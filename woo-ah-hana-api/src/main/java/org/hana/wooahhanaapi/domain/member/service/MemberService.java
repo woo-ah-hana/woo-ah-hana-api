@@ -1,6 +1,7 @@
 package org.hana.wooahhanaapi.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
+import org.hana.wooahhanaapi.domain.member.dto.MemberDto;
 import org.hana.wooahhanaapi.domain.member.dto.SignUpRequestDto;
 import org.hana.wooahhanaapi.domain.member.entity.MemberEntity;
 import org.hana.wooahhanaapi.domain.member.repository.MemberRepository;
@@ -40,9 +41,14 @@ public class MemberService implements UserDetailsService {
         return memberEntity.getUsername();
     }
 
-    public String getMemberInfo() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        MemberEntity memberEntity = this.memberRepository.findAllByUsername(username);
-        return memberEntity.getPassword();
+    public MemberDto getMemberInfo() {
+        MemberEntity memberEntity1 = (MemberEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return MemberDto.builder()
+                .username(memberEntity1.getUsername())
+                .name(memberEntity1.getName())
+                .phoneNumber(memberEntity1.getPhoneNumber())
+                .build();
+//        MemberEntity memberEntity2 = this.memberRepository.findAllByUsername("ham");
+//        return memberEntity2.getUsername();
     }
 }

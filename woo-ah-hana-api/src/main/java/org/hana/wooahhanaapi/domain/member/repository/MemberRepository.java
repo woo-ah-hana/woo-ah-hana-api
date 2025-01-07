@@ -8,6 +8,5 @@ import java.util.UUID;
 
 public interface MemberRepository extends JpaRepository<MemberEntity, UUID> {
     Optional<MemberEntity> findByUsername(String username);
-
     MemberEntity findAllByUsername(String username);
 }

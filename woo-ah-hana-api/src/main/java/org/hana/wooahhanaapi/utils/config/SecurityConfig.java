@@ -1,7 +1,6 @@
 package org.hana.wooahhanaapi.utils.config;
 
 import lombok.RequiredArgsConstructor;
-import org.hana.wooahhanaapi.domain.member.repository.MemberRepository;
 import org.hana.wooahhanaapi.utils.security.JwtAuthenticationFilter;
 import org.hana.wooahhanaapi.utils.security.JwtProvider;
 import org.springframework.context.annotation.Bean;
@@ -13,8 +12,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.annotation.web.configurers.SessionManagementConfigurer;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -34,12 +31,6 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
-//
-//    @Bean
-//    public UserDetailsService userDetailsService(MemberRepository memberRepository){
-//        return username -> memberRepository.findByUsername(username)
-//                .orElseThrow(() -> new UsernameNotFoundException("사용자가 없습니다"));
-//    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, JwtProvider jwtProvider)throws Exception{

@@ -44,10 +44,10 @@ public class JwtProvider {
                 .compact();
     }
 
-    public String createRefreshToken(String userPk, String username){
+    public String createRefreshToken(String userPk, String name){
         Claims claims = Jwts.claims().setSubject(userPk);
         Date now = new Date();
-        claims.put("username", username);
+        claims.put("username", name);
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
