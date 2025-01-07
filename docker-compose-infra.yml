@@ -11,6 +11,24 @@ services:
     networks:
       - api-net
 
+  account:
+    image: yoonyounghun/woo-ah-account:latest
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+    networks:
+      - api-net
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    environment:
+      - FAST_DB_HOST=${FAST_DB_HOST}
+      - FAST_DB_PORT=${FAST_DB_PORT}
+      - FAST_POSTGRES_USER=${FAST_POSTGRES_USER}
+      - FAST_POSTGRES_DATABASE_NAME=${FAST_POSTGRES_DATABASE_NAME}
+      - FAST_POSTGRES_PASSWORD=${FAST_POSTGRES_PASSWORD}
+
 networks:
   api-net:
     name: woo-ah-hana-api
