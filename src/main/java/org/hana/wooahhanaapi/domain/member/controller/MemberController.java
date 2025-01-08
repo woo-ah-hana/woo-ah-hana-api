@@ -1,7 +1,7 @@
 package org.hana.wooahhanaapi.domain.member.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.hana.wooahhanaapi.domain.member.dto.MemberDto;
+import org.hana.wooahhanaapi.domain.member.dto.MemberResponseDto;
 import org.hana.wooahhanaapi.domain.member.dto.SignUpRequestDto;
 import org.hana.wooahhanaapi.domain.member.dto.LoginRequestDto;
 import org.hana.wooahhanaapi.domain.member.service.MemberService;
@@ -44,7 +44,7 @@ public class MemberController {
     }
 
     @GetMapping("")
-    public MemberDto getMemberInfo(){
+    public MemberResponseDto getMemberInfo(){
         return this.memberService.getMemberInfo();
     }
 }

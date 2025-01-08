@@ -33,6 +33,12 @@ public class MemberEntity implements UserDetails {
     @Column(nullable=false)
     protected String phoneNumber;
 
+    @Column(nullable=false)
+    protected String accountNumber;
+
+    @Column(nullable=false)
+    protected String accountBank;
+
     // UserDetail 구현
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -63,7 +69,7 @@ public class MemberEntity implements UserDetails {
         return UserDetails.super.isEnabled();
     }
 
-    public static MemberEntity create(String username, String name, String password, String phoneNumber) {
-        return new MemberEntity(null,username,password,name,phoneNumber);
+    public static MemberEntity create(String username, String name, String password, String phoneNumber, String accountNumber, String accountBank) {
+        return new MemberEntity(null,username,password,name,phoneNumber,accountNumber,accountBank);
     }
 }
