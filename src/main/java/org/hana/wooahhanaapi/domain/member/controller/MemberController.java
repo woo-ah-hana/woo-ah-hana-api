@@ -21,10 +21,13 @@ public class MemberController {
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
 
-    @PostMapping("/signup")
+    @PostMapping("/signUp")
     public String signup(@RequestBody SignUpRequestDto signUpRequestDto){
         return this.memberService.signUp(signUpRequestDto);
     }
+
+//    @PostMapping("/signUp/accountAuth")
+//    public String signUpAccountAuth(@RequestBody SignUpRequestDto signUpRequestDto){}
 
     @PostMapping("/login")
     public LoginResponseDto login(@RequestBody LoginRequestDto loginRequestDto) {
