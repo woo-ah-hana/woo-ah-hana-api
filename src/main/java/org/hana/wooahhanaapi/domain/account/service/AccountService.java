@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AccountService {
-    private AccountPort accountPort;
+    private final AccountPort accountPort;
 
     public AccountCreateRespDto createAccount(AccountCreateReqDto accountCreateReqDto) {
         return accountPort.createNewAccount(accountCreateReqDto);

@@ -22,7 +22,7 @@ public class MockAccountAdapter implements AccountPort{
             String jsonBody = objectMapper.writeValueAsString(accountCreateReqDto);
 
             HttpRequest httpRequest = HttpRequest.newBuilder()
-                    .uri(URI.create("https://localhost:8000/account"))
+                    .uri(URI.create("http://localhost:8000/account"))
                     .header("Content-Type", "application/json") // JSON 형식으로 전송
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                     .build();

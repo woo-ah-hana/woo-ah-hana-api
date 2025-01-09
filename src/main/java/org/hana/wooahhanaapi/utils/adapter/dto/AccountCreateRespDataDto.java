@@ -1,17 +1,18 @@
 package org.hana.wooahhanaapi.utils.adapter.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.io.Serializable;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AccountCreateRespDataDto {
-    private String bankCodeTran;
-    private String id;
-    private String bankName;
+public class AccountCreateRespDataDto implements Serializable {
     private String bankTranId;
+    private String accountNumber;
+    private String accountType;
+    private String id;
+    private int availableAmt;
+    private String productName;
 }
