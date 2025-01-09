@@ -1,6 +1,7 @@
 package org.hana.wooahhanaapi.domain.member.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.hana.wooahhanaapi.domain.member.dto.LoginResponseDto;
 import org.hana.wooahhanaapi.domain.member.dto.MemberResponseDto;
 import org.hana.wooahhanaapi.domain.member.dto.SignUpRequestDto;
 import org.hana.wooahhanaapi.domain.member.dto.LoginRequestDto;
@@ -26,7 +27,7 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequestDto loginRequestDto) {
+    public LoginResponseDto login(@RequestBody LoginRequestDto loginRequestDto) {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -38,9 +39,8 @@ public class MemberController {
 
         String accessToken = jwtProvider.createAccessToken(loginRequestDto.getUsername(), authentication.getName());
         String refreshToken = jwtProvider.createRefreshToken(loginRequestDto.getUsername(), authentication.getName());
-        System.out.println(refreshToken);
-        //?refreshToken은 프론트에 넘겨주는 것이 맞는가?
-        return accessToken;
+
+        return LoginResponseDto.builder().accessToken(accessToken).refreshToken(refreshToken).build();
     }
 
     @GetMapping("")
