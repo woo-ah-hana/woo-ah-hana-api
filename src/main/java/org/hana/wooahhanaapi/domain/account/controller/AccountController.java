@@ -18,7 +18,10 @@ public class AccountController {
     public AccountCreateRespDto createAccount(@RequestBody AccountCreateReqDto accountCreateReqDto) {
         return this.accountService.createAccount(accountCreateReqDto);
     }
-
+    @PostMapping("/record")
+    public AccountTransferRecordRespDto recordAccount(@RequestBody AccountTransferRecordReqDto accountTransferRecordReqDto) {
+        return this.accountService.getTransferRecord(accountTransferRecordReqDto);
+    }
     @PostMapping("/create-bank")
     public BankCreateRespDto createBank(@RequestBody BankCreateReqDto bankCreateReqDto) {
         return this.accountService.createBank(bankCreateReqDto);
