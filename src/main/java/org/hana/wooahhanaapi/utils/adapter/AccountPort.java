@@ -7,6 +7,4 @@ public interface AccountPort {
 
     AccountCreateRespDto createNewAccount(AccountCreateReqDto accountCreateReqDto);
 
-
-
 }
