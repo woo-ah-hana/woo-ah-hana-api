@@ -1,10 +1,10 @@
 package org.hana.wooahhanaapi.domain.account.adapter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import lombok.extern.slf4j.Slf4j;
 import org.hana.wooahhanaapi.domain.account.adapter.dto.AccountCreateReqDto;
 import org.hana.wooahhanaapi.domain.account.adapter.dto.AccountCreateRespDto;
+import org.hana.wooahhanaapi.domain.account.exception.DuplicateAccountException;
 import org.springframework.stereotype.Service;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -13,16 +13,13 @@ import java.net.http.HttpResponse;
 
 @Service
 @Slf4j
-public class MockAccountAdapter implements AccountPort{
+public class AccountCreateAdapter implements AccountCreatePort {
 
     @Override
     public AccountCreateRespDto createNewAccount(AccountCreateReqDto accountCreateReqDto) {
 
         HttpClient client = HttpClient.newHttpClient();
         ObjectMapper objectMapper = new ObjectMapper();
-
-        // PropertyNamingStrategy.SNAKE_CASE 적용
-        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
 
         try {
 
@@ -39,7 +36,13 @@ public class MockAccountAdapter implements AccountPort{
             System.out.println(response.statusCode());
             System.out.println(response.body());
 
-            return objectMapper.readValue(response.body(), AccountCreateRespDto.class);
+            if(response.statusCode() == 400 || response.body().contains("이미 존재하는 계좌번호입니다.")) {
+                throw new DuplicateAccountException("이미 존재하는 계좌번호입니다.");
+            }
+            else {
+                return objectMapper.readValue(response.body(), AccountCreateRespDto.class);
+            }
+
         }
         catch (Exception e){
             throw new RuntimeException(e);
