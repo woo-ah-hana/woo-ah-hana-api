@@ -2,20 +2,19 @@ package org.hana.wooahhanaapi.domain.plan.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-//import org.hana.wooahhanaapi.domain.plan.entity.MembershipEntity;
+import org.hana.wooahhanaapi.domain.member.entity.MembershipEntity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
-@Builder
 @Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MockPlanEntity {
+public class PlanEntity {
     @Id
     @GeneratedValue(strategy= GenerationType.UUID)
     @Column(name="id")
@@ -33,10 +32,10 @@ public class MockPlanEntity {
     @Column(nullable=false, name = "category")
     protected String category;
 
-    @Column(nullable = false, name = "location")
+    @Column(name = "location")
     protected String location;
 
-//    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<MembershipEntity> memberships; // Plan에 참여한 회원 목록
+    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MembershipEntity> memberships; // Plan에 참여한 회원 목록
 
 }
