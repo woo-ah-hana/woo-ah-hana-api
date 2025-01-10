@@ -23,5 +23,5 @@ public class UserNotFoundException extends GlobalException {
   public LocalDateTime getTimeStamp() {
     return customExceptionData.getTimestamp();
   }
-
+  
 }
