@@ -3,7 +3,7 @@ package org.hana.wooahhanaapi.domain.account.adapter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hana.wooahhanaapi.domain.account.adapter.dto.AccountTransferRecordReqDto;
 import org.hana.wooahhanaapi.domain.account.adapter.dto.AccountTransferRecordRespDto;
-import org.hana.wooahhanaapi.domain.account.exception.TransferNotValidException;
+import org.hana.wooahhanaapi.domain.account.exception.AccountNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -33,7 +33,7 @@ public class AccountTransferRecordAdapter implements AccountTransferRecordPort {
             System.out.println(response.statusCode());
             System.out.println(response.body());
             if(response.statusCode() == 400 || response.body().contains("존재하지 않는 계좌입니다.")) {
-                throw new TransferNotValidException("존재하지 않는 계좌입니다.");
+                throw new AccountNotFoundException("존재하지 않는 계좌입니다.");
             }
             else {
                 return objectMapper.readValue(response.body(), AccountTransferRecordRespDto.class);

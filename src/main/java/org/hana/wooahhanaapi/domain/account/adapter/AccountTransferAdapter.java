@@ -1,10 +1,9 @@
 package org.hana.wooahhanaapi.domain.account.adapter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hana.wooahhanaapi.domain.account.adapter.dto.AccountTransferRecordRespDto;
 import org.hana.wooahhanaapi.domain.account.adapter.dto.AccountTransferReqDto;
 import org.hana.wooahhanaapi.domain.account.adapter.dto.AccountTransferRespDto;
-import org.hana.wooahhanaapi.domain.account.exception.AccountNotFoundException;
+import org.hana.wooahhanaapi.domain.account.exception.TransferNotValidException;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -35,7 +34,7 @@ public class AccountTransferAdapter implements AccountTransferPort{
             System.out.println(response.statusCode());
             System.out.println(response.body());
             if(response.statusCode() == 400 || response.body().contains("(입출금) 잘못된 접근입니다.")) {
-                throw new AccountNotFoundException("(입출금) 잘못된 접근입니다.");
+                throw new TransferNotValidException("(입출금) 잘못된 접근입니다.");
             }
             else {
                 return objectMapper.readValue(response.body(), AccountTransferRespDto.class);
