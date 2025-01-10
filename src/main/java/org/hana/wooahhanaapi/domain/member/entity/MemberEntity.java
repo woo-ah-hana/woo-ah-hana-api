@@ -9,7 +9,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -39,9 +38,6 @@ public class MemberEntity implements UserDetails {
 
     @Column(nullable=false)
     protected String accountBank;
-
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MembershipEntity> memberships = new ArrayList<>();
 
     // UserDetail 구현
     @Override
@@ -73,8 +69,7 @@ public class MemberEntity implements UserDetails {
         return UserDetails.super.isEnabled();
     }
 
-    public static MemberEntity create(String username, String name, String password, String phoneNumber, String accountNumber, String accountBank ) {
-        return new MemberEntity(null,username,password,name,phoneNumber,accountNumber,accountBank,new ArrayList<>());
+    public static MemberEntity create(String username, String name, String password, String phoneNumber, String accountNumber, String accountBank) {
+        return new MemberEntity(null,username,password,name,phoneNumber,accountNumber,accountBank);
     }
-
 }
