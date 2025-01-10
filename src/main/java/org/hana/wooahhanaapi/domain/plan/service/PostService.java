@@ -6,7 +6,7 @@ import org.hana.wooahhanaapi.domain.member.entity.MemberEntity;
 import org.hana.wooahhanaapi.domain.member.repository.MemberRepository;
 import org.hana.wooahhanaapi.domain.plan.dto.CreatePostRequestDto;
 import org.hana.wooahhanaapi.domain.plan.dto.CreatePostResponseDto;
-import org.hana.wooahhanaapi.domain.plan.entity.PlanEntity;
+import org.hana.wooahhanaapi.domain.plan.entity.MockPlanEntity;
 import org.hana.wooahhanaapi.domain.plan.entity.PostEntity;
 import org.hana.wooahhanaapi.domain.plan.exception.*;
 import org.hana.wooahhanaapi.domain.plan.repository.PlanRepository;
@@ -44,7 +44,7 @@ public class PostService {
             throw new FileSizeExceededException("업로드 가능한 파일 크기를 초과했습니다.");
         }
 
-        PlanEntity plan = planRepository.findById(UUID.fromString(requestDto.getPlanId()))
+        MockPlanEntity plan = planRepository.findById(UUID.fromString(requestDto.getPlanId()))
                 .orElseThrow(() -> new EntityNotFoundException("해당 Plan이 존재하지 않습니다."));
 
         MemberEntity member = memberRepository.findById(UUID.fromString(requestDto.getMemberId()))
