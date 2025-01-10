@@ -2,9 +2,10 @@ package org.hana.wooahhanaapi.domain.plan.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hana.wooahhanaapi.domain.member.entity.MembershipEntity;
+import org.hana.wooahhanaapi.utils.annotations.ListConverter;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,30 +13,36 @@ import java.util.UUID;
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class PlanEntity {
     @Id
     @GeneratedValue(strategy= GenerationType.UUID)
     @Column(name="id")
-    protected UUID id;
+    private UUID id;
+
+    @Column(nullable = false, name="community_id")
+    private UUID communityId;
 
     @Column(nullable=false, name = "title")
-    protected String title;
+    private String title;
 
     @Column(nullable=false, name = "start_date")
-    protected LocalDateTime startDate;
+    private LocalDateTime startDate;
 
     @Column(nullable=false, name = "end_date")
-    protected LocalDateTime endDate;
+    private LocalDateTime endDate;
 
     @Column(nullable=false, name = "category")
     protected String category;
 
-    @Column(name = "location")
-    protected String location;
+    @Column(name = "locations")
+    @Convert(converter = ListConverter.class)
+    protected List<String> locations;
 
-    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MembershipEntity> memberships; // Plan에 참여한 회원 목록
+    @Column(name = "member_ids")
+    @Convert(converter = ListConverter.class)
+    private List<UUID> memberIds;
 
 }
