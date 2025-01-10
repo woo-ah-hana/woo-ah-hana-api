@@ -26,4 +26,8 @@ public class AccountController {
     public BankCreateRespDto createBank(@RequestBody BankCreateReqDto bankCreateReqDto) {
         return this.accountService.createBank(bankCreateReqDto);
     }
+    @PostMapping("/info")
+    public GetAccountInfoRespDto getBalance(@RequestBody GetAccountInfoReqDto getAccountInfoReqDto) {
+        return this.accountService.getBalance(getAccountInfoReqDto);
+    }
 }
