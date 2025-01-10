@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/plan")
 @RequiredArgsConstructor
@@ -17,9 +19,8 @@ public class PlanController {
 
     private final PlanService planService;
 
-//    @PostMapping("/create")
-//    public ResponseEntity<CreatePlanRequestDto> createPlan(@RequestBody CreatePlanRequestDto requestDto) {
-//        planService.createPlan(requestDto);
-//        return ResponseEntity.status(HttpStatus.CREATED).body(requestDto);
-//    }
+    @PostMapping
+    public UUID createPlan(@RequestBody CreatePlanRequestDto requestDto) {
+        return planService.createPlan(requestDto);
+    }
 }
