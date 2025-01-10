@@ -2,6 +2,7 @@ package org.hana.wooahhanaapi.domain.account.service;
 
 import lombok.RequiredArgsConstructor;
 import org.hana.wooahhanaapi.domain.account.adapter.AccountCreatePort;
+import org.hana.wooahhanaapi.domain.account.adapter.AccountTransferPort;
 import org.hana.wooahhanaapi.domain.account.adapter.AccountTransferRecordPort;
 import org.hana.wooahhanaapi.domain.account.adapter.BankCreatePort;
 import org.hana.wooahhanaapi.domain.account.adapter.GetAccountInfoPort;
@@ -16,6 +17,7 @@ public class AccountService {
     private final BankCreatePort bankCreatePort;
     private final AccountTransferRecordPort accountTransferRecordPort;
     private final GetAccountInfoPort getAccountInfoPort;
+    private final AccountTransferPort accountTransferPort;
 
     public AccountCreateRespDto createAccount(AccountCreateReqDto accountCreateReqDto) {
         return accountCreatePort.createNewAccount(accountCreateReqDto);
@@ -31,5 +33,9 @@ public class AccountService {
 
     public GetAccountInfoRespDto getBalance(GetAccountInfoReqDto getAccountInfoReqDto) {
         return getAccountInfoPort.getBalance(getAccountInfoReqDto);
+    }
+
+    public AccountTransferRespDto createTransfer(AccountTransferReqDto accountTransferReqDto) {
+        return accountTransferPort.createAccountTransfer(accountTransferReqDto);
     }
 }
