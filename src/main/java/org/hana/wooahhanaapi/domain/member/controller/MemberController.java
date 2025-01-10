@@ -21,7 +21,7 @@ public class MemberController {
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
 
-    @PostMapping("/signUp")
+    @PostMapping("/signup")
     public String signup(@RequestBody SignUpRequestDto signUpRequestDto){
         return this.memberService.signUp(signUpRequestDto);
     }
