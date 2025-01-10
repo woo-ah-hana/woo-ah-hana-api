@@ -24,4 +24,10 @@ public class PostController {
     ) throws IOException {
         return this.postService.createPost(requestDto, image);
     }
+
+    @DeleteMapping("/{postId}")
+    public String deletePost(@PathVariable String postId) {
+        postService.deletePost(postId);
+        return "Post가 성공적으로 삭제되었습니다.";
+    }
 }

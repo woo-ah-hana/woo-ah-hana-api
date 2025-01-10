@@ -38,4 +38,14 @@ public class S3Service {
 //        return amazonS3.getUrl(bucket, encodedFileName).toString();
           return "url";
     }
+
+    public void delete(String fileUrl) {
+        try {
+            // ".com/" 이후의 파일명을 추출
+            String keyName = fileUrl.substring(fileUrl.indexOf(".com/") + 5);
+//            amazonS3.deleteObject(bucket, keyName);
+        } catch (AmazonServiceException e) {
+            log.error("S3 파일 삭제 중 오류 발생: {}", e.toString());
+        }
+    }
 }

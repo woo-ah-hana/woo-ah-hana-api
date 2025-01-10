@@ -1,5 +1,6 @@
 package org.hana.wooahhanaapi.domain.plan.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.hana.wooahhanaapi.domain.member.entity.MemberEntity;
 import org.hana.wooahhanaapi.domain.member.repository.MemberRepository;
@@ -67,5 +68,16 @@ public class PostService {
                 .imageUrl(post.getImageUrl())
                 .description(post.getDescription())
                 .build();
+    }
+
+    @Transactional
+    public void deletePost(String postId) {
+        PostEntity post = postRepository.findById(UUID.fromString(postId))
+                .orElseThrow(() -> new EntityNotFoundException("해당 Post를 찾을 수 없습니다."));
+
+        String fileUrl = post.getImageUrl();
+//        s3Service.delete(fileUrl);
+
+        postRepository.delete(post);
     }
 }
