@@ -11,7 +11,7 @@ import java.util.UUID;
 @Getter
 @Builder
 @AllArgsConstructor
-public class ListPlanResponseDto {
+public class GetPlansResponseDto {
     private UUID id;
     private String title;
     private LocalDateTime startDate;

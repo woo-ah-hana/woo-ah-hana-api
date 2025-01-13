@@ -4,9 +4,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.hana.wooahhanaapi.domain.plan.domain.Plan;
 import org.hana.wooahhanaapi.domain.plan.dto.CreatePlanRequestDto;
-import org.hana.wooahhanaapi.domain.plan.dto.ListPlanResponseDto;
+import org.hana.wooahhanaapi.domain.plan.dto.GetPlansResponseDto;
 import org.hana.wooahhanaapi.domain.plan.entity.PlanEntity;
-import org.hana.wooahhanaapi.domain.plan.entity.PostEntity;
 import org.hana.wooahhanaapi.domain.plan.exception.EntityNotFoundException;
 import org.hana.wooahhanaapi.domain.plan.mapper.PlanMapper;
 import org.hana.wooahhanaapi.domain.plan.repository.PlanRepository;
@@ -43,7 +42,7 @@ public class PlanService {
         planRepository.delete(plan);
     }
 
-    public List<ListPlanResponseDto> getPlanList(UUID communityId) {
+    public List<GetPlansResponseDto> getPlans(UUID communityId) {
         return planRepository.findAllByCommunityId(communityId)
                 .stream()
                 .map(PlanMapper::mapEntityToDto)
