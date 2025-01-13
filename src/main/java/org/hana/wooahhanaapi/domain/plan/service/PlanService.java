@@ -14,6 +14,7 @@ import org.hana.wooahhanaapi.domain.plan.mapper.PlanMapper;
 import org.hana.wooahhanaapi.domain.plan.repository.PlanRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -70,5 +71,12 @@ public class PlanService {
         );
 
         planRepository.save(PlanMapper.mapDomainToEntity(plan));
+    }
+
+    public List<GetPlansResponseDto> getCompletedPlans(UUID communityId) {
+        return planRepository.findCompletedByCommunityId(communityId)
+                .stream()
+                .map(PlanMapper::mapEntityToDto)
+                .collect(Collectors.toList());
     }
 }
