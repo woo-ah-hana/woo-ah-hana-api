@@ -15,11 +15,11 @@ import java.net.http.HttpResponse;
 @Slf4j
 public class AccountCreateAdapter implements AccountCreatePort {
 
+    private static final HttpClient client = HttpClient.newHttpClient();
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
     @Override
     public AccountCreateRespDto createNewAccount(AccountCreateReqDto accountCreateReqDto) {
-
-        HttpClient client = HttpClient.newHttpClient();
-        ObjectMapper objectMapper = new ObjectMapper();
 
         try {
 

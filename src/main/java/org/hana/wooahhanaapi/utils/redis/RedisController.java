@@ -19,7 +19,7 @@ public class RedisController {
     @PostMapping
     public ResponseEntity<?> addItem(@RequestBody RedisTestDto redisTestDto){
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-        Long expiredTime = 10L;
+        Long expiredTime = 100L;
         valueOperations.set(redisTestDto.getKey(), redisTestDto.getValue(),expiredTime, TimeUnit.SECONDS);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

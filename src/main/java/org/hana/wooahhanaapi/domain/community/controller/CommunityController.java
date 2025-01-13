@@ -1,8 +1,7 @@
 package org.hana.wooahhanaapi.domain.community.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.hana.wooahhanaapi.domain.account.adapter.dto.AccountValidationConfirmDto;
-import org.hana.wooahhanaapi.domain.account.adapter.dto.AccountValidationReqDto;
+import org.hana.wooahhanaapi.domain.community.adapter.dto.SendValidationCodeReqDto;
 import org.hana.wooahhanaapi.domain.community.dto.CommunityChgManagerReqDto;
 import org.hana.wooahhanaapi.domain.community.dto.CommunityCreateReqDto;
 import org.hana.wooahhanaapi.domain.community.service.CommunityService;
@@ -24,9 +23,9 @@ public class CommunityController {
     }
 
     // 모임 생성시 모임통장 입금자명 확인용 1원 전송
-    @PostMapping("/new/validAccountReq")
-    public String validateAccount(@RequestBody AccountValidationReqDto dto) {
-        this.communityService.validateAccountRequest(dto);
+    @PostMapping("/new/send-code")
+    public String validateAccount(@RequestBody SendValidationCodeReqDto dto) {
+        this.communityService.sendValidationCode(dto);
         return "success";
     }
 
