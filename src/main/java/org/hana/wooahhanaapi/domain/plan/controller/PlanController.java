@@ -1,8 +1,10 @@
 package org.hana.wooahhanaapi.domain.plan.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.hana.wooahhanaapi.domain.member.dto.MemberResponseDto;
 import org.hana.wooahhanaapi.domain.plan.dto.CreatePlanRequestDto;
 import org.hana.wooahhanaapi.domain.plan.dto.GetPlansResponseDto;
+
 import org.hana.wooahhanaapi.domain.plan.service.PlanService;
 import org.springframework.web.bind.annotation.*;
 
