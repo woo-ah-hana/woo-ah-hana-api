@@ -44,11 +44,9 @@ public class CommunityService {
                 .accountNumber(dto.getAccountNumber())
                 .validationCode(dto.getValidationCode())
                 .build();
-        System.out.println("aa");
         if(!validateAccountPort.validateAccount(accValidDto)) {
             throw new IncorrectValidationCodeException("입금자명이 일치하지 않습니다.");
         }
-        System.out.println("dd");
         CommunityEntity newCommunity = CommunityEntity.create(
                 userDetails.getId(),
                 dto.getName(),

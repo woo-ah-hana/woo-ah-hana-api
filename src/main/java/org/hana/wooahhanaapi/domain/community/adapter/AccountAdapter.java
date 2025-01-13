@@ -27,15 +27,11 @@ public class AccountAdapter implements ValidateAccountPort, SendValidCodePort {
     @Override
     public boolean validateAccount(AccountValidationConfirmDto dto){
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-        System.out.println("cc");
-        System.out.println(dto.getAccountNumber());
-        System.out.println(valueOperations.get(dto.getAccountNumber()));
         return Objects.requireNonNull(valueOperations.get(dto.getAccountNumber())).equals(dto.getValidationCode());
     }
 
     @Override
     public void sendValidCode(SendValidationCodeReqDto reqDto){
-        System.out.println("aaaaaaaaaa");
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
 
         String validCode = "우아하나" + ThreadLocalRandom.current().nextInt(1000);
@@ -59,12 +55,9 @@ public class AccountAdapter implements ValidateAccountPort, SendValidCodePort {
                     .branchName("우아하나")
                     .build();
             System.out.println(dto2.getAccountNumber());
-            System.out.println("bbbbbbb");
 
             accountService.createTransfer(dto2);
-            System.out.println("ccccccc");
             valueOperations.set(reqDto.getAccountNumber(), validCode, expiredTime, TimeUnit.SECONDS);
-            System.out.println("ddddddddd");
         }catch (Exception e){
             throw new AccountNotFoundException("계좌를 찾을 수 없음");
         }
