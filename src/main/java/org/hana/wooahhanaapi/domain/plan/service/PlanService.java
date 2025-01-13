@@ -8,6 +8,8 @@ import org.hana.wooahhanaapi.domain.plan.dto.GetPlansResponseDto;
 import org.hana.wooahhanaapi.domain.plan.dto.UpdatePlanRequestDto;
 import org.hana.wooahhanaapi.domain.plan.entity.PlanEntity;
 import org.hana.wooahhanaapi.domain.plan.exception.EntityNotFoundException;
+import org.hana.wooahhanaapi.domain.plan.exception.InvalidPostDataException;
+import org.hana.wooahhanaapi.domain.plan.exception.LogicalPlanDataException;
 import org.hana.wooahhanaapi.domain.plan.mapper.PlanMapper;
 import org.hana.wooahhanaapi.domain.plan.repository.PlanRepository;
 import org.springframework.stereotype.Service;
@@ -54,6 +56,13 @@ public class PlanService {
     public void updatePlan(UUID planId, UpdatePlanRequestDto requestDto) {
         PlanEntity plan = planRepository.findById(planId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 plan을 찾을 수 없습니다."));
+
+        if (requestDto.getStartDate() != null && requestDto.getEndDate() != null) {
+            if (requestDto.getStartDate().isAfter(requestDto.getEndDate())) {
+                throw new LogicalPlanDataException("종료일은 시작일 이후여야 합니다.");
+            }
+        }
+
         PlanEntity updatedPlan = PlanEntity.builder()
                 .id(plan.getId())
                 .communityId(plan.getCommunityId())
