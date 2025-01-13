@@ -40,4 +40,9 @@ public class PlanController {
         planService.updatePlan(planId, requestDto);
         return "Plan이 성공적으로 업데이트 되었습니다.";
     }
+
+    @GetMapping("/completed/{communityId}")
+    public List<GetPlansResponseDto> getCompletedPlans(@PathVariable UUID communityId) {
+        return planService.getCompletedPlans(communityId);
+    }
 }
