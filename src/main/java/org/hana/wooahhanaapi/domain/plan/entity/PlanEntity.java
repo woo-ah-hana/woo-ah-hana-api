@@ -45,13 +45,4 @@ public class PlanEntity {
     @Convert(converter = ListConverter.class)
     private List<UUID> memberIds;
 
-    public void update(String title, LocalDateTime startDate, LocalDateTime endDate, String category, List<String> locations, List<UUID> memberIds) {
-        if (title != null) this.title = title;
-        if (startDate != null) this.startDate = startDate;
-        if (endDate != null) this.endDate = endDate;
-        if (category != null) this.category = category;
-        if (locations != null) this.locations = locations;
-        if (memberIds != null) this.memberIds = memberIds;
-    }
-
 }
