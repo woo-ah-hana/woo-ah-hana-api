@@ -1,17 +1,14 @@
 package org.hana.wooahhanaapi.domain.community.service;
 
 import lombok.RequiredArgsConstructor;
-import org.hana.wooahhanaapi.domain.account.adapter.dto.AccountTransferReqDto;
-import org.hana.wooahhanaapi.domain.account.adapter.dto.AccountValidationConfirmDto;
-import org.hana.wooahhanaapi.domain.account.adapter.dto.AccountValidationReqDto;
+import org.hana.wooahhanaapi.domain.account.adapter.dto.*;
 import org.hana.wooahhanaapi.domain.account.entity.AccountValidationEntity;
 import org.hana.wooahhanaapi.domain.account.exception.AccountNotFoundException;
 import org.hana.wooahhanaapi.domain.account.exception.IncorrectValidationCodeException;
 import org.hana.wooahhanaapi.domain.account.repository.AccountValidationRepository;
 import org.hana.wooahhanaapi.domain.account.service.AccountService;
 import org.hana.wooahhanaapi.domain.community.domain.Community;
-import org.hana.wooahhanaapi.domain.community.dto.CommunityChgManagerReqDto;
-import org.hana.wooahhanaapi.domain.community.dto.CommunityCreateReqDto;
+import org.hana.wooahhanaapi.domain.community.dto.*;
 import org.hana.wooahhanaapi.domain.community.entity.CommunityEntity;
 import org.hana.wooahhanaapi.domain.community.exception.CommunityNotFoundException;
 import org.hana.wooahhanaapi.domain.community.exception.NotAMemberException;
@@ -27,7 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
@@ -119,6 +116,7 @@ public class CommunityService {
         }
     }
 
+    // 계주 변경
     public boolean changeCommunityManager(CommunityChgManagerReqDto dto) {
 
         // 커뮤니티 찾고
@@ -141,6 +139,84 @@ public class CommunityService {
         else {
             throw new NotAMemberException("해당 회원은 모임의 멤버가 아닙니다.");
         }
+
+    }
+
+    // 회비 납입 여부 체크
+    public CommunityFeeStatusRespDto checkFeeStatus(CommunityFeeStatusReqDto dto) {
+        // 커뮤니티 찾고
+        CommunityEntity foundCommunity = communityRepository.findById(dto.getCommunityId())
+                .orElseThrow(() -> new CommunityNotFoundException("커뮤니티를 찾을 수 없습니다."));
+        List<MemberEntity> members = membershipRepository.findMembersByCommunityId(dto.getCommunityId());
+
+        Long fee = foundCommunity.getFee();
+        // 매월 입금날 찾기
+        Long feePeriod = foundCommunity.getFeePeriod();
+        // 현재 년, 월, 일 추출
+        LocalDateTime now = LocalDateTime.now();
+        int year = now.getYear();  // 년도
+        int month = now.getMonthValue();  // 월 (1-12)
+        int dayOfMonth = now.getDayOfMonth();  // 일 (1-31)
+        String fromDate = "";
+        String toDate = "";
+
+        if(feePeriod > dayOfMonth) {
+            if(month-1 == 0) {
+                fromDate = (year-1) + "-" + 12 + "-" + feePeriod;
+            }
+            else {
+                fromDate = year + "-" + (month-1) + "-" + feePeriod;
+            }
+            toDate = year + "-" + month + "-" + dayOfMonth;
+
+        }
+        else if(feePeriod < dayOfMonth) {
+            fromDate = year + "-" + month + "-" + feePeriod;
+            toDate = year + "-" + month + "-" + dayOfMonth;
+        }
+
+        // 조회 조건 dto 생성
+        AccountTransferRecordReqDto reqDto = AccountTransferRecordReqDto.builder()
+                .bankTranId("001")
+                .accountNumber(foundCommunity.getAccountNumber())
+                .fromDate(fromDate)
+                .toDate(toDate)
+                .build();
+
+        Set<CommunityFeeStatusRespListDto> paidMembers = new HashSet<>();  // 납부한 멤버
+        Set<CommunityFeeStatusRespListDto> unpaidMembers = new HashSet<>();  // 납부하지 않은 멤버
+
+        // 멤버별 입금액을 누적할 맵
+        Map<MemberEntity, Long> memberPayments = new HashMap<>();
+
+        // 기록 조회
+        List<AccountTransferRecordRespListDto> resultData = accountService.getTransferRecord(reqDto)
+                .getData().getResList();
+
+        for (AccountTransferRecordRespListDto listDto : resultData) {
+            if ("입금".equals(listDto.getTranType())) {
+                // 입금 내역의 계좌 번호와 매핑된 멤버를 찾아서 입금액 누적
+                for (MemberEntity member : members) {
+                    if (member.getName().equals(listDto.getPrintContent())) {
+                        // 입금액 누적
+                        memberPayments.put(member,
+                                memberPayments.getOrDefault(member, 0L) + Long.valueOf(listDto.getTranAmt()));
+                    }
+                }
+            }
+        }
+
+        for (Map.Entry<MemberEntity, Long> entry : memberPayments.entrySet()) {
+            // 매월 입금액을 만족했으면 납입한 멤버 목록에 추가
+            if (entry.getValue().compareTo(fee) >= 0) {
+                paidMembers.add(new CommunityFeeStatusRespListDto(entry.getKey().getName(), entry.getValue()));
+            }
+            else {
+                unpaidMembers.add(new CommunityFeeStatusRespListDto(entry.getKey().getName(), entry.getValue()));
+            }
+        }
+
+        return new CommunityFeeStatusRespDto(paidMembers, unpaidMembers);
 
     }
 }
