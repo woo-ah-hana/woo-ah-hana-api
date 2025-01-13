@@ -44,5 +44,4 @@ public class PlanEntity {
     @Column(name = "member_ids")
     @Convert(converter = ListConverter.class)
     private List<UUID> memberIds;
-
 }

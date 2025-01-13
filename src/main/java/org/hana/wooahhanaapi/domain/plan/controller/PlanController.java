@@ -5,6 +5,7 @@ import org.hana.wooahhanaapi.domain.member.dto.MemberResponseDto;
 import org.hana.wooahhanaapi.domain.plan.dto.CreatePlanRequestDto;
 import org.hana.wooahhanaapi.domain.plan.dto.GetPlansResponseDto;
 
+import org.hana.wooahhanaapi.domain.plan.dto.UpdatePlanRequestDto;
 import org.hana.wooahhanaapi.domain.plan.service.PlanService;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,5 +33,11 @@ public class PlanController {
     @GetMapping("/list/{communityId}")
     public List<GetPlansResponseDto> getPlans(@PathVariable UUID communityId) {
         return planService.getPlans(communityId);
+    }
+
+    @PatchMapping("/update/{planId}")
+    public String updatePlan(@PathVariable UUID planId, @RequestBody UpdatePlanRequestDto requestDto) {
+        planService.updatePlan(planId, requestDto);
+        return "Plan이 성공적으로 업데이트 되었습니다.";
     }
 }
