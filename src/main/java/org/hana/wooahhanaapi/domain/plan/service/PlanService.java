@@ -59,8 +59,8 @@ public class PlanService {
                 .orElseThrow(() -> new EntityNotFoundException("해당 plan을 찾을 수 없습니다."));
 
         Plan plan = Plan.update(
-                existingPlanEntity.getId(),
-                dto.getCommunityId() != null ? dto.getCommunityId() : existingPlanEntity.getCommunityId(),
+                planId,
+                existingPlanEntity.getCommunityId(),
                 dto.getTitle() != null ? dto.getTitle() : existingPlanEntity.getTitle(),
                 dto.getStartDate() != null ? dto.getStartDate() : existingPlanEntity.getStartDate(),
                 dto.getEndDate() != null ? dto.getEndDate() : existingPlanEntity.getEndDate(),
