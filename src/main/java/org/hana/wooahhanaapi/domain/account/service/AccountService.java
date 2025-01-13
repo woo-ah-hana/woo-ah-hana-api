@@ -31,8 +31,8 @@ public class AccountService {
         return accountTransferRecordPort.getTransferRecord(accountTransferRecordReqDto);
     }
 
-    public GetAccountInfoRespDto getBalance(GetAccountInfoReqDto getAccountInfoReqDto) {
-        return getAccountInfoPort.getBalance(getAccountInfoReqDto);
+    public GetAccountInfoRespDto getAccountInfo(GetAccountInfoReqDto getAccountInfoReqDto) {
+        return getAccountInfoPort.getAccountInfo(getAccountInfoReqDto);
     }
 
     public AccountTransferRespDto createTransfer(AccountTransferReqDto accountTransferReqDto) {

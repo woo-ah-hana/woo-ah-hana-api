@@ -28,7 +28,7 @@ public class AccountController {
     }
     @PostMapping("/info")
     public GetAccountInfoRespDto getBalance(@RequestBody GetAccountInfoReqDto getAccountInfoReqDto) {
-        return this.accountService.getBalance(getAccountInfoReqDto);
+        return this.accountService.getAccountInfo(getAccountInfoReqDto);
     }
     @PostMapping("/transfer")
     public AccountTransferRespDto transferAccount(@RequestBody AccountTransferReqDto accountTransferReqDto) {

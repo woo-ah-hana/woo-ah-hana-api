@@ -18,7 +18,7 @@ public class GetAccountInfoAdapter implements GetAccountInfoPort {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public GetAccountInfoRespDto getBalance(GetAccountInfoReqDto getAccountInfoReqDto){
+    public GetAccountInfoRespDto getAccountInfo(GetAccountInfoReqDto getAccountInfoReqDto){
 
         try{
             String jsonBody = objectMapper.writeValueAsString(getAccountInfoReqDto);
