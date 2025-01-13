@@ -5,8 +5,11 @@ import lombok.RequiredArgsConstructor;
 import org.hana.wooahhanaapi.domain.plan.domain.Plan;
 import org.hana.wooahhanaapi.domain.plan.dto.CreatePlanRequestDto;
 import org.hana.wooahhanaapi.domain.plan.dto.GetPlansResponseDto;
+import org.hana.wooahhanaapi.domain.plan.dto.UpdatePlanRequestDto;
 import org.hana.wooahhanaapi.domain.plan.entity.PlanEntity;
 import org.hana.wooahhanaapi.domain.plan.exception.EntityNotFoundException;
+import org.hana.wooahhanaapi.domain.plan.exception.InvalidPostDataException;
+import org.hana.wooahhanaapi.domain.plan.exception.LogicalPlanDataException;
 import org.hana.wooahhanaapi.domain.plan.mapper.PlanMapper;
 import org.hana.wooahhanaapi.domain.plan.repository.PlanRepository;
 import org.springframework.stereotype.Service;
@@ -23,7 +26,7 @@ public class PlanService {
 
     public UUID createPlan(CreatePlanRequestDto dto) {
         Plan plan = Plan.create(
-            null,
+                null,
                 dto.getCommunityId(),
                 dto.getTitle(),
                 dto.getStartDate(),
@@ -47,5 +50,25 @@ public class PlanService {
                 .stream()
                 .map(PlanMapper::mapEntityToDto)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void updatePlan(UUID planId, UpdatePlanRequestDto dto) {
+
+        PlanEntity existingPlanEntity = planRepository.findById(planId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 plan을 찾을 수 없습니다."));
+
+        Plan plan = Plan.update(
+                planId,
+                existingPlanEntity.getCommunityId(),
+                dto.getTitle() != null ? dto.getTitle() : existingPlanEntity.getTitle(),
+                dto.getStartDate() != null ? dto.getStartDate() : existingPlanEntity.getStartDate(),
+                dto.getEndDate() != null ? dto.getEndDate() : existingPlanEntity.getEndDate(),
+                dto.getCategory() != null ? dto.getCategory() : existingPlanEntity.getCategory(),
+                dto.getLocations() != null ? dto.getLocations() : existingPlanEntity.getLocations(),
+                dto.getMemberIds() != null ? dto.getMemberIds() : existingPlanEntity.getMemberIds()
+        );
+
+        planRepository.save(PlanMapper.mapDomainToEntity(plan));
     }
 }

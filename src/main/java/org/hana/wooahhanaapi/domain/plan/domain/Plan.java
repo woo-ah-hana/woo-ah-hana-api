@@ -37,5 +37,9 @@ public class Plan {
         if(startDate.isAfter(endDate)) {throw new LogicalPlanDataException("종료일은 시작일 이후여야 합니다.");}
         return new Plan( id, communityId, title, startDate, endDate, category, locations, memberIds );
     }
+    public static Plan update(UUID id, UUID communityId, String title, LocalDateTime startDate, LocalDateTime endDate, String category, List<String> locations, List<UUID> memberIds) {
+        if(startDate.isAfter(endDate)) {throw new LogicalPlanDataException("종료일은 시작일 이후여야 합니다.");}
+        return new Plan( id, communityId, title, startDate, endDate, category, locations, memberIds );
+    }
 }
 
