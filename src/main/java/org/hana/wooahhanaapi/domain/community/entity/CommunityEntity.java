@@ -30,7 +30,7 @@ public class CommunityEntity {
     private Long fee;
     private Long feePeriod;
 
-    @OneToMany(mappedBy = "community_entity")
+    @OneToMany(mappedBy = "community")
     private List<MembershipEntity> memberships = new ArrayList<>();
 
     public static CommunityEntity create(UUID managerId, String name, String accountNumber, Long credits, Long fee, Long feePeriod) {
