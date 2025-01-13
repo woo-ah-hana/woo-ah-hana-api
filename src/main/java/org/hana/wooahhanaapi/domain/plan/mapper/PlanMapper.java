@@ -2,6 +2,7 @@ package org.hana.wooahhanaapi.domain.plan.mapper;
 
 import jakarta.persistence.Id;
 import org.hana.wooahhanaapi.domain.plan.domain.Plan;
+import org.hana.wooahhanaapi.domain.plan.dto.ListPlanResponseDto;
 import org.hana.wooahhanaapi.domain.plan.entity.PlanEntity;
 
 public class PlanMapper {
@@ -17,16 +18,14 @@ public class PlanMapper {
                 .build();
     }
 
-    public static Plan mapEntityToDomain(PlanEntity entity){
-        return Plan.create(
-                entity.getId(),
-                entity.getCommunityId(),
-                entity.getTitle(),
-                entity.getStartDate(),
-                entity.getEndDate(),
-                entity.getCategory(),
-                entity.getLocations(),
-                entity.getMemberIds()
-        );
+    public static ListPlanResponseDto mapEntityToDto(PlanEntity entity){
+        return ListPlanResponseDto.builder()
+                .id(entity.getId())
+                .title(entity.getTitle())
+                .startDate(entity.getStartDate())
+                .endDate(entity.getEndDate())
+                .category(entity.getCategory())
+                .locations(entity.getLocations())
+                .build();
     }
 }

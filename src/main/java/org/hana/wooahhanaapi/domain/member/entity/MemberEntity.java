@@ -36,7 +36,7 @@ public class MemberEntity implements UserDetails {
     @Column(nullable=false)
     protected String accountNumber;
 
-    @Column(nullable=false)
+    //@Column(nullable=false)
     protected String accountBank;
 
     // UserDetail 구현
