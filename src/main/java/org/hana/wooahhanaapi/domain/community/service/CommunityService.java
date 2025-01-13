@@ -9,10 +9,17 @@ import org.hana.wooahhanaapi.domain.account.exception.AccountNotFoundException;
 import org.hana.wooahhanaapi.domain.account.exception.IncorrectValidationCodeException;
 import org.hana.wooahhanaapi.domain.account.repository.AccountValidationRepository;
 import org.hana.wooahhanaapi.domain.account.service.AccountService;
+import org.hana.wooahhanaapi.domain.community.domain.Community;
+import org.hana.wooahhanaapi.domain.community.dto.CommunityChgManagerReqDto;
 import org.hana.wooahhanaapi.domain.community.dto.CommunityCreateReqDto;
 import org.hana.wooahhanaapi.domain.community.entity.CommunityEntity;
+import org.hana.wooahhanaapi.domain.community.exception.CommunityNotFoundException;
+import org.hana.wooahhanaapi.domain.community.exception.NotAMemberException;
+import org.hana.wooahhanaapi.domain.community.mapper.CommunityMapper;
 import org.hana.wooahhanaapi.domain.community.repository.CommunityRepository;
+import org.hana.wooahhanaapi.domain.community.repository.MembershipRepository;
 import org.hana.wooahhanaapi.domain.member.entity.MemberEntity;
+import org.hana.wooahhanaapi.domain.member.exception.UserNotFoundException;
 import org.hana.wooahhanaapi.domain.member.repository.MemberRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,6 +36,8 @@ public class CommunityService {
     private final CommunityRepository communityRepository;
     private final AccountValidationRepository accountValidationRepository;
     private final AccountService accountService;
+    private final MemberRepository memberRepository;
+    private final MembershipRepository membershipRepository;
 
     // 모임 생성
     public void createCommunity(CommunityCreateReqDto dto) {
@@ -45,8 +54,7 @@ public class CommunityService {
             throw new IncorrectValidationCodeException("입금자명이 일치하지 않습니다.");
         }
 
-        CommunityEntity newCommunity = new CommunityEntity(
-                null,
+        CommunityEntity newCommunity = CommunityEntity.create(
                 userDetails.getId(),
                 dto.getName(),
                 dto.getAccountNumber(),
@@ -109,5 +117,30 @@ public class CommunityService {
         else {
             throw new AccountNotFoundException("계좌를 찾을 수 없습니다.");
         }
+    }
+
+    public boolean changeCommunityManager(CommunityChgManagerReqDto dto) {
+
+        // 커뮤니티 찾고
+        CommunityEntity foundCommunity = communityRepository.findById(dto.getCommunityId())
+                .orElseThrow(() -> new CommunityNotFoundException("커뮤니티를 찾을 수 없습니다."));
+
+        // 멤버 찾고
+        MemberEntity foundMember = memberRepository.findById(dto.getMemberId())
+                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
+
+        // 지정하고자 하는 멤버가 그 커뮤니티의 멤버인지 확인
+        if(!membershipRepository.findAllByMemberAndCommunity(foundMember, foundCommunity).isEmpty()) {
+            Community community = Community.create(
+                    foundCommunity.getId(), dto.getMemberId(), foundCommunity.getName(),
+                    foundCommunity.getAccountNumber(), foundCommunity.getCredits(), foundCommunity.getFee(), foundCommunity.getFeePeriod()
+            );
+            communityRepository.save(CommunityMapper.mapDomainToEntity(community));
+            return true;
+        }
+        else {
+            throw new NotAMemberException("해당 회원은 모임의 멤버가 아닙니다.");
+        }
+
     }
 }

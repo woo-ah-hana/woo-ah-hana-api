@@ -3,6 +3,7 @@ package org.hana.wooahhanaapi.domain.community.controller;
 import lombok.RequiredArgsConstructor;
 import org.hana.wooahhanaapi.domain.account.adapter.dto.AccountValidationConfirmDto;
 import org.hana.wooahhanaapi.domain.account.adapter.dto.AccountValidationReqDto;
+import org.hana.wooahhanaapi.domain.community.dto.CommunityChgManagerReqDto;
 import org.hana.wooahhanaapi.domain.community.dto.CommunityCreateReqDto;
 import org.hana.wooahhanaapi.domain.community.service.CommunityService;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,5 +34,11 @@ public class CommunityController {
 //    public boolean validateAccountConfirm(AccountValidationConfirmDto dto) {
 //        return this.communityService.validateAccountConfirm(dto);
 //    }
+
+    @PostMapping("/changeManager")
+    public String changeManager(@RequestBody CommunityChgManagerReqDto dto) {
+        this.communityService.changeCommunityManager(dto);
+        return "success";
+    }
 
 }
