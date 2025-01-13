@@ -13,6 +13,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class UpdatePlanRequestDto {
+    private UUID id;
+    private UUID communityId;
     private String title;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startDate;

@@ -53,26 +53,22 @@ public class PlanService {
     }
 
     @Transactional
-    public void updatePlan(UUID planId, UpdatePlanRequestDto requestDto) {
-        PlanEntity plan = planRepository.findById(planId)
+    public void updatePlan(UUID planId, UpdatePlanRequestDto dto) {
+
+        PlanEntity existingPlanEntity = planRepository.findById(planId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 plan을 찾을 수 없습니다."));
 
-        PlanEntity updatedPlan = PlanEntity.builder()
-                .id(plan.getId())
-                .communityId(plan.getCommunityId())
-                .title(requestDto.getTitle() != null ? requestDto.getTitle() : plan.getTitle())
-                .startDate(requestDto.getStartDate() != null ? requestDto.getStartDate() : plan.getStartDate())
-                .endDate(requestDto.getEndDate() != null ? requestDto.getEndDate() : plan.getEndDate())
-                .category(requestDto.getCategory() != null ? requestDto.getCategory() : plan.getCategory())
-                .locations(requestDto.getLocations() != null ? requestDto.getLocations() : plan.getLocations())
-                .memberIds(requestDto.getMemberIds() != null ? requestDto.getMemberIds() : plan.getMemberIds())
-                .build();
+        Plan plan = Plan.update(
+                existingPlanEntity.getId(),
+                dto.getCommunityId() != null ? dto.getCommunityId() : existingPlanEntity.getCommunityId(),
+                dto.getTitle() != null ? dto.getTitle() : existingPlanEntity.getTitle(),
+                dto.getStartDate() != null ? dto.getStartDate() : existingPlanEntity.getStartDate(),
+                dto.getEndDate() != null ? dto.getEndDate() : existingPlanEntity.getEndDate(),
+                dto.getCategory() != null ? dto.getCategory() : existingPlanEntity.getCategory(),
+                dto.getLocations() != null ? dto.getLocations() : existingPlanEntity.getLocations(),
+                dto.getMemberIds() != null ? dto.getMemberIds() : existingPlanEntity.getMemberIds()
+        );
 
-        if (updatedPlan.getStartDate() != null && updatedPlan.getEndDate() != null) {
-            if (updatedPlan.getStartDate().isAfter(updatedPlan.getEndDate())) {
-                throw new LogicalPlanDataException("종료일은 시작일 이후여야 합니다.");
-            }
-        }
-        planRepository.save(updatedPlan);
+        planRepository.save(PlanMapper.mapDomainToEntity(plan));
     }
 }
