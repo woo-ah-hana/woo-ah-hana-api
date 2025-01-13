@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.hana.wooahhanaapi.domain.community.adapter.dto.SendValidationCodeReqDto;
 import org.hana.wooahhanaapi.domain.community.dto.CommunityChgManagerReqDto;
 import org.hana.wooahhanaapi.domain.community.dto.CommunityCreateReqDto;
+import org.hana.wooahhanaapi.domain.community.dto.CommunityFeeStatusReqDto;
+import org.hana.wooahhanaapi.domain.community.dto.CommunityFeeStatusRespDto;
 import org.hana.wooahhanaapi.domain.community.service.CommunityService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,10 +36,17 @@ public class CommunityController {
 //        return this.communityService.validateAccountConfirm(dto);
 //    }
 
+    // 모임 계주 변경
     @PostMapping("/changeManager")
     public String changeManager(@RequestBody CommunityChgManagerReqDto dto) {
         this.communityService.changeCommunityManager(dto);
         return "success";
+    }
+
+    // 회비 입금 현황
+    @PostMapping("/feeStatus")
+    public CommunityFeeStatusRespDto feeStatus(@RequestBody CommunityFeeStatusReqDto dto) {
+        return this.communityService.checkFeeStatus(dto);
     }
 
 }
