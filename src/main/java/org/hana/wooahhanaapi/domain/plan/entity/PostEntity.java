@@ -9,12 +9,13 @@ import org.hana.wooahhanaapi.domain.member.entity.MemberEntity;
 
 import java.util.UUID;
 
-@Table(name = "post")
+
 @Entity
 @Builder
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "post")
 public class PostEntity {
 
     @Id

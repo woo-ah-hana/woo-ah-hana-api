@@ -20,8 +20,8 @@ import java.util.UUID;
 @Table(name="member")
 public class MemberEntity implements UserDetails {
     @Id
-    @GeneratedValue(strategy= GenerationType.UUID)
-    @Column(name="id")
+    @GeneratedValue(strategy= GenerationType.AUTO)
+    //@Column(name="id")
     protected UUID id;
 
     @Column(nullable=false, unique = true)
@@ -77,5 +77,12 @@ public class MemberEntity implements UserDetails {
 
     public static MemberEntity create(String username, String name, String password, String phoneNumber, String accountNumber, String accountBank) {
         return new MemberEntity(null,username,password,name,phoneNumber,accountNumber,accountBank, null);
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if (id == null) {
+            id = UUID.randomUUID();  // UUID 값을 자동 생성
+        }
     }
 }
