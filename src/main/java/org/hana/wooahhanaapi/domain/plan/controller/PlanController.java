@@ -29,7 +29,7 @@ public class PlanController {
     }
 
     @GetMapping("/list/{communityId}")
-    public List<ListPlanResponseDto> listPlans(@PathVariable UUID communityId) {
-        return planService.getPlanList(communityId);
+    public List<ListPlanResponseDto> getPlans(@PathVariable UUID communityId) {
+        return planService.getPlans(communityId);
     }
 }
