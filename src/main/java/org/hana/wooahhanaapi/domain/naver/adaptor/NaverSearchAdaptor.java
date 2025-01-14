@@ -1,11 +1,11 @@
-package org.hana.wooahhanaapi.domain.activeplan.adaptor;
+package org.hana.wooahhanaapi.domain.naver.adaptor;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hana.wooahhanaapi.domain.activeplan.adaptor.dto.SearchResponseDto;
-import org.hana.wooahhanaapi.domain.activeplan.exception.EmptyResponseBodyException;
-import org.hana.wooahhanaapi.domain.activeplan.exception.InvalidSearchQueryException;
-import org.hana.wooahhanaapi.domain.activeplan.exception.NaverApiException;
+import org.hana.wooahhanaapi.domain.naver.adaptor.dto.SearchResponseDto;
+import org.hana.wooahhanaapi.domain.naver.exception.EmptyResponseBodyException;
+import org.hana.wooahhanaapi.domain.naver.exception.InvalidSearchQueryException;
+import org.hana.wooahhanaapi.domain.naver.exception.NaverApiException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -23,6 +23,12 @@ import java.util.stream.Collectors;
 
 @Service
 public class NaverSearchAdaptor implements NaverSearchPort{
+
+    @Value("${naver.client.id}")
+    private String clientId;
+
+    @Value("${naver.client.secret}")
+    private String clientSecret;
 
     @Override
     public List<SearchResponseDto> getSearchResultList(List<String> queries) {
@@ -53,9 +59,6 @@ public class NaverSearchAdaptor implements NaverSearchPort{
 
     @Override
     public SearchResponseDto getSearchResult(String query) {
-        String clientId = "UAGg85a6riglTDRBSJqQ";
-        String clientSecret = "B9Yr2U8onG";
-
         try {
             String encodedQuery = URLEncoder.encode(query, "UTF-8");
             String apiURL = "https://openapi.naver.com/v1/search/local.json?query=" + encodedQuery + "&sort=comment&display=3";

@@ -1,7 +1,5 @@
-package org.hana.wooahhanaapi.domain.activeplan.adaptor.dto;
+package org.hana.wooahhanaapi.domain.naver.adaptor.dto;
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
