@@ -48,6 +48,18 @@ public class CommunityController {
         return this.communityService.checkFeeStatus(dto);
     }
 
+    // 모임통장에 입금 클릭 후 정보 불러오기
+    @PostMapping("/deposit/info")
+    public CommunityDepositInfoRespDto depositInfo(@RequestBody CommunityDepositInfoReqDto dto) {
+        return this.communityService.depositToAccountInfo(dto);
+    }
+
+    // 모임통장에 입금 수행
+    @PostMapping("/deposit")
+    public String deposit(@RequestBody CommunityDepositReqDto dto) {
+        this.communityService.depositToAccount(dto);
+        return "success";
+
     // 모임통장 거래내역 확인
     @PostMapping("/trsfRecords")
     public List<CommunityTrsfRecordRespDto> getTransferRecords(@RequestBody CommunityTrsfRecordReqDto dto) {

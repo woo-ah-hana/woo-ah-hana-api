@@ -97,9 +97,9 @@ public class CommunityService {
     // 계주 변경
     public boolean changeCommunityManager(CommunityChgManagerReqDto dto) {
 
-        // 커뮤니티 찾고
+        // 모임 찾고
         CommunityEntity foundCommunity = communityRepository.findById(dto.getCommunityId())
-                .orElseThrow(() -> new CommunityNotFoundException("커뮤니티를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CommunityNotFoundException("모임을 찾을 수 없습니다."));
 
         // 멤버 찾고
         MemberEntity foundMember = memberRepository.findById(dto.getMemberId())
@@ -198,6 +198,72 @@ public class CommunityService {
 
     }
 
+    // 모임통장에 입금 위한 정보 불러오기
+    public CommunityDepositInfoRespDto depositToAccountInfo(CommunityDepositInfoReqDto dto) {
+        // 현재 로그인한 사용자 정보 가져오기
+        MemberEntity userDetails = (MemberEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        // 모임 불러오기
+        CommunityEntity foundCommunity = communityRepository.findById(dto.getCommunityId())
+                .orElseThrow(() -> new CommunityNotFoundException("모임을 찾을 수 없습니다."));
+
+        // 멤버 개인 계좌의 은행
+        String memberBank = userDetails.getAccountBank();
+        // 멤버 개인 계좌번호
+        String memberAccountNumber = userDetails.getAccountNumber();
+        // 모임통장 계좌의 은행
+        String communityAccountBank = "하나은행";
+        // 모임통장 계좌번호
+        String communityAccountNumber = foundCommunity.getAccountNumber();
+
+        return new CommunityDepositInfoRespDto(memberBank, memberAccountNumber, communityAccountBank, communityAccountNumber);
+    }
+
+    // 모임통장에 입금
+    public void depositToAccount(CommunityDepositReqDto dto) {
+        // 현재 로그인한 사용자 정보 가져오기
+        MemberEntity userDetails = (MemberEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        // 모임 불러오기
+        CommunityEntity foundCommunity = communityRepository.findById(dto.getCommunityId())
+                .orElseThrow(() -> new CommunityNotFoundException("모임을 찾을 수 없습니다."));
+
+        // 멤버 개인 통장에서 먼저 출금
+        try{
+            transfer(userDetails.getAccountNumber(), "001", userDetails.getName(), "출금", dto.getAmount());
+        }
+        catch (Exception e){
+            throw new RuntimeException("개인 계좌에서 출금에 실패했습니다.");
+        }
+
+        // 모임통장에 입금
+        transfer(foundCommunity.getAccountNumber(), "001", foundCommunity.getName(), "입금", dto.getAmount());
+    }
+
+    // 입출금 메서드를 분리
+    private void transfer(String accountNumber, String bankTranId, String printContent, String inoutType, String tranAmt) {
+        LocalDateTime currentDate = LocalDateTime.now();
+        DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("HH:mm");
+        // 날짜를 원하는 형식의 String으로 변환
+        String formattedDate = currentDate.format(formatter1);
+        String formattedTime = currentDate.format(formatter2);
+        try{
+            AccountTransferReqDto dto2 = AccountTransferReqDto.builder()
+                    .accountNumber(accountNumber)
+                    .bankTranId(bankTranId)//하나은행:001, 우리은행:002
+                    .printContent(printContent)
+                    .tranDate(formattedDate)
+                    .tranTime(formattedTime)
+                    .inoutType(inoutType)
+                    .tranType("결재")
+                    .tranAmt(tranAmt)
+                    .branchName("우아하나")
+                    .build();
+            accountTransferPort.createAccountTransfer(dto2);
+        }catch (Exception e){
+            throw new AccountNotFoundException("계좌를 찾을 수 없음");
+        }
+      
     // 모임통장 거래내역 조회
     public List<CommunityTrsfRecordRespDto> getTransferRecord(CommunityTrsfRecordReqDto dto) {
 
