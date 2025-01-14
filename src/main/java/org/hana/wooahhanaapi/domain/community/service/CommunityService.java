@@ -1,11 +1,14 @@
 package org.hana.wooahhanaapi.domain.community.service;
 
 import lombok.RequiredArgsConstructor;
+import org.hana.wooahhanaapi.domain.account.adapter.AccountTransferPort;
+import org.hana.wooahhanaapi.domain.account.adapter.AccountTransferRecordPort;
 import org.hana.wooahhanaapi.domain.account.adapter.dto.*;
+import org.hana.wooahhanaapi.domain.account.exception.AccountNotFoundException;
 import org.hana.wooahhanaapi.domain.account.service.AccountService;
 import org.hana.wooahhanaapi.domain.community.adapter.ValidateAccountPort;
 import org.hana.wooahhanaapi.domain.community.adapter.dto.AccountValidationConfirmDto;
-import org.hana.wooahhanaapi.domain.community.adapter.SendValidCodePort;
+import org.hana.wooahhanaapi.domain.community.adapter.SaveValidCodePort;
 import org.hana.wooahhanaapi.domain.community.adapter.dto.SendValidationCodeReqDto;
 import org.hana.wooahhanaapi.domain.account.exception.IncorrectValidationCodeException;
 import org.hana.wooahhanaapi.domain.community.domain.Community;
@@ -23,7 +26,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @RequiredArgsConstructor
@@ -31,9 +36,11 @@ public class CommunityService {
     private final CommunityRepository communityRepository;
     private final MemberRepository memberRepository;
     private final MembershipRepository membershipRepository;
-    private final SendValidCodePort sendValidCodePort;
+    private final SaveValidCodePort saveValidCodePort;
     private final ValidateAccountPort validateAccountPort;
-    private final AccountService accountService;
+    private final AccountTransferPort accountTransferPort;
+    private final AccountTransferRecordPort accountTransferRecordPort;
+
     // 모임 생성
     public void createCommunity(CommunityCreateReqDto dto) {
 
@@ -61,7 +68,30 @@ public class CommunityService {
 
      // 모임 생성시 계좌 인증 1원 보내기
     public void sendValidationCode(SendValidationCodeReqDto sendValidationCodeReqDto) {
-        sendValidCodePort.sendValidCode(sendValidationCodeReqDto);
+        String validCode = "우아하나" + ThreadLocalRandom.current().nextInt(1000);
+        LocalDateTime currentDate = LocalDateTime.now();
+        DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("HH:mm");
+        try{
+            // 날짜를 원하는 형식의 String으로 변환
+            String formattedDate = currentDate.format(formatter1);
+            String formattedTime = currentDate.format(formatter2);
+            AccountTransferReqDto dto2 = AccountTransferReqDto.builder()
+                    .accountNumber(sendValidationCodeReqDto.getAccountNumber())
+                    .bankTranId(sendValidationCodeReqDto.getBankTranId())//하나은행:001, 우리은행:002
+                    .printContent(validCode)
+                    .tranDate(formattedDate)
+                    .tranTime(formattedTime)
+                    .inoutType("입금")
+                    .tranType("결재")
+                    .tranAmt("1")
+                    .branchName("우아하나")
+                    .build();
+            accountTransferPort.createAccountTransfer(dto2);
+            saveValidCodePort.saveValidCode(sendValidationCodeReqDto.getAccountNumber(),validCode);
+        }catch (Exception e){
+            throw new AccountNotFoundException("계좌를 찾을 수 없음");
+        }
     }
 
     // 계주 변경
@@ -138,7 +168,7 @@ public class CommunityService {
         Map<MemberEntity, Long> memberPayments = new HashMap<>();
 
         // 기록 조회
-        List<AccountTransferRecordRespListDto> resultData = accountService.getTransferRecord(reqDto)
+        List<AccountTransferRecordRespListDto> resultData = accountTransferRecordPort.getTransferRecord(reqDto)
                 .getData().getResList();
 
         for (AccountTransferRecordRespListDto listDto : resultData) {
