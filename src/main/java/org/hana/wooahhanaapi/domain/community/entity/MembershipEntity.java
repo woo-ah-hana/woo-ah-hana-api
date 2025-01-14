@@ -26,4 +26,8 @@ public class MembershipEntity {
     @ManyToOne
     @JoinColumn(name="community_id")
     private CommunityEntity community;
+
+    public static MembershipEntity create(MemberEntity member, CommunityEntity community) {
+        return new MembershipEntity(null,member,community);
+    }
 }
