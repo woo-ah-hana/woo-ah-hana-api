@@ -15,7 +15,7 @@ import java.util.UUID;
 public class GetPostResponseDto {
     private UUID id;
     private UUID memberId;
-    private String imageLink;
+    private String imageUrl;
     private String description;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
