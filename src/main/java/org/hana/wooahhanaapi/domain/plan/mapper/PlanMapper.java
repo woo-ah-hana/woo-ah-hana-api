@@ -44,10 +44,10 @@ public class PlanMapper {
     }
 
     public static GetPostResponseDto mapPostsEntityToDto(PostEntity entity){
-        return org.hana.wooahhanaapi.domain.plan.dto.GetPostResponseDto.builder()
+        return GetPostResponseDto.builder()
                 .id(entity.getId())
                 .memberId(entity.getMember().getId())
-                .imageLink(entity.getImageUrl())
+                .imageUrl(entity.getImageUrl())
                 .description(entity.getDescription())
                 .createdAt(entity.getCreatedAt())
                 .build();
