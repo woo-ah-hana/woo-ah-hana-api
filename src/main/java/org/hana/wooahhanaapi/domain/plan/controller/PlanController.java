@@ -1,7 +1,7 @@
 package org.hana.wooahhanaapi.domain.plan.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.hana.wooahhanaapi.domain.member.dto.MemberResponseDto;
+import org.hana.wooahhanaapi.domain.plan.domain.Plan;
 import org.hana.wooahhanaapi.domain.plan.dto.CreatePlanRequestDto;
 import org.hana.wooahhanaapi.domain.plan.dto.GetPlansResponseDto;
 
@@ -28,6 +28,11 @@ public class PlanController {
     public String deletePlan(@PathVariable String planId){
         planService.deletePlan(planId);
         return "Plan이 성공적으로 삭제되었습니다.";
+    }
+
+    @GetMapping("/{planId}")
+    public Plan getPlan(@PathVariable UUID planId) {
+        return planService.getPlanDetail(planId);
     }
 
     @GetMapping("/list/{communityId}")
