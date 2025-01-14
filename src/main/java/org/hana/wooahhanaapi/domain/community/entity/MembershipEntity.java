@@ -12,6 +12,7 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name="membership")
 public class MembershipEntity {
 
     @Id
