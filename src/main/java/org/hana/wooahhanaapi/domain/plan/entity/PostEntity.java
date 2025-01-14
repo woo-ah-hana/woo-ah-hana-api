@@ -7,14 +7,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hana.wooahhanaapi.domain.member.entity.MemberEntity;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Table(name = "post")
+
 @Entity
 @Builder
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "post")
 public class PostEntity {
 
     @Id
@@ -23,7 +25,7 @@ public class PostEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "plan_id", nullable = false)
-    private MockPlanEntity plan;
+    private PlanEntity plan;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
@@ -34,5 +36,9 @@ public class PostEntity {
 
     @Column(length = 255)
     private String description;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
 }
 

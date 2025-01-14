@@ -22,12 +22,18 @@ public class AccountTransferReqDto {
     private String printContent;
     private String tranAmt;
     private String branchName;
-    private String apiTranDtm;
-    private String apiTranId;
     private String bankTranId;
-    private String bankCodeTran;
-    private String bankRspCode;
-    private String fintechUseNum;
-    private String beforInquiryTraceInfo;
+    @Builder.Default
+    private String apiTranDtm = "00";
+    @Builder.Default
+    private String apiTranId = "00";
+    @Builder.Default
+    private String bankCodeTran = "00";
+    @Builder.Default
+    private String bankRspCode = "00";
+    @Builder.Default
+    private String fintechUseNum = "00";
+    @Builder.Default
+    private String beforInquiryTraceInfo = "00";
 
 }

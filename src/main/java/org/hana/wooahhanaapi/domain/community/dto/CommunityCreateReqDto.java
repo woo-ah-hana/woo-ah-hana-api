@@ -1,5 +1,7 @@
 package org.hana.wooahhanaapi.domain.community.dto;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,14 +14,15 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+//@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CommunityCreateReqDto {
 
-    @NotBlank
-    private UUID managerId;
     @NotBlank
     private String name;
     @NotBlank
     private String accountNumber;
+    @NotBlank
+    private String validationCode;
     @NotBlank
     private Long credits;
     @NotBlank

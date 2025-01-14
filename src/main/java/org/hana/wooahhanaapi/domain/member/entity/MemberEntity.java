@@ -4,21 +4,24 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hana.wooahhanaapi.domain.community.entity.MembershipEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name="member")
 public class MemberEntity implements UserDetails {
     @Id
-    @GeneratedValue(strategy= GenerationType.UUID)
-    @Column(name="id")
+    @GeneratedValue(strategy= GenerationType.AUTO)
+    //@Column(name="id")
     protected UUID id;
 
     @Column(nullable=false, unique = true)
@@ -38,6 +41,9 @@ public class MemberEntity implements UserDetails {
 
     @Column(nullable=false)
     protected String accountBank;
+
+    @OneToMany(mappedBy="member")
+    protected List<MembershipEntity> memberships;
 
     // UserDetail 구현
     @Override
@@ -70,6 +76,13 @@ public class MemberEntity implements UserDetails {
     }
 
     public static MemberEntity create(String username, String name, String password, String phoneNumber, String accountNumber, String accountBank) {
-        return new MemberEntity(null,username,password,name,phoneNumber,accountNumber,accountBank);
+        return new MemberEntity(null,username,password,name,phoneNumber,accountNumber,accountBank, null);
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if (id == null) {
+            id = UUID.randomUUID();  // UUID 값을 자동 생성
+        }
     }
 }

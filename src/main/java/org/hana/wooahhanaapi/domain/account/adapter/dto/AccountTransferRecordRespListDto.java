@@ -19,7 +19,7 @@ public class AccountTransferRecordRespListDto {
     private String inoutType;
     private String tranType;
     private String printContent;
-    private String transAmt;
+    private String tranAmt;
     private String afterBalanceAmt;
     private String branchName;
 

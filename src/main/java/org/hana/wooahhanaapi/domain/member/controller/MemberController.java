@@ -5,9 +5,12 @@ import org.hana.wooahhanaapi.domain.member.dto.LoginResponseDto;
 import org.hana.wooahhanaapi.domain.member.dto.MemberResponseDto;
 import org.hana.wooahhanaapi.domain.member.dto.SignUpRequestDto;
 import org.hana.wooahhanaapi.domain.member.dto.LoginRequestDto;
+import org.hana.wooahhanaapi.domain.member.exception.PasswordNotMatchException;
+import org.hana.wooahhanaapi.domain.member.exception.UserNotFoundException;
 import org.hana.wooahhanaapi.domain.member.service.MemberService;
 import org.hana.wooahhanaapi.utils.security.JwtProvider;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,7 +24,7 @@ public class MemberController {
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
 
-    @PostMapping("/signUp")
+    @PostMapping("/signup")
     public String signup(@RequestBody SignUpRequestDto signUpRequestDto){
         return this.memberService.signUp(signUpRequestDto);
     }
@@ -32,6 +35,16 @@ public class MemberController {
     @PostMapping("/login")
     public LoginResponseDto login(@RequestBody LoginRequestDto loginRequestDto) {
 
+        try{
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequestDto.getUsername(),
+                            loginRequestDto.getPassword()
+                    )
+            );
+        }catch (BadCredentialsException e){
+            throw new PasswordNotMatchException("비밀번호가 일치하지 않습니다.");
+        }
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequestDto.getUsername(),
