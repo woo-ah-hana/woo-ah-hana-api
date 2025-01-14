@@ -1,7 +1,11 @@
 package org.hana.wooahhanaapi.domain.activeplan.adaptor;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hana.wooahhanaapi.domain.activeplan.adaptor.dto.SearchResponseDto;
+import org.hana.wooahhanaapi.domain.activeplan.exception.EmptyResponseBodyException;
+import org.hana.wooahhanaapi.domain.activeplan.exception.InvalidSearchQueryException;
+import org.hana.wooahhanaapi.domain.activeplan.exception.NaverApiException;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -9,54 +13,72 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 @Service
 public class NaverSearchAdaptor implements NaverSearchPort{
 
     @Override
-    public SearchResponseDto getSearchResult(String query) {
+    public List<SearchResponseDto> getSearchResultList(List<String> queries) {
+        // 중복되거나 유효하지 않은 검색어를 필터링하여 처리
+        Set<String> uniqueQueries = new HashSet<>();
+        List<String> validQueries = queries.stream()
+                .filter(query -> query != null && !query.trim().isEmpty() && uniqueQueries.add(query))  // 유효한 검색어만 필터링
+                .toList();
 
+        if (validQueries.isEmpty()) {
+            throw new InvalidSearchQueryException("유효한 검색어가 없습니다.");
+        }
+
+        List<CompletableFuture<SearchResponseDto>> futures = validQueries.stream()
+                .map(query -> CompletableFuture.supplyAsync(() -> getSearchResult(query)))
+                .toList();
+
+        return futures.stream()
+                .map(future -> {
+                    try {
+                        return future.get();
+                    } catch (InterruptedException | ExecutionException e) {
+                        throw new RuntimeException("병렬 처리 중 오류 발생", e);
+                    }
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public SearchResponseDto getSearchResult(String query) {
         String clientId = "UAGg85a6riglTDRBSJqQ";
         String clientSecret = "B9Yr2U8onG";
 
-        String text = query;
-        try{
-            text = URLEncoder.encode(text, "UTF-8");
-        } catch (UnsupportedEncodingException e){
-            throw new RuntimeException("검색어 인코딩 실패", e);
-        }
-
-        // URL만 수정하여 API를 사용
-        String apiURL = "https://openapi.naver.com/v1/search/local.json?query=" + text;    // JSON 결과
-        //String apiURL = "https://openapi.naver.com/v1/search/local.xml?query="+ text; // XML 결과
-
-        Map<String, String> requestHeaders = new HashMap<>();
-        requestHeaders.put("X-Naver-Client-Id", clientId);
-        requestHeaders.put("X-Naver-Client-Secret", clientSecret);
-
-        String responseBody = get(apiURL, requestHeaders);
-        // Jackson ObjectMapper 생성
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        SearchResponseDto responseDto = null;
         try {
-            // responseBody를 SearchResponseDto로 변환
-            responseDto = objectMapper.readValue(responseBody, SearchResponseDto.class);
+            String encodedQuery = URLEncoder.encode(query, "UTF-8");
+            String apiURL = "https://openapi.naver.com/v1/search/local.json?query=" + encodedQuery + "&sort=comment&display=3";
 
-            // 결과 출력
-            System.out.println("Last Build Date: " + responseDto.getLastBuildDate());
-            System.out.println("Total: " + responseDto.getTotal());
-            if (!responseDto.getItems().isEmpty()) {
-                System.out.println("First Item Title: " + responseDto.getItems().get(0).getTitle());
+            Map<String, String> requestHeaders = Map.of(
+                    "X-Naver-Client-Id", clientId,
+                    "X-Naver-Client-Secret", clientSecret
+            );
+
+            String responseBody = get(apiURL, requestHeaders);
+
+            if (responseBody == null || responseBody.isEmpty()) {
+                throw new EmptyResponseBodyException(query);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readValue(responseBody, SearchResponseDto.class);
+
+        } catch (IOException e) {
+            throw new NaverApiException("검색어 처리 중 문제가 발생했습니다: " + e.getMessage());
         }
-        System.out.println(responseBody);
-        return responseDto;
     }
+
 
     private static String get(String apiUrl, Map<String, String> requestHeaders){
         HttpURLConnection con = connect(apiUrl);
@@ -68,7 +90,7 @@ public class NaverSearchAdaptor implements NaverSearchPort{
 
 
             int responseCode = con.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) { // 정상 호출
+            if (responseCode == HttpURLConnection.HTTP_OK) {
                 return readBody(con.getInputStream());
             } else { // 오류 발생
                 return readBody(con.getErrorStream());
