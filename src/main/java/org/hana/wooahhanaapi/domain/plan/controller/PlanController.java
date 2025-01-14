@@ -35,10 +35,7 @@ public class PlanController {
         return planService.getPlanDetail(planId);
     }
 
-    @GetMapping("/list/{communityId}")
-    public List<GetPlansResponseDto> getPlans(@PathVariable UUID communityId) {
-        return planService.getPlans(communityId);
-    }
+
 
     @PatchMapping("/update/{planId}")
     public String updatePlan(@PathVariable UUID planId, @RequestBody UpdatePlanRequestDto requestDto) {
@@ -50,4 +47,5 @@ public class PlanController {
     public List<GetPlansResponseDto> getCompletedPlans(@PathVariable UUID communityId) {
         return planService.getCompletedPlans(communityId);
     }
+
 }

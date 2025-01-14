@@ -6,17 +6,21 @@ import org.hana.wooahhanaapi.domain.member.entity.MemberEntity;
 import org.hana.wooahhanaapi.domain.member.repository.MemberRepository;
 import org.hana.wooahhanaapi.domain.plan.dto.CreatePostRequestDto;
 import org.hana.wooahhanaapi.domain.plan.dto.CreatePostResponseDto;
+import org.hana.wooahhanaapi.domain.plan.dto.GetPostResponseDto;
 import org.hana.wooahhanaapi.domain.plan.entity.PlanEntity;
 import org.hana.wooahhanaapi.domain.plan.entity.PostEntity;
 import org.hana.wooahhanaapi.domain.plan.exception.*;
+import org.hana.wooahhanaapi.domain.plan.mapper.PlanMapper;
 import org.hana.wooahhanaapi.domain.plan.repository.PlanRepository;
 import org.hana.wooahhanaapi.domain.plan.repository.PostRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -71,5 +75,12 @@ public class PostService {
 
         // TODO: S3 서비스에서 삭제
         postRepository.delete(post);
+    }
+
+    public List<GetPostResponseDto> getPostsByPlanId(UUID planId) {
+        List<PostEntity> posts = postRepository.findCompletedByPlanId(planId);
+        return posts.stream()
+                .map(PlanMapper::mapPostsEntityToDto)
+                .collect(Collectors.toList());
     }
 }
