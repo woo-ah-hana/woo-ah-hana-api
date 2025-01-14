@@ -58,6 +58,7 @@ public class PostService {
                 .member(member)
                 .imageUrl(imageUrl)
                 .description(requestDto.getDescription())
+                .createdAt(requestDto.getCreateAt())
                 .build();
         postRepository.save(post);
 
@@ -65,6 +66,7 @@ public class PostService {
                 .postId(post.getId().toString())
                 .imageUrl(post.getImageUrl())
                 .description(post.getDescription())
+                .createAt(post.getCreatedAt())
                 .build();
     }
 

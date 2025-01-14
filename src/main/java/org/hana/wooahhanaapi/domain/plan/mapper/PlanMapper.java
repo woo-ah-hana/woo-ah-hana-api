@@ -49,7 +49,7 @@ public class PlanMapper {
                 .memberId(entity.getMember().getId())
                 .imageLink(entity.getImageUrl())
                 .description(entity.getDescription())
-                .createdAt(entity.getCreatedAt().toString()) // createdAt 필드 추가?
+                .createdAt(entity.getCreatedAt())
                 .build();
     }
 }

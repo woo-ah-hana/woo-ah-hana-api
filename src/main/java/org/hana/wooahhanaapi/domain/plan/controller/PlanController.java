@@ -35,8 +35,6 @@ public class PlanController {
         return planService.getPlanDetail(planId);
     }
 
-
-
     @PatchMapping("/update/{planId}")
     public String updatePlan(@PathVariable UUID planId, @RequestBody UpdatePlanRequestDto requestDto) {
         planService.updatePlan(planId, requestDto);
