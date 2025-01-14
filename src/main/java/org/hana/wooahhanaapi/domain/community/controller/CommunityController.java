@@ -59,6 +59,7 @@ public class CommunityController {
     public String deposit(@RequestBody CommunityDepositReqDto dto) {
         this.communityService.depositToAccount(dto);
         return "success";
+    }
 
     // 모임통장 거래내역 확인
     @PostMapping("/trsfRecords")

@@ -247,7 +247,7 @@ public class CommunityService {
         // 날짜를 원하는 형식의 String으로 변환
         String formattedDate = currentDate.format(formatter1);
         String formattedTime = currentDate.format(formatter2);
-        try{
+        try {
             AccountTransferReqDto dto2 = AccountTransferReqDto.builder()
                     .accountNumber(accountNumber)
                     .bankTranId(bankTranId)//하나은행:001, 우리은행:002
@@ -260,9 +260,10 @@ public class CommunityService {
                     .branchName("우아하나")
                     .build();
             accountTransferPort.createAccountTransfer(dto2);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new AccountNotFoundException("계좌를 찾을 수 없음");
         }
+    }
       
     // 모임통장 거래내역 조회
     public List<CommunityTrsfRecordRespDto> getTransferRecord(CommunityTrsfRecordReqDto dto) {
