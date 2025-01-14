@@ -1,24 +1,23 @@
 package org.hana.wooahhanaapi.domain.activeplan.controller;
 
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.hana.wooahhanaapi.domain.activeplan.adaptor.NaverSearchAdaptor;
-import org.springframework.stereotype.Controller;
+import org.hana.wooahhanaapi.domain.activeplan.adaptor.dto.SearchResponseDto;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
-@Controller
-@RequestMapping("/activeplan")
+@RestController
+@RequestMapping("/active_plan")
 public class ActivePlanController {
 
     private final NaverSearchAdaptor naverSearchAdaptor;
 
-    @GetMapping("/naver")
-    public String getNaverSearch(@RequestParam String word) {
-        return naverSearchAdaptor.getSearchResult(word);
+    @GetMapping("/api_test")
+    public SearchResponseDto getNaverSearch(@RequestParam String query) {
+        return naverSearchAdaptor.getSearchResult(query);
     }
 
 }

@@ -1,5 +1,7 @@
 package org.hana.wooahhanaapi.domain.activeplan.adaptor;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hana.wooahhanaapi.domain.activeplan.adaptor.dto.SearchResponseDto;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -14,7 +16,7 @@ import java.util.Map;
 public class NaverSearchAdaptor implements NaverSearchPort{
 
     @Override
-    public String getSearchResult(String query) {
+    public SearchResponseDto getSearchResult(String query) {
 
         String clientId = "UAGg85a6riglTDRBSJqQ";
         String clientSecret = "B9Yr2U8onG";
@@ -30,12 +32,30 @@ public class NaverSearchAdaptor implements NaverSearchPort{
         String apiURL = "https://openapi.naver.com/v1/search/local.json?query=" + text;    // JSON 결과
         //String apiURL = "https://openapi.naver.com/v1/search/local.xml?query="+ text; // XML 결과
 
-
         Map<String, String> requestHeaders = new HashMap<>();
         requestHeaders.put("X-Naver-Client-Id", clientId);
         requestHeaders.put("X-Naver-Client-Secret", clientSecret);
 
-        return get(apiURL,requestHeaders);
+        String responseBody = get(apiURL, requestHeaders);
+        // Jackson ObjectMapper 생성
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        SearchResponseDto responseDto = null;
+        try {
+            // responseBody를 SearchResponseDto로 변환
+            responseDto = objectMapper.readValue(responseBody, SearchResponseDto.class);
+
+            // 결과 출력
+            System.out.println("Last Build Date: " + responseDto.getLastBuildDate());
+            System.out.println("Total: " + responseDto.getTotal());
+            if (!responseDto.getItems().isEmpty()) {
+                System.out.println("First Item Title: " + responseDto.getItems().get(0).getTitle());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println(responseBody);
+        return responseDto;
     }
 
     private static String get(String apiUrl, Map<String, String> requestHeaders){
