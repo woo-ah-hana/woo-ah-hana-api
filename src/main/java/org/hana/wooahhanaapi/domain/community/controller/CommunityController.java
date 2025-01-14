@@ -1,11 +1,8 @@
 package org.hana.wooahhanaapi.domain.community.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.hana.wooahhanaapi.domain.community.dto.*;
 import org.hana.wooahhanaapi.utils.redis.dto.SendValidationCodeReqDto;
-import org.hana.wooahhanaapi.domain.community.dto.CommunityChgManagerReqDto;
-import org.hana.wooahhanaapi.domain.community.dto.CommunityCreateReqDto;
-import org.hana.wooahhanaapi.domain.community.dto.CommunityFeeStatusReqDto;
-import org.hana.wooahhanaapi.domain.community.dto.CommunityFeeStatusRespDto;
 import org.hana.wooahhanaapi.domain.community.service.CommunityService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,6 +44,19 @@ public class CommunityController {
     @PostMapping("/feeStatus")
     public CommunityFeeStatusRespDto feeStatus(@RequestBody CommunityFeeStatusReqDto dto) {
         return this.communityService.checkFeeStatus(dto);
+    }
+
+    // 모임통장에 입금 클릭 후 정보 불러오기
+    @PostMapping("/deposit/info")
+    public CommunityDepositInfoRespDto depositInfo(@RequestBody CommunityDepositInfoReqDto dto) {
+        return this.communityService.depositToAccountInfo(dto);
+    }
+
+    // 모임통장에 입금 수행
+    @PostMapping("/deposit")
+    public String deposit(@RequestBody CommunityDepositReqDto dto) {
+        this.communityService.depositToAccount(dto);
+        return "success";
     }
 
 }

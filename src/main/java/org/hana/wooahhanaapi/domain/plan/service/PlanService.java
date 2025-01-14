@@ -83,7 +83,7 @@ public class PlanService {
     public List<GetPlansResponseDto> getCompletedPlans(UUID communityId) {
         return planRepository.findCompletedByCommunityId(communityId)
                 .stream()
-                .map(PlanMapper::mapEntityToDto)
+                .map(PlanMapper::mapPlansEntityToDto)
                 .collect(Collectors.toList());
     }
 }
