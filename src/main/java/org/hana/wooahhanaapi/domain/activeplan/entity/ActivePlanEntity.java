@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hana.wooahhanaapi.domain.plan.entity.MockPlanEntity;
+import org.hana.wooahhanaapi.domain.plan.entity.PlanEntity;
 
 import java.time.LocalDateTime;
 
@@ -23,7 +23,7 @@ public class ActivePlanEntity {
 
     @OneToOne
     @JoinColumn(name = "plan_id", nullable = false)
-    private MockPlanEntity plan;
+    private PlanEntity plan;
 
     @Column(nullable = false)
     private LocalDateTime date;
