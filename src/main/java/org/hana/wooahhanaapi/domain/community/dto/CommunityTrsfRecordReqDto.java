@@ -17,5 +17,5 @@ import java.util.UUID;
 public class CommunityTrsfRecordReqDto {
 
     private UUID communityId;
-    private Long recentMonth;
+    private int recentMonth;
 }

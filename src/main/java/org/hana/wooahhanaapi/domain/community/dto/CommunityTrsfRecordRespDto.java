@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CommunityTrsfRecordRespDto {
-    
+
     private String tranDate;
     private String tranTime;
     private String inoutType;

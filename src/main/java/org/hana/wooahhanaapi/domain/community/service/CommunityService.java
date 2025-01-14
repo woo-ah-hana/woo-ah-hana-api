@@ -28,6 +28,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -121,7 +122,7 @@ public class CommunityService {
 
     // 회비 납입 여부 체크
     public CommunityFeeStatusRespDto checkFeeStatus(CommunityFeeStatusReqDto dto) {
-        // 커뮤니티 찾고
+        // 모임 찾고
         CommunityEntity foundCommunity = communityRepository.findById(dto.getCommunityId())
                 .orElseThrow(() -> new CommunityNotFoundException("커뮤니티를 찾을 수 없습니다."));
         List<MemberEntity> members = membershipRepository.findMembersByCommunityId(dto.getCommunityId());
@@ -197,4 +198,50 @@ public class CommunityService {
 
     }
 
+    // 모임통장 거래내역 조회
+    public List<CommunityTrsfRecordRespDto> getTransferRecord(CommunityTrsfRecordReqDto dto) {
+
+        // 모임 찾고
+        CommunityEntity foundCommunity = communityRepository.findById(dto.getCommunityId())
+                .orElseThrow(() -> new CommunityNotFoundException("커뮤니티를 찾을 수 없습니다."));
+
+        // 모임에 등록된 모임통장 계좌번호 가져오기
+        String communityAccountNumber = foundCommunity.getAccountNumber();
+
+        // 최근 n개월까지 조회(예 : 1, 3, 6, 12개월)
+        int duration = dto.getRecentMonth();
+        LocalDateTime fromDate = LocalDateTime.now().minusMonths(duration);
+        LocalDateTime toDate = LocalDateTime.now();
+
+        // 날짜 포맷 변환
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String fDate = fromDate.format(formatter);
+        String tDate = toDate.format(formatter);
+
+        // 조회 조건 dto 생성
+        AccountTransferRecordReqDto reqDto = AccountTransferRecordReqDto.builder()
+                .bankTranId("001")
+                .accountNumber(communityAccountNumber)
+                .fromDate(fDate)
+                .toDate(tDate)
+                .build();
+
+        // 기록 조회
+        List<AccountTransferRecordRespListDto> resultData = accountTransferRecordPort.getTransferRecord(reqDto)
+                .getData().getResList();
+
+        List<CommunityTrsfRecordRespDto> records = resultData.stream()
+                .map(record -> new CommunityTrsfRecordRespDto(
+                        record.getTranDate(),
+                        record.getTranTime(),
+                        record.getInoutType(),
+                        record.getTranType(),
+                        record.getPrintContent(),
+                        record.getTranAmt(),
+                        record.getAfterBalanceAmt(),
+                        record.getBranchName()
+                )).collect(Collectors.toList());
+
+        return records;
+    }
 }
