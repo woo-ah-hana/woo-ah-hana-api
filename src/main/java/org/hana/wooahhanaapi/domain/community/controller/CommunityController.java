@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/community")
@@ -57,6 +59,11 @@ public class CommunityController {
     public String deposit(@RequestBody CommunityDepositReqDto dto) {
         this.communityService.depositToAccount(dto);
         return "success";
+
+    // 모임통장 거래내역 확인
+    @PostMapping("/trsfRecords")
+    public List<CommunityTrsfRecordRespDto> getTransferRecords(@RequestBody CommunityTrsfRecordReqDto dto) {
+        return this.communityService.getTransferRecord(dto);
     }
 
 }
