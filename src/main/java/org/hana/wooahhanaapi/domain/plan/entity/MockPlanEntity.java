@@ -15,6 +15,7 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "plan")
 public class MockPlanEntity {
     @Id
     @GeneratedValue(strategy= GenerationType.UUID)
