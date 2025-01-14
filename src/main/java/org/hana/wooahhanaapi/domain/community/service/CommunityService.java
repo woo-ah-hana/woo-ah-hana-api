@@ -196,4 +196,5 @@ public class CommunityService {
         return new CommunityFeeStatusRespDto(paidMembers, unpaidMembers);
 
     }
+
 }
