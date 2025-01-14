@@ -24,10 +24,10 @@ import java.util.stream.Collectors;
 @Service
 public class NaverSearchAdaptor implements NaverSearchPort{
 
-    @Value("${naver.client.id}")
+    @Value("${NAVER_CLIENT_ID}")
     private String clientId;
 
-    @Value("${naver.client.secret}")
+    @Value("${NAVER_CLIENT_SECRET}")
     private String clientSecret;
 
     @Override
