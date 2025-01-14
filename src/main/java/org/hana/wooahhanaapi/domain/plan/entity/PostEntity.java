@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hana.wooahhanaapi.domain.member.entity.MemberEntity;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 
@@ -35,5 +36,9 @@ public class PostEntity {
 
     @Column(length = 255)
     private String description;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
 }
 

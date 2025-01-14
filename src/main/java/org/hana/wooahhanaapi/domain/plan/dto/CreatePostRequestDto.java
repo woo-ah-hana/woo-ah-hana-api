@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,4 +16,5 @@ public class CreatePostRequestDto {
     private String planId;
     private String memberId;
     private String description;
+    private LocalDateTime createAt;
 }

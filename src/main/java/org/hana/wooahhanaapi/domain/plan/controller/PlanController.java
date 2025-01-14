@@ -50,4 +50,5 @@ public class PlanController {
     public List<GetPlansResponseDto> getCompletedPlans(@PathVariable UUID communityId) {
         return planService.getCompletedPlans(communityId);
     }
+
 }

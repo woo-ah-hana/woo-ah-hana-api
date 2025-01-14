@@ -2,7 +2,9 @@ package org.hana.wooahhanaapi.domain.plan.mapper;
 
 import org.hana.wooahhanaapi.domain.plan.domain.Plan;
 import org.hana.wooahhanaapi.domain.plan.dto.GetPlansResponseDto;
+import org.hana.wooahhanaapi.domain.plan.dto.GetPostResponseDto;
 import org.hana.wooahhanaapi.domain.plan.entity.PlanEntity;
+import org.hana.wooahhanaapi.domain.plan.entity.PostEntity;
 
 public class PlanMapper {
     public static PlanEntity mapDomainToEntity(Plan plan) {
@@ -38,6 +40,16 @@ public class PlanMapper {
                 .endDate(entity.getEndDate())
                 .category(entity.getCategory())
                 .locations(entity.getLocations())
+                .build();
+    }
+
+    public static GetPostResponseDto mapPostsEntityToDto(PostEntity entity){
+        return GetPostResponseDto.builder()
+                .id(entity.getId())
+                .memberId(entity.getMember().getId())
+                .imageUrl(entity.getImageUrl())
+                .description(entity.getDescription())
+                .createdAt(entity.getCreatedAt())
                 .build();
     }
 }
