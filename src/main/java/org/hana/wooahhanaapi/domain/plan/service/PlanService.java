@@ -8,8 +8,6 @@ import org.hana.wooahhanaapi.domain.plan.dto.GetPlansResponseDto;
 import org.hana.wooahhanaapi.domain.plan.dto.UpdatePlanRequestDto;
 import org.hana.wooahhanaapi.domain.plan.entity.PlanEntity;
 import org.hana.wooahhanaapi.domain.plan.exception.EntityNotFoundException;
-import org.hana.wooahhanaapi.domain.plan.exception.InvalidPostDataException;
-import org.hana.wooahhanaapi.domain.plan.exception.LogicalPlanDataException;
 import org.hana.wooahhanaapi.domain.plan.mapper.PlanMapper;
 import org.hana.wooahhanaapi.domain.plan.repository.PlanRepository;
 import org.springframework.stereotype.Service;
@@ -46,10 +44,19 @@ public class PlanService {
         planRepository.delete(plan);
     }
 
+    public Plan getPlanDetail(UUID planId) {
+        PlanEntity planEntity = planRepository.findById(planId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 plan을 찾을 수 없습니다."));
+
+        return PlanMapper.mapEntityToDomain(planEntity);
+
+
+    }
+
     public List<GetPlansResponseDto> getPlans(UUID communityId) {
         return planRepository.findAllByCommunityId(communityId)
                 .stream()
-                .map(PlanMapper::mapEntityToDto)
+                .map(PlanMapper::mapPlansEntityToDto)
                 .collect(Collectors.toList());
     }
 

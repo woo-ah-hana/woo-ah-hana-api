@@ -30,7 +30,7 @@ public class PlanMapper {
         );
     }
 
-    public static GetPlansResponseDto mapEntityToDto(PlanEntity entity){
+    public static GetPlansResponseDto mapPlansEntityToDto(PlanEntity entity){
         return GetPlansResponseDto.builder()
                 .id(entity.getId())
                 .title(entity.getTitle())
