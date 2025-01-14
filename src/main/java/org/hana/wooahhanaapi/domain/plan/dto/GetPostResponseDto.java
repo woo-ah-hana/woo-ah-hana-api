@@ -1,5 +1,6 @@
 package org.hana.wooahhanaapi.domain.plan.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,6 +17,7 @@ public class GetPostResponseDto {
     private UUID memberId;
     private String imageLink;
     private String description;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
 
 }
