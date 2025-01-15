@@ -66,13 +66,13 @@ public class CommunityController {
         return this.communityService.getTransferRecord(dto);
     }
 
-    //커뮤니티 목록 가져오기
+    //메인화면:커뮤니티 목록 가져오기
     @GetMapping("/list")
     public List<CommunitiesResponseDto> getCommunityList() {
         return this.communityService.getCommunities();
     }
 
-    //커뮤니티 정보 가져오기
+    //메인화면:모임 통장 정보 가져오기
     @GetMapping("/info")
     public CommunityInfoResponseDto getCommunityInfo(@RequestParam UUID communityId) {
         return this.communityService.getCommunityInfo(communityId);
