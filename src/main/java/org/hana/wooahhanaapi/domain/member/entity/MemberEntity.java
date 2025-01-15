@@ -40,7 +40,7 @@ public class MemberEntity implements UserDetails {
     protected String accountNumber;
 
     @Column(nullable=false)
-    protected String accountBank;
+    protected String bankTranId;
 
     @OneToMany(mappedBy="member")
     protected List<MembershipEntity> memberships;
