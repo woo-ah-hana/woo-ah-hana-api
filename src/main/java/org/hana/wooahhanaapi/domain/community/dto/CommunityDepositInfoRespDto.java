@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CommunityDepositInfoRespDto {
 
-    private String memberBank;
+    private String bankTranId;
     private String memberAccountNumber;
     private String communityAccountBank;
     private String communityAccountNumber;
