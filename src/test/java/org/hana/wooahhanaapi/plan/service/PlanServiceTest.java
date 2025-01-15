@@ -27,10 +27,10 @@ import java.util.UUID;
 import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.*;
 
-class YourServiceTest {
+class PlanServiceTest {
 
     @InjectMocks
-    private PlanService planService; // 테스트 대상 클래스
+    private PlanService planService;
 
     @Mock
     private PlanRepository planRepository;
@@ -48,17 +48,16 @@ class YourServiceTest {
 
     @Test
     void testGetPlanReceipt_Success() {
-        // 준비 단계
         UUID planId = UUID.randomUUID();
         PlanEntity mockPlan = PlanEntity.builder()
                 .communityId(UUID.randomUUID())
-                .startDate(LocalDateTime.of(2023, 1, 1, 0, 0))
-                .endDate(LocalDateTime.of(2023, 12, 31, 23, 59))
+                .startDate(LocalDateTime.of(2025, 1, 1, 0, 0))
+                .endDate(LocalDateTime.of(2025, 1, 5, 23, 59))
                 .build();
 
         CommunityEntity mockCommunity = CommunityEntity.builder()
                 .accountNumber("123-456-789")
-                .memberships(List.of(new MembershipEntity(), new MembershipEntity())) // 멤버 2명
+                .memberships(List.of(new MembershipEntity(), new MembershipEntity()))
                 .build();
 
         AccountTransferRecordRespDto mockResponse = AccountTransferRecordRespDto.builder()
@@ -102,20 +101,16 @@ class YourServiceTest {
                         .build())
                 .build();
 
-        // Mock 동작 정의
         when(planRepository.findById(planId)).thenReturn(Optional.of(mockPlan));
         when(communityRepository.findById(mockPlan.getCommunityId())).thenReturn(Optional.of(mockCommunity));
         when(accountTransferRecordPort.getTransferRecord(any())).thenReturn(mockResponse);
 
-        // 실행 단계
         GetReceiptResponseDto response = planService.getPlanReceipt(planId);
 
-        // 검증 단계
         assertThat(response.getRecords()).hasSize(2);
-        assertThat(response.getTotalAmt()).isEqualTo(3000L); // 총 금액 확인
-        assertThat(response.getPerAmt()).isEqualTo(1500L); // 인당 금액 확인
+        assertThat(response.getTotalAmt()).isEqualTo(3000L);
+        assertThat(response.getPerAmt()).isEqualTo(1500L);
 
-        // Mock 호출 여부 검증
         verify(planRepository).findById(planId);
         verify(communityRepository).findById(mockPlan.getCommunityId());
         verify(accountTransferRecordPort).getTransferRecord(any());
