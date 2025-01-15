@@ -327,4 +327,22 @@ public class CommunityService {
                         .name(communityEntity.getName())
                         .build()).toList();
     }
+
+    public CommunityInfoResponseDto getCommunityInfo(UUID communityId) {
+        try{
+            //모임 통장 정보
+            CommunityEntity community = communityRepository.findById(communityId).orElseThrow();
+            //모임 통장 잔액
+            GetAccountInfoReqDto getAccountInfoReqDto = new GetAccountInfoReqDto("001","00","2025-01-17", community.getAccountNumber());
+            Long balance = getAccountInfoPort.getAccountInfo(getAccountInfoReqDto).getData().getBalanceAmt();
+
+            return CommunityInfoResponseDto.builder()
+                .name(community.getName())
+                .accountNumber(community.getAccountNumber())
+                .balance(balance)
+                .build();
+        }catch (Exception e){
+            throw new CommunityNotFoundException("커뮤니티 아이디에 해당하는 커뮤니티가 없습니다.");
+        }
+    }
 }
