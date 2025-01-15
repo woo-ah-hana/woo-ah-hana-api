@@ -2,9 +2,18 @@ package org.hana.wooahhanaapi.domain.plan.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.hana.wooahhanaapi.domain.account.adapter.AccountTransferPort;
+import org.hana.wooahhanaapi.domain.account.adapter.AccountTransferRecordPort;
+import org.hana.wooahhanaapi.domain.account.adapter.dto.AccountTransferRecordReqDto;
+import org.hana.wooahhanaapi.domain.account.adapter.dto.AccountTransferRecordRespListDto;
+import org.hana.wooahhanaapi.domain.community.dto.CommunityTrsfRecordRespDto;
+import org.hana.wooahhanaapi.domain.community.entity.CommunityEntity;
+import org.hana.wooahhanaapi.domain.community.exception.CommunityNotFoundException;
+import org.hana.wooahhanaapi.domain.community.repository.CommunityRepository;
 import org.hana.wooahhanaapi.domain.plan.domain.Plan;
 import org.hana.wooahhanaapi.domain.plan.dto.CreatePlanRequestDto;
 import org.hana.wooahhanaapi.domain.plan.dto.GetPlansResponseDto;
+import org.hana.wooahhanaapi.domain.plan.dto.GetReceiptResponseDto;
 import org.hana.wooahhanaapi.domain.plan.dto.UpdatePlanRequestDto;
 import org.hana.wooahhanaapi.domain.plan.entity.PlanEntity;
 import org.hana.wooahhanaapi.domain.plan.exception.EntityNotFoundException;
@@ -13,6 +22,7 @@ import org.hana.wooahhanaapi.domain.plan.repository.PlanRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -22,6 +32,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PlanService {
     private final PlanRepository planRepository;
+    private final CommunityRepository communityRepository;
+    private final AccountTransferRecordPort accountTransferRecordPort;
 
     public UUID createPlan(CreatePlanRequestDto dto) {
         Plan plan = Plan.create(
@@ -86,4 +98,49 @@ public class PlanService {
                 .map(PlanMapper::mapPlansEntityToDto)
                 .collect(Collectors.toList());
     }
+
+
+    public GetReceiptResponseDto getPlanReceipt(UUID planId) {
+        PlanEntity plan = planRepository.findById(planId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 plan을 찾을 수 없습니다."));
+
+        CommunityEntity foundCommunity = communityRepository.findById(plan.getCommunityId())
+                .orElseThrow(() -> new CommunityNotFoundException("커뮤니티를 찾을 수 없습니다."));
+
+        AccountTransferRecordReqDto reqDto = AccountTransferRecordReqDto.builder()
+                .bankTranId("001") // 하나은행
+                .accountNumber(foundCommunity.getAccountNumber())
+                .fromDate(plan.getStartDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                .toDate(plan.getEndDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                .build();
+
+
+        List<AccountTransferRecordRespListDto> resultData = accountTransferRecordPort.getTransferRecord(reqDto)
+                .getData().getResList();
+
+        List<CommunityTrsfRecordRespDto> records = resultData.stream()
+                .map(record -> new CommunityTrsfRecordRespDto(
+                        record.getTranDate(),
+                        record.getTranTime(),
+                        record.getInoutType(),
+                        record.getTranType(),
+                        record.getPrintContent(),
+                        record.getTranAmt(),
+                        record.getAfterBalanceAmt(),
+                        record.getBranchName()
+                )).collect(Collectors.toList());
+
+        long totalAmt = records.stream()
+                .mapToLong(record -> Long.parseLong(record.getTranAmt()))
+                .sum();
+
+        long perAmt = (foundCommunity.getMemberships().isEmpty()) ? 0 : totalAmt / foundCommunity.getMemberships().size();
+
+        return GetReceiptResponseDto.builder()
+                .records(records) // 거래 기록 리스트
+                .totalAmt(totalAmt) // 총 소비액
+                .perAmt(perAmt) // 1인당 소비액
+                .build();
+    }
+
 }
