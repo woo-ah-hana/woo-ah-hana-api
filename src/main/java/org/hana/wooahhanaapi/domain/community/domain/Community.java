@@ -24,4 +24,9 @@ public class Community {
     public static Community create(UUID id, UUID managerId, String name, String accountNumber, Long credits, Long fee, Long feePeriod) {
         return new Community(id, managerId, name, accountNumber, credits, fee, feePeriod);
     }
+
+    public void updateFeeInfo(Long fee, Long feePeriod) {
+        this.fee = fee;
+        this.feePeriod = feePeriod;
+    }
 }
