@@ -215,7 +215,7 @@ public class CommunityService {
                 .orElseThrow(() -> new CommunityNotFoundException("모임을 찾을 수 없습니다."));
 
         // 멤버 개인 계좌의 은행
-        String memberBank = userDetails.getBankTranId();
+        String bankTranId = userDetails.getBankTranId();
         // 멤버 개인 계좌번호
         String memberAccountNumber = userDetails.getAccountNumber();
         // 모임통장 계좌의 은행
@@ -223,7 +223,7 @@ public class CommunityService {
         // 모임통장 계좌번호
         String communityAccountNumber = foundCommunity.getAccountNumber();
 
-        return new CommunityDepositInfoRespDto(memberBank, memberAccountNumber, communityAccountBank, communityAccountNumber);
+        return new CommunityDepositInfoRespDto(bankTranId, memberAccountNumber, communityAccountBank, communityAccountNumber);
     }
 
     // 모임통장에 입금
