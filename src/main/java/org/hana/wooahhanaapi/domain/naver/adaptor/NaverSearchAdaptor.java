@@ -76,11 +76,19 @@ public class NaverSearchAdaptor implements NaverSearchPort{
                 throw new EmptyResponseBodyException(query);
             }
 
+            if (responseBody.contains("errorMessage")) {
+                throw new NaverApiException("네이버 API 오류: " + responseBody);
+            }
+
             ObjectMapper objectMapper = new ObjectMapper();
             return objectMapper.readValue(responseBody, SearchResponseDto.class);
 
         } catch (IOException e) {
             throw new NaverApiException("검색어 처리 중 문제가 발생했습니다: " + e.getMessage());
+        } catch (NaverApiException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new NaverApiException("예상치 못한 오류가 발생했습니다: " + e.getMessage());
         }
     }
 
@@ -97,7 +105,7 @@ public class NaverSearchAdaptor implements NaverSearchPort{
             int responseCode = con.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 return readBody(con.getInputStream());
-            } else { // 오류 발생
+            } else {
                 return readBody(con.getErrorStream());
             }
         } catch (IOException e) {
