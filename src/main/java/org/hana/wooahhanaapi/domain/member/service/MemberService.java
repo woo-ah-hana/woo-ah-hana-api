@@ -1,6 +1,8 @@
 package org.hana.wooahhanaapi.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
+import org.hana.wooahhanaapi.domain.account.exception.MemberNotPresentException;
+import org.hana.wooahhanaapi.domain.community.exception.NotAMemberException;
 import org.hana.wooahhanaapi.domain.member.dto.MemberResponseDto;
 import org.hana.wooahhanaapi.domain.member.dto.SignUpRequestDto;
 import org.hana.wooahhanaapi.domain.member.entity.MemberEntity;
@@ -55,7 +57,10 @@ public class MemberService implements UserDetailsService {
 //        return memberEntity2.getUsername();
     }
     public String getMemberName(UUID uuid) {
-        String Name = memberRepository.findById(uuid).get().getName();
-        return Name;
+        try{
+            return memberRepository.findById(uuid).get().getName();
+        } catch (Exception e) {
+            throw new MemberNotPresentException("id에 해당하는 member가 없습니다");
+        }
     }
 }
