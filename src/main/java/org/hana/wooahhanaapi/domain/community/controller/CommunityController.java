@@ -24,7 +24,7 @@ public class CommunityController {
     }
 
     // 모임 생성시 모임통장 입금자명 확인용 1원 전송
-    @PostMapping("/new/send-code")
+    @PostMapping("/send-code")
     public String validateAccount(@RequestBody SendValidationCodeReqDto dto) {
         this.communityService.sendValidationCode(dto);
         return "success";
@@ -65,6 +65,13 @@ public class CommunityController {
     @PostMapping("/trsfRecords")
     public List<CommunityTrsfRecordRespDto> getTransferRecords(@RequestBody CommunityTrsfRecordReqDto dto) {
         return this.communityService.getTransferRecord(dto);
+    }
+
+    // 개인 계좌 변경
+    @PostMapping("/account/changeAccount")
+    public String changeMemberAccount(@RequestBody CommunityChgMemAccReqDto dto) {
+        this.communityService.changeMemberAccount(dto);
+        return "success";
     }
 
 }

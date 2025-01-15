@@ -316,4 +316,24 @@ public class CommunityService {
 
         return records;
     }
+
+    // 개인 계좌 변경
+    public void changeMemberAccount(CommunityChgMemAccReqDto dto) {
+        // 현재 로그인한 사용자 정보 가져오기
+        MemberEntity userDetails = (MemberEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        // 계좌 인증 절차
+        AccountValidationConfirmDto accValidDto = AccountValidationConfirmDto.builder()
+                .accountNumber(dto.getAccountNumber())
+                .validationCode(dto.getValidationCode())
+                .build();
+        if(!validateAccountPort.validateAccount(accValidDto)) {
+            throw new IncorrectValidationCodeException("입금자명이 일치하지 않습니다.");
+        }
+
+        // 계좌 수정
+        userDetails.updateAccount(dto.getAccountNumber(), dto.getBankTranId());
+        // 저장
+        memberRepository.save(userDetails);
+    }
 }
