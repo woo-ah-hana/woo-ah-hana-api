@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.hana.wooahhanaapi.domain.community.dto.*;
 import org.hana.wooahhanaapi.utils.redis.dto.SendValidationCodeReqDto;
 import org.hana.wooahhanaapi.domain.community.service.CommunityService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -65,6 +62,12 @@ public class CommunityController {
     @PostMapping("/trsfRecords")
     public List<CommunityTrsfRecordRespDto> getTransferRecords(@RequestBody CommunityTrsfRecordReqDto dto) {
         return this.communityService.getTransferRecord(dto);
+    }
+
+    //커뮤니티 목록 가져오기
+    @GetMapping("/list")
+    public List<CommunitiesResponseDto> getCommunityList() {
+        return this.communityService.getCommunities();
     }
 
 }
