@@ -1,10 +1,14 @@
 package org.hana.wooahhanaapi.domain.plan.mapper;
 
+import org.hana.wooahhanaapi.domain.member.entity.MemberEntity;
+import org.hana.wooahhanaapi.domain.member.repository.MemberRepository;
 import org.hana.wooahhanaapi.domain.plan.domain.Plan;
 import org.hana.wooahhanaapi.domain.plan.dto.GetPlansResponseDto;
 import org.hana.wooahhanaapi.domain.plan.dto.GetPostResponseDto;
 import org.hana.wooahhanaapi.domain.plan.entity.PlanEntity;
 import org.hana.wooahhanaapi.domain.plan.entity.PostEntity;
+
+import java.util.stream.Collectors;
 
 public class PlanMapper {
     public static PlanEntity mapDomainToEntity(Plan plan) {
@@ -32,7 +36,9 @@ public class PlanMapper {
         );
     }
 
-    public static GetPlansResponseDto mapPlansEntityToDto(PlanEntity entity){
+    public static GetPlansResponseDto mapPlansEntityToDto(PlanEntity entity, MemberRepository memberRepository) {
+        MemberNameResolver resolver = new MemberNameResolver(memberRepository);
+
         return GetPlansResponseDto.builder()
                 .id(entity.getId())
                 .title(entity.getTitle())
@@ -40,13 +46,15 @@ public class PlanMapper {
                 .endDate(entity.getEndDate())
                 .category(entity.getCategory())
                 .locations(entity.getLocations())
+                .memberNames(resolver.resolveMemberNames(entity.getMemberIds()))
                 .build();
     }
+
 
     public static GetPostResponseDto mapPostsEntityToDto(PostEntity entity){
         return GetPostResponseDto.builder()
                 .id(entity.getId())
-                .memberId(entity.getMember().getId())
+                .memberName(entity.getMember().getName())
                 .imageUrl(entity.getImageUrl())
                 .description(entity.getDescription())
                 .createdAt(entity.getCreatedAt())

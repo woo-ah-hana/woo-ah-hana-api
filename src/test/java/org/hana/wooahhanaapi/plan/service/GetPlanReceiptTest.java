@@ -6,11 +6,9 @@ import org.hana.wooahhanaapi.domain.account.adapter.dto.AccountTransferRecordRes
 import org.hana.wooahhanaapi.domain.account.adapter.dto.AccountTransferRecordRespListDto;
 import org.hana.wooahhanaapi.domain.community.entity.CommunityEntity;
 import org.hana.wooahhanaapi.domain.community.entity.MembershipEntity;
-import org.hana.wooahhanaapi.domain.community.exception.CommunityNotFoundException;
 import org.hana.wooahhanaapi.domain.community.repository.CommunityRepository;
 import org.hana.wooahhanaapi.domain.plan.dto.GetReceiptResponseDto;
 import org.hana.wooahhanaapi.domain.plan.entity.PlanEntity;
-import org.hana.wooahhanaapi.domain.plan.exception.EntityNotFoundException;
 import org.hana.wooahhanaapi.domain.plan.repository.PlanRepository;
 import org.hana.wooahhanaapi.domain.plan.service.PlanService;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +25,7 @@ import java.util.UUID;
 import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.*;
 
-class PlanServiceTest {
+class GetPlanReceiptTest {
 
     @InjectMocks
     private PlanService planService;
