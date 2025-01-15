@@ -13,6 +13,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class MemberService implements UserDetailsService {
@@ -51,5 +53,9 @@ public class MemberService implements UserDetailsService {
                 .build();
 //        MemberEntity memberEntity2 = this.memberRepository.findAllByUsername("ham");
 //        return memberEntity2.getUsername();
+    }
+    public String getMemberName(UUID uuid) {
+        String Name = memberRepository.findById(uuid).get().getName();
+        return Name;
     }
 }
