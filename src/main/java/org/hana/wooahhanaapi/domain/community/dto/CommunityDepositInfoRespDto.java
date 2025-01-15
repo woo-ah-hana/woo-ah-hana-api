@@ -16,6 +16,7 @@ public class CommunityDepositInfoRespDto {
 
     private String bankTranId;
     private String memberAccountNumber;
+    private Long memberAccountBalance ;
     private String communityAccountBank;
     private String communityAccountNumber;
 }

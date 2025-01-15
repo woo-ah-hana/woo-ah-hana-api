@@ -3,6 +3,7 @@ package org.hana.wooahhanaapi.domain.community.service;
 import lombok.RequiredArgsConstructor;
 import org.hana.wooahhanaapi.domain.account.adapter.AccountTransferPort;
 import org.hana.wooahhanaapi.domain.account.adapter.AccountTransferRecordPort;
+import org.hana.wooahhanaapi.domain.account.adapter.GetAccountInfoPort;
 import org.hana.wooahhanaapi.domain.account.adapter.dto.*;
 import org.hana.wooahhanaapi.domain.account.exception.AccountNotFoundException;
 import org.hana.wooahhanaapi.utils.redis.ValidateAccountPort;
@@ -40,6 +41,7 @@ public class CommunityService {
     private final ValidateAccountPort validateAccountPort;
     private final AccountTransferPort accountTransferPort;
     private final AccountTransferRecordPort accountTransferRecordPort;
+    private final GetAccountInfoPort getAccountInfoPort;
 
     // 모임 생성
     public void createCommunity(CommunityCreateReqDto dto) {
@@ -210,12 +212,15 @@ public class CommunityService {
         String bankTranId = userDetails.getBankTranId();
         // 멤버 개인 계좌번호
         String memberAccountNumber = userDetails.getAccountNumber();
+        //멤버 계좌 잔액
+        GetAccountInfoReqDto getAccountInfoReqDto = new GetAccountInfoReqDto(bankTranId,"00","2025-01-17",memberAccountNumber);
+        Long memberAccountBalance = getAccountInfoPort.getAccountInfo(getAccountInfoReqDto).getData().getBalanceAmt() ;
         // 모임통장 계좌의 은행
         String communityAccountBank = "하나은행";
         // 모임통장 계좌번호
         String communityAccountNumber = foundCommunity.getAccountNumber();
 
-        return new CommunityDepositInfoRespDto(bankTranId, memberAccountNumber, communityAccountBank, communityAccountNumber);
+        return new CommunityDepositInfoRespDto(bankTranId, memberAccountNumber, memberAccountBalance, communityAccountBank, communityAccountNumber);
     }
 
     // 모임통장에 입금
