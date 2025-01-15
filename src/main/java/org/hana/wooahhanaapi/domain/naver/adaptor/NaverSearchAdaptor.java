@@ -95,7 +95,7 @@ public class NaverSearchAdaptor implements NaverSearchPort{
             int responseCode = con.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 return readBody(con.getInputStream());
-            } else { // 오류 발생
+            } else {
                 return readBody(con.getErrorStream());
             }
         } catch (IOException e) {
