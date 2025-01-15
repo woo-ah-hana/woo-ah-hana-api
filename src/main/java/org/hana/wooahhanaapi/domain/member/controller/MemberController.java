@@ -70,8 +70,7 @@ public class MemberController {
     @GetMapping("")
     public String getMemberName(@RequestParam(required = false) UUID id) {
         try{
-            String name = this.memberService.getMemberName(id);
-            return name;
+            return this.memberService.getMemberName(id);
         } catch (Exception e) {
             throw new NotAMemberException("id에 해당하는 member가 없습니다");
         }
