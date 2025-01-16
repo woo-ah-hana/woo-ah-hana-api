@@ -316,4 +316,15 @@ public class CommunityService {
 
         return records;
     }
+
+    public List<CommunitiesResponseDto> getCommunities() {
+        MemberEntity userDetails = (MemberEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<CommunityEntity> result = membershipRepository.findCommunitiesByMemberId(userDetails.getId());
+
+        return result.stream()
+                .map(communityEntity -> CommunitiesResponseDto.builder()
+                        .communityId(communityEntity.getId())
+                        .name(communityEntity.getName())
+                        .build()).toList();
+    }
 }
