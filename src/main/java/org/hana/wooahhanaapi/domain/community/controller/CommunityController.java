@@ -87,19 +87,6 @@ public class CommunityController {
         return this.communityService.checkFeeStatus(dto);
     }
 
-    // 모임통장 회비 금액 / 주기 수정
-    @PostMapping("/account/changeFeeInfo")
-    public String changeFeeInfo(@RequestBody CommunityChgFeeInfoReqDto dto) {
-        this.communityService.changeFeeInfo(dto);
-        return "success";
-    }
-
-    // 회비 입금 현황
-    @PostMapping("/feeStatus")
-    public CommunityFeeStatusRespDto feeStatus(@RequestBody CommunityFeeStatusReqDto dto) {
-        return this.communityService.checkFeeStatus(dto);
-    }
-
     //메인화면:모임 목록 가져오기
     @GetMapping("/list")
     public List<CommunitiesResponseDto> getCommunityList() {
