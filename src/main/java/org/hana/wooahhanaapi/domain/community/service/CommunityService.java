@@ -126,7 +126,7 @@ public class CommunityService {
     public CommunityFeeStatusRespDto checkFeeStatus(CommunityFeeStatusReqDto dto) {
         // 모임 찾고
         CommunityEntity foundCommunity = communityRepository.findById(dto.getCommunityId())
-                .orElseThrow(() -> new CommunityNotFoundException("커뮤니티를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CommunityNotFoundException("모임을 찾을 수 없습니다."));
         List<MemberEntity> members = membershipRepository.findMembersByCommunityId(dto.getCommunityId());
 
         Long fee = foundCommunity.getFee();
@@ -275,7 +275,7 @@ public class CommunityService {
 
         // 모임 찾고
         CommunityEntity foundCommunity = communityRepository.findById(dto.getCommunityId())
-                .orElseThrow(() -> new CommunityNotFoundException("커뮤니티를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CommunityNotFoundException("모임을 찾을 수 없습니다."));
 
         // 모임에 등록된 모임통장 계좌번호 가져오기
         String communityAccountNumber = foundCommunity.getAccountNumber();
@@ -342,7 +342,7 @@ public class CommunityService {
                 .balance(balance)
                 .build();
         }catch (Exception e){
-            throw new CommunityNotFoundException("커뮤니티 아이디에 해당하는 커뮤니티가 없습니다.");
+            throw new CommunityNotFoundException("모임 아이디를 찾을 수 없습니다.");
         }
     }
 }

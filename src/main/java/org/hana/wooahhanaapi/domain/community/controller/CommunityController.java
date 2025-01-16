@@ -66,7 +66,7 @@ public class CommunityController {
         return this.communityService.getTransferRecord(dto);
     }
 
-    //메인화면:커뮤니티 목록 가져오기
+    //메인화면:모임 목록 가져오기
     @GetMapping("/list")
     public List<CommunitiesResponseDto> getCommunityList() {
         return this.communityService.getCommunities();
