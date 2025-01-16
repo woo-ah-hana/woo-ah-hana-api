@@ -388,17 +388,16 @@ public class CommunityService {
             MemberEntity foundMember = memberRepository.findByAccountNumber(account.getMemberAccNum())
                     .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
             // 멤버 개인 통장에서 먼저 출금
-            try{
+            try {
                 transfer(account.getMemberAccNum(), account.getMemberBankTranId(), foundCommunity.getName(), "출금", account.getFee());
-            }
-            catch (Exception e){
+            } catch (Exception e) {
                 throw new RuntimeException("개인 계좌에서 출금에 실패했습니다.");
             }
 
             // 모임통장에 입금
             transfer(account.getCommunityAccNum(), "001", foundMember.getName(), "입금", account.getFee());
         }
-
+    }
     public List<CommunitiesResponseDto> getCommunities() {
         MemberEntity userDetails = (MemberEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<CommunityEntity> result = membershipRepository.findCommunitiesByMemberId(userDetails.getId());
@@ -426,6 +425,5 @@ public class CommunityService {
         }catch (Exception e){
             throw new CommunityNotFoundException("모임 아이디를 찾을 수 없습니다.");
         }
-
     }
 }
