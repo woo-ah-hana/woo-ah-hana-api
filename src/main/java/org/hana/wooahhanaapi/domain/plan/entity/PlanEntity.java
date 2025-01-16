@@ -46,4 +46,7 @@ public class PlanEntity {
     @Convert(converter = ListConverter.class)
     private List<UUID> memberIds;
 
+    public static PlanEntity create(UUID communityId, String title, LocalDateTime startDate, LocalDateTime endDate, String category) {
+        return new PlanEntity(null, communityId, title, startDate, endDate, category, null, null);
+    }
 }
