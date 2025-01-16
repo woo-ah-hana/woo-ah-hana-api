@@ -67,7 +67,7 @@ public class MemberController {
         return this.memberService.getMemberInfo();
     }
 
-    @GetMapping("")
+    @GetMapping("/name")
     public String getMemberName(@RequestParam(required = false) UUID id) {
         return this.memberService.getMemberName(id);
     }

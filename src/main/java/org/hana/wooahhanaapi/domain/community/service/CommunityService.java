@@ -5,13 +5,11 @@ import org.hana.wooahhanaapi.domain.account.adapter.AccountTransferPort;
 import org.hana.wooahhanaapi.domain.account.adapter.AccountTransferRecordPort;
 import org.hana.wooahhanaapi.domain.account.adapter.GetAccountInfoPort;
 import org.hana.wooahhanaapi.domain.account.adapter.dto.*;
-import org.hana.wooahhanaapi.domain.account.exception.AccountNotFoundException;
 import org.hana.wooahhanaapi.domain.community.domain.AutoDeposit;
 import org.hana.wooahhanaapi.domain.community.entity.AutoDepositEntity;
 import org.hana.wooahhanaapi.domain.community.exception.NoAuthorityException;
 import org.hana.wooahhanaapi.domain.community.mapper.AutoDepositMapper;
 import org.hana.wooahhanaapi.domain.community.repository.AutoDepositRepository;
-import org.hana.wooahhanaapi.domain.community.exception.NoAuthorityException;
 import org.hana.wooahhanaapi.utils.redis.ValidateAccountPort;
 import org.hana.wooahhanaapi.utils.redis.dto.AccountValidationConfirmDto;
 import org.hana.wooahhanaapi.utils.redis.SaveValidCodePort;
@@ -80,33 +78,19 @@ public class CommunityService {
      // 모임 생성시 계좌 인증 1원 보내기
     public void sendValidationCode(SendValidationCodeReqDto sendValidationCodeReqDto) {
         String validCode = "우아하나" + ThreadLocalRandom.current().nextInt(1000);
-        LocalDateTime currentDate = LocalDateTime.now();
-        DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("HH:mm");
-        try{
-            // 날짜를 원하는 형식의 String으로 변환
-            String formattedDate = currentDate.format(formatter1);
-            String formattedTime = currentDate.format(formatter2);
-            AccountTransferReqDto dto2 = AccountTransferReqDto.builder()
-                    .accountNumber(sendValidationCodeReqDto.getAccountNumber())
-                    .bankTranId(sendValidationCodeReqDto.getBankTranId())//하나은행:001, 우리은행:002
-                    .printContent(validCode)
-                    .tranDate(formattedDate)
-                    .tranTime(formattedTime)
-                    .inoutType("입금")
-                    .tranType("결재")
-                    .tranAmt("1")
-                    .branchName("우아하나")
-                    .build();
-            accountTransferPort.createAccountTransfer(dto2);
-            saveValidCodePort.saveValidCode(sendValidationCodeReqDto.getAccountNumber(),validCode);
-        }catch (Exception e){
-            throw new AccountNotFoundException("계좌를 찾을 수 없음");
-        }
+        SimplifiedTransferReqDto reqDto = SimplifiedTransferReqDto.builder()
+                .accountNumber(sendValidationCodeReqDto.getAccountNumber())
+                .bankTranId(sendValidationCodeReqDto.getBankTranId())
+                .inoutType("입금")
+                .printContent(validCode)
+                .tranAmt("1")
+                .build();
+        accountTransferPort.createAccountTransfer(reqDto);
+        saveValidCodePort.saveValidCode(sendValidationCodeReqDto.getAccountNumber(),validCode);
     }
 
     // 계주 변경
-    public boolean changeCommunityManager(CommunityChgManagerReqDto dto) {
+    public void changeCommunityManager(CommunityChgManagerReqDto dto) {
 
         // 모임 찾고
         CommunityEntity foundCommunity = communityRepository.findById(dto.getCommunityId())
@@ -123,7 +107,6 @@ public class CommunityService {
                     foundCommunity.getAccountNumber(), foundCommunity.getCredits(), foundCommunity.getFee(), foundCommunity.getFeePeriod()
             );
             communityRepository.save(CommunityMapper.mapDomainToEntity(community));
-            return true;
         }
         else {
             throw new NotAMemberException("해당 회원은 모임의 멤버가 아닙니다.");
@@ -243,42 +226,33 @@ public class CommunityService {
 
         // 멤버 개인 통장에서 먼저 출금
         try{
-            transfer(userDetails.getAccountNumber(), userDetails.getBankTranId(), userDetails.getName(), "출금", dto.getAmount());
+            SimplifiedTransferReqDto reqDto = SimplifiedTransferReqDto.builder()
+                    .accountNumber(userDetails.getAccountNumber())
+                    .bankTranId(userDetails.getBankTranId())
+                    .inoutType("출금")
+                    .printContent(userDetails.getName())
+                    .tranAmt(dto.getAmount())
+                    .build();
+            accountTransferPort.createAccountTransfer(reqDto);
         }
         catch (Exception e){
             throw new RuntimeException("개인 계좌에서 출금에 실패했습니다.");
         }
-
         // 모임통장에 입금
-        transfer(foundCommunity.getAccountNumber(), "001", foundCommunity.getName(), "입금", dto.getAmount());
-    }
-
-    // 입출금 메서드를 분리
-    private void transfer(String accountNumber, String bankTranId, String printContent, String inoutType, String tranAmt) {
-        LocalDateTime currentDate = LocalDateTime.now();
-        DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("HH:mm");
-        // 날짜를 원하는 형식의 String으로 변환
-        String formattedDate = currentDate.format(formatter1);
-        String formattedTime = currentDate.format(formatter2);
-        try {
-            AccountTransferReqDto dto2 = AccountTransferReqDto.builder()
-                    .accountNumber(accountNumber)
-                    .bankTranId(bankTranId)//하나은행:001, 우리은행:002
-                    .printContent(printContent)
-                    .tranDate(formattedDate)
-                    .tranTime(formattedTime)
-                    .inoutType(inoutType)
-                    .tranType("결재")
-                    .tranAmt(tranAmt)
-                    .branchName("우아하나")
+        try{
+            SimplifiedTransferReqDto reqDto = SimplifiedTransferReqDto.builder()
+                    .accountNumber(foundCommunity.getAccountNumber())
+                    .bankTranId("001")
+                    .inoutType("입금")
+                    .printContent(foundCommunity.getName())
+                    .tranAmt(dto.getAmount())
                     .build();
-            accountTransferPort.createAccountTransfer(dto2);
-        } catch (Exception e) {
-            throw new AccountNotFoundException("계좌를 찾을 수 없음");
+            accountTransferPort.createAccountTransfer(reqDto);
+        }catch (Exception e){
+            throw new RuntimeException("모임 계좌 입금에 실패했습니다.");
         }
     }
-      
+
     // 모임통장 거래내역 조회
     public List<CommunityTrsfRecordRespDto> getTransferRecord(CommunityTrsfRecordReqDto dto) {
 
@@ -409,13 +383,30 @@ public class CommunityService {
                     .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
             // 멤버 개인 통장에서 먼저 출금
             try {
-                transfer(account.getMemberAccNum(), account.getMemberBankTranId(), foundCommunity.getName(), "출금", account.getFee());
+                SimplifiedTransferReqDto reqDto = SimplifiedTransferReqDto.builder()
+                        .accountNumber(account.getMemberAccNum())
+                        .bankTranId(account.getMemberBankTranId())
+                        .inoutType("출금")
+                        .printContent(foundCommunity.getName())
+                        .tranAmt(account.getFee())
+                        .build();
+                accountTransferPort.createAccountTransfer(reqDto);
             } catch (Exception e) {
                 throw new RuntimeException("개인 계좌에서 출금에 실패했습니다.");
             }
-
             // 모임통장에 입금
-            transfer(account.getCommunityAccNum(), "001", foundMember.getName(), "입금", account.getFee());
+            try{
+                SimplifiedTransferReqDto reqDto = SimplifiedTransferReqDto.builder()
+                        .accountNumber(account.getCommunityAccNum())
+                        .bankTranId("001")
+                        .inoutType("입금")
+                        .printContent(foundMember.getName())
+                        .tranAmt(account.getFee())
+                        .build();
+                accountTransferPort.createAccountTransfer(reqDto);
+            }catch (Exception e){
+                throw new RuntimeException("모임 계좌 입금에 실패했습니다.");
+            }
         }
     }
     public List<CommunitiesResponseDto> getCommunities() {
