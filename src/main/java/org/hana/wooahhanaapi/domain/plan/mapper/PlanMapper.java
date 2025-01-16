@@ -46,6 +46,7 @@ public class PlanMapper {
                 .endDate(entity.getEndDate())
                 .category(entity.getCategory())
                 .locations(entity.getLocations())
+                .memberIds(entity.getMemberIds())
                 .memberNames(resolver.resolveMemberNames(entity.getMemberIds()))
                 .build();
     }
