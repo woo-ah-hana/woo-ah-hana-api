@@ -29,24 +29,18 @@ public class CommunityController {
         return "success";
     }
 
-//    @PostMapping("/new/validAccountConfirm")
-//    public boolean validateAccountConfirm(AccountValidationConfirmDto dto) {
-//        return this.communityService.validateAccountConfirm(dto);
-//    }
-
-    // 모임 계주 변경
-    @PostMapping("/changeManager")
-    public String changeManager(@RequestBody CommunityChgManagerReqDto dto) {
-        this.communityService.changeCommunityManager(dto);
-        return "success";
+    /**
+     * 0.모임통장 클릭
+     * */
+    // 모임통장 거래내역 확인
+    @PostMapping("/trsfRecords")
+    public List<CommunityTrsfRecordRespDto> getTransferRecords(@RequestBody CommunityTrsfRecordReqDto dto) {
+        return this.communityService.getTransferRecord(dto);
     }
 
-    // 회비 입금 현황
-    @PostMapping("/feeStatus")
-    public CommunityFeeStatusRespDto feeStatus(@RequestBody CommunityFeeStatusReqDto dto) {
-        return this.communityService.checkFeeStatus(dto);
-    }
-
+    /**
+     * 1.모임통장에 입금
+     * */
     // 모임통장에 입금 클릭 후 정보 불러오기
     @PostMapping("/deposit/info")
     public CommunityDepositInfoRespDto depositInfo(@RequestBody CommunityDepositInfoReqDto dto) {
@@ -60,10 +54,27 @@ public class CommunityController {
         return "success";
     }
 
-    // 모임통장 거래내역 확인
-    @PostMapping("/trsfRecords")
-    public List<CommunityTrsfRecordRespDto> getTransferRecords(@RequestBody CommunityTrsfRecordReqDto dto) {
-        return this.communityService.getTransferRecord(dto);
+    /**
+     * 2. 내/모임 계좌관리
+     * */
+    // 모임 계주 변경
+    @PostMapping("/account/changeManager")
+    public String changeManager(@RequestBody CommunityChgManagerReqDto dto) {
+        this.communityService.changeCommunityManager(dto);
+        return "success";
+    }
+
+    // 모임통장 회비 금액 / 주기 수정
+    @PostMapping("/account/changeFeeInfo")
+    public String changeFeeInfo(@RequestBody CommunityChgFeeInfoReqDto dto) {
+        this.communityService.changeFeeInfo(dto);
+        return "success";
+    }
+
+    // 회비 입금 현황
+    @PostMapping("/feeStatus")
+    public CommunityFeeStatusRespDto feeStatus(@RequestBody CommunityFeeStatusReqDto dto) {
+        return this.communityService.checkFeeStatus(dto);
     }
 
     //메인화면:모임 목록 가져오기

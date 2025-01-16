@@ -6,6 +6,7 @@ import org.hana.wooahhanaapi.domain.account.adapter.AccountTransferRecordPort;
 import org.hana.wooahhanaapi.domain.account.adapter.GetAccountInfoPort;
 import org.hana.wooahhanaapi.domain.account.adapter.dto.*;
 import org.hana.wooahhanaapi.domain.account.exception.AccountNotFoundException;
+import org.hana.wooahhanaapi.domain.community.exception.NoAuthorityException;
 import org.hana.wooahhanaapi.utils.redis.ValidateAccountPort;
 import org.hana.wooahhanaapi.utils.redis.dto.AccountValidationConfirmDto;
 import org.hana.wooahhanaapi.utils.redis.SaveValidCodePort;
@@ -317,6 +318,26 @@ public class CommunityService {
         return records;
     }
 
+    // 모임의 회비 금액, 주기 수정
+    public void changeFeeInfo(CommunityChgFeeInfoReqDto dto) {
+        // 현재 로그인한 사용자 정보 가져오기
+        MemberEntity userDetails = (MemberEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        // 모임 찾고
+        CommunityEntity foundCommunity = communityRepository.findById(dto.getCommunityId())
+                .orElseThrow(() -> new CommunityNotFoundException("커뮤니티를 찾을 수 없습니다."));
+
+        // 현재 로그인 유저가 계주가 아닐 때 => 권한 없음
+        if(userDetails.getId() != foundCommunity.getManagerId()) {
+            throw new NoAuthorityException("권한이 없습니다.");
+        }
+
+        Community foundCommunityDomain = CommunityMapper.mapEntityToDomain(foundCommunity);
+        foundCommunityDomain.updateFeeInfo(dto.getFee(), dto.getFeePeriod());
+        CommunityEntity editedCommunity = CommunityMapper.mapDomainToEntity(foundCommunityDomain);
+
+        communityRepository.save(editedCommunity);
+
     public List<CommunitiesResponseDto> getCommunities() {
         MemberEntity userDetails = (MemberEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<CommunityEntity> result = membershipRepository.findCommunitiesByMemberId(userDetails.getId());
@@ -344,5 +365,6 @@ public class CommunityService {
         }catch (Exception e){
             throw new CommunityNotFoundException("모임 아이디를 찾을 수 없습니다.");
         }
+
     }
 }
