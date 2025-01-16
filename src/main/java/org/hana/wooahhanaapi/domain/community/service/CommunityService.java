@@ -6,6 +6,11 @@ import org.hana.wooahhanaapi.domain.account.adapter.AccountTransferRecordPort;
 import org.hana.wooahhanaapi.domain.account.adapter.GetAccountInfoPort;
 import org.hana.wooahhanaapi.domain.account.adapter.dto.*;
 import org.hana.wooahhanaapi.domain.account.exception.AccountNotFoundException;
+import org.hana.wooahhanaapi.domain.community.domain.AutoDeposit;
+import org.hana.wooahhanaapi.domain.community.entity.AutoDepositEntity;
+import org.hana.wooahhanaapi.domain.community.exception.NoAuthorityException;
+import org.hana.wooahhanaapi.domain.community.mapper.AutoDepositMapper;
+import org.hana.wooahhanaapi.domain.community.repository.AutoDepositRepository;
 import org.hana.wooahhanaapi.domain.community.exception.NoAuthorityException;
 import org.hana.wooahhanaapi.utils.redis.ValidateAccountPort;
 import org.hana.wooahhanaapi.utils.redis.dto.AccountValidationConfirmDto;
@@ -23,9 +28,11 @@ import org.hana.wooahhanaapi.domain.community.repository.MembershipRepository;
 import org.hana.wooahhanaapi.domain.member.entity.MemberEntity;
 import org.hana.wooahhanaapi.domain.member.exception.UserNotFoundException;
 import org.hana.wooahhanaapi.domain.member.repository.MemberRepository;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -42,6 +49,7 @@ public class CommunityService {
     private final ValidateAccountPort validateAccountPort;
     private final AccountTransferPort accountTransferPort;
     private final AccountTransferRecordPort accountTransferRecordPort;
+    private final AutoDepositRepository autoDepositRepository;
     private final GetAccountInfoPort getAccountInfoPort;
 
     // 모임 생성
@@ -235,7 +243,7 @@ public class CommunityService {
 
         // 멤버 개인 통장에서 먼저 출금
         try{
-            transfer(userDetails.getAccountNumber(), "001", userDetails.getName(), "출금", dto.getAmount());
+            transfer(userDetails.getAccountNumber(), userDetails.getBankTranId(), userDetails.getName(), "출금", dto.getAmount());
         }
         catch (Exception e){
             throw new RuntimeException("개인 계좌에서 출금에 실패했습니다.");
@@ -325,7 +333,7 @@ public class CommunityService {
 
         // 모임 찾고
         CommunityEntity foundCommunity = communityRepository.findById(dto.getCommunityId())
-                .orElseThrow(() -> new CommunityNotFoundException("커뮤니티를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CommunityNotFoundException("모임을 찾을 수 없습니다."));
 
         // 현재 로그인 유저가 계주가 아닐 때 => 권한 없음
         if(userDetails.getId() != foundCommunity.getManagerId()) {
@@ -337,6 +345,59 @@ public class CommunityService {
         CommunityEntity editedCommunity = CommunityMapper.mapDomainToEntity(foundCommunityDomain);
 
         communityRepository.save(editedCommunity);
+
+    }
+
+    // 자동이체 설정 정보 저장
+    public void setAutoDeposit(CommunityAutoDepositReqDto dto) {
+        // 현재 로그인한 사용자 정보 가져오기
+        MemberEntity userDetails = (MemberEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        // 모임 찾고
+        CommunityEntity foundCommunity = communityRepository.findById(dto.getCommunityId())
+                .orElseThrow(() -> new CommunityNotFoundException("모임을 찾을 수 없습니다."));
+
+        AutoDeposit newAutoDeposit = AutoDeposit.create(
+                null,
+                userDetails.getBankTranId(),
+                userDetails.getAccountNumber(),
+                foundCommunity.getAccountNumber(),
+                dto.getFee(),
+                dto.getDepositDay()
+        );
+
+        // 자동이체 정보 저장
+        autoDepositRepository.save(AutoDepositMapper.mapDomainToEntity(newAutoDeposit));
+    }
+
+    // 매일 자정에 당일이 자동이체 날짜인 계좌들을 체크 -> 이체 진행
+    @Scheduled(cron = "0 0 0 * * ?")
+    public void sendDailyTransfers() {
+        // 오늘 날짜
+        LocalDate today = LocalDate.now();
+        int todayDay = today.getDayOfMonth();  // 오늘 날짜의 일(day)
+
+        // 이체 날짜가 오늘인 계좌들 조회
+        List<AutoDepositEntity> accounts = autoDepositRepository.findALlByDepositDay(todayDay);
+        // 계좌 별 이체 진행
+        for (AutoDepositEntity account : accounts) {
+            // 모임 찾고
+            CommunityEntity foundCommunity = communityRepository.findByAccountNumber(account.getCommunityAccNum())
+                    .orElseThrow(() -> new CommunityNotFoundException("모임을 찾을 수 없습니다."));
+            // 멤버 찾고
+            MemberEntity foundMember = memberRepository.findByAccountNumber(account.getMemberAccNum())
+                    .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
+            // 멤버 개인 통장에서 먼저 출금
+            try{
+                transfer(account.getMemberAccNum(), account.getMemberBankTranId(), foundCommunity.getName(), "출금", account.getFee());
+            }
+            catch (Exception e){
+                throw new RuntimeException("개인 계좌에서 출금에 실패했습니다.");
+            }
+
+            // 모임통장에 입금
+            transfer(account.getCommunityAccNum(), "001", foundMember.getName(), "입금", account.getFee());
+        }
 
     public List<CommunitiesResponseDto> getCommunities() {
         MemberEntity userDetails = (MemberEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

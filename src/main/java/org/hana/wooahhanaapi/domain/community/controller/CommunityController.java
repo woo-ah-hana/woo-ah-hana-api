@@ -71,6 +71,29 @@ public class CommunityController {
         return "success";
     }
 
+    // 자동이체 설정
+    @PostMapping("/account/autoDeposit")
+    public String setAutoDeposit(@RequestBody CommunityAutoDepositReqDto dto) {
+        this.communityService.setAutoDeposit(dto);
+        return "success";
+    }
+
+    /**
+     * 6. 회비 입금현황
+     * */
+    // 회비 입금 현황
+    @PostMapping("/feeStatus")
+    public CommunityFeeStatusRespDto feeStatus(@RequestBody CommunityFeeStatusReqDto dto) {
+        return this.communityService.checkFeeStatus(dto);
+    }
+
+    // 모임통장 회비 금액 / 주기 수정
+    @PostMapping("/account/changeFeeInfo")
+    public String changeFeeInfo(@RequestBody CommunityChgFeeInfoReqDto dto) {
+        this.communityService.changeFeeInfo(dto);
+        return "success";
+    }
+
     // 회비 입금 현황
     @PostMapping("/feeStatus")
     public CommunityFeeStatusRespDto feeStatus(@RequestBody CommunityFeeStatusReqDto dto) {
