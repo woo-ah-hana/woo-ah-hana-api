@@ -32,12 +32,12 @@ public class PlanController {
     }
 
     @GetMapping("/{planId}")
-    public Plan getPlan(@PathVariable UUID planId) {
+    public GetPlansResponseDto getPlan(@PathVariable UUID planId) {
         return planService.getPlanDetail(planId);
     }
 
     @GetMapping("/list/{communityId}")
-    public List<GetPlansResponseDto> getPlans(@PathVariable UUID communityId) {
+    public List<Plan> getPlans(@PathVariable UUID communityId) {
         return planService.getPlans(communityId);
     }
 
@@ -48,7 +48,7 @@ public class PlanController {
     }
 
     @GetMapping("/completed/{communityId}")
-    public List<GetPlansResponseDto> getCompletedPlans(@PathVariable UUID communityId) {
+    public List<Plan> getCompletedPlans(@PathVariable UUID communityId) {
         return planService.getCompletedPlans(communityId);
     }
 
