@@ -75,8 +75,13 @@ public class MemberEntity implements UserDetails {
         return UserDetails.super.isEnabled();
     }
 
-    public static MemberEntity create(String username, String name, String password, String phoneNumber, String accountNumber, String accountBank) {
-        return new MemberEntity(null,username,password,name,phoneNumber,accountNumber,accountBank, null);
+    public static MemberEntity create(String username, String name, String password, String phoneNumber, String accountNumber, String bankTranId) {
+        return new MemberEntity(null,username,password,name,phoneNumber,accountNumber,bankTranId, null);
+    }
+
+    public void updateAccount(String accountNumber, String bankTranId) {
+        this.accountNumber = accountNumber;
+        this.bankTranId = bankTranId;
     }
 
     @PrePersist
