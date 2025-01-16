@@ -34,19 +34,10 @@ public class AccountAdapter implements AccountCreatePort, AccountTransferPort, A
                     .build();
 
             HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-            System.out.println(response.statusCode());
-            System.out.println(response.body());
-
-            if(response.statusCode() == 400 || response.body().contains("이미 존재하는 계좌번호입니다.")) {
-                throw new DuplicateAccountException("이미 존재하는 계좌번호입니다.");
-            }
-            else {
-                return objectMapper.readValue(response.body(), AccountCreateRespDto.class);
-            }
-
+            return objectMapper.readValue(response.body(), AccountCreateRespDto.class);
         }
         catch (Exception e){
-            throw new RuntimeException(e);
+            throw new DuplicateAccountException("이미 존재하는 계좌번호입니다.");
         }
     }
 
