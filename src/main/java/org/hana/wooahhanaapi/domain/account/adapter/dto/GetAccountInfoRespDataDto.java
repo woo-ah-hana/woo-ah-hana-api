@@ -23,8 +23,8 @@ public class GetAccountInfoRespDataDto {
     private String bankRspCode;
     private String bankRspMessage;
     private String fintechUseNum;
-    private int balanceAmt;
-    private int availableAmt;
+    private Long balanceAmt;
+    private Long availableAmt;
     private String accountType;
     private String productName;
 }

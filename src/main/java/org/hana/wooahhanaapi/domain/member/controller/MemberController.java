@@ -1,6 +1,7 @@
 package org.hana.wooahhanaapi.domain.member.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.hana.wooahhanaapi.domain.community.exception.NotAMemberException;
 import org.hana.wooahhanaapi.domain.member.dto.LoginResponseDto;
 import org.hana.wooahhanaapi.domain.member.dto.MemberResponseDto;
 import org.hana.wooahhanaapi.domain.member.dto.SignUpRequestDto;
@@ -15,6 +16,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/member")
@@ -59,8 +62,13 @@ public class MemberController {
         return LoginResponseDto.builder().accessToken(accessToken).refreshToken(refreshToken).build();
     }
 
-    @GetMapping("")
+    @GetMapping("/info")
     public MemberResponseDto getMemberInfo(){
         return this.memberService.getMemberInfo();
+    }
+
+    @GetMapping("")
+    public String getMemberName(@RequestParam(required = false) UUID id) {
+        return this.memberService.getMemberName(id);
     }
 }

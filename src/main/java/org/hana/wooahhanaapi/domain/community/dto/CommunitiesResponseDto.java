@@ -13,7 +13,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CommunityDepositInfoReqDto {
-
+public class CommunitiesResponseDto {
     private UUID communityId;
+    private String name;
 }
+

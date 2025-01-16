@@ -3,6 +3,7 @@ package org.hana.wooahhanaapi.domain.community.service;
 import lombok.RequiredArgsConstructor;
 import org.hana.wooahhanaapi.domain.account.adapter.AccountTransferPort;
 import org.hana.wooahhanaapi.domain.account.adapter.AccountTransferRecordPort;
+import org.hana.wooahhanaapi.domain.account.adapter.GetAccountInfoPort;
 import org.hana.wooahhanaapi.domain.account.adapter.dto.*;
 import org.hana.wooahhanaapi.domain.account.exception.AccountNotFoundException;
 import org.hana.wooahhanaapi.domain.community.exception.NoAuthorityException;
@@ -41,6 +42,7 @@ public class CommunityService {
     private final ValidateAccountPort validateAccountPort;
     private final AccountTransferPort accountTransferPort;
     private final AccountTransferRecordPort accountTransferRecordPort;
+    private final GetAccountInfoPort getAccountInfoPort;
 
     // 모임 생성
     public void createCommunity(CommunityCreateReqDto dto) {
@@ -125,7 +127,7 @@ public class CommunityService {
     public CommunityFeeStatusRespDto checkFeeStatus(CommunityFeeStatusReqDto dto) {
         // 모임 찾고
         CommunityEntity foundCommunity = communityRepository.findById(dto.getCommunityId())
-                .orElseThrow(() -> new CommunityNotFoundException("커뮤니티를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CommunityNotFoundException("모임을 찾을 수 없습니다."));
         List<MemberEntity> members = membershipRepository.findMembersByCommunityId(dto.getCommunityId());
 
         Long fee = foundCommunity.getFee();
@@ -208,15 +210,18 @@ public class CommunityService {
                 .orElseThrow(() -> new CommunityNotFoundException("모임을 찾을 수 없습니다."));
 
         // 멤버 개인 계좌의 은행
-        String memberBank = userDetails.getAccountBank();
+        String bankTranId = userDetails.getBankTranId();
         // 멤버 개인 계좌번호
         String memberAccountNumber = userDetails.getAccountNumber();
+        //멤버 계좌 잔액
+        GetAccountInfoReqDto getAccountInfoReqDto = new GetAccountInfoReqDto(bankTranId,"00","2025-01-17",memberAccountNumber);
+        Long memberAccountBalance = getAccountInfoPort.getAccountInfo(getAccountInfoReqDto).getData().getBalanceAmt() ;
         // 모임통장 계좌의 은행
         String communityAccountBank = "하나은행";
         // 모임통장 계좌번호
         String communityAccountNumber = foundCommunity.getAccountNumber();
 
-        return new CommunityDepositInfoRespDto(memberBank, memberAccountNumber, communityAccountBank, communityAccountNumber);
+        return new CommunityDepositInfoRespDto(bankTranId, memberAccountNumber, memberAccountBalance, communityAccountBank, communityAccountNumber);
     }
 
     // 모임통장에 입금
@@ -271,7 +276,7 @@ public class CommunityService {
 
         // 모임 찾고
         CommunityEntity foundCommunity = communityRepository.findById(dto.getCommunityId())
-                .orElseThrow(() -> new CommunityNotFoundException("커뮤니티를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CommunityNotFoundException("모임을 찾을 수 없습니다."));
 
         // 모임에 등록된 모임통장 계좌번호 가져오기
         String communityAccountNumber = foundCommunity.getAccountNumber();
@@ -332,6 +337,34 @@ public class CommunityService {
         CommunityEntity editedCommunity = CommunityMapper.mapDomainToEntity(foundCommunityDomain);
 
         communityRepository.save(editedCommunity);
+
+    public List<CommunitiesResponseDto> getCommunities() {
+        MemberEntity userDetails = (MemberEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<CommunityEntity> result = membershipRepository.findCommunitiesByMemberId(userDetails.getId());
+
+        return result.stream()
+                .map(communityEntity -> CommunitiesResponseDto.builder()
+                        .communityId(communityEntity.getId())
+                        .name(communityEntity.getName())
+                        .build()).toList();
+    }
+
+    public CommunityInfoResponseDto getCommunityInfo(UUID communityId) {
+        try{
+            //모임 통장 정보
+            CommunityEntity community = communityRepository.findById(communityId).orElseThrow();
+            //모임 통장 잔액
+            GetAccountInfoReqDto getAccountInfoReqDto = new GetAccountInfoReqDto("001","00","2025-01-17", community.getAccountNumber());
+            Long balance = getAccountInfoPort.getAccountInfo(getAccountInfoReqDto).getData().getBalanceAmt();
+
+            return CommunityInfoResponseDto.builder()
+                .name(community.getName())
+                .accountNumber(community.getAccountNumber())
+                .balance(balance)
+                .build();
+        }catch (Exception e){
+            throw new CommunityNotFoundException("모임 아이디를 찾을 수 없습니다.");
+        }
 
     }
 }
