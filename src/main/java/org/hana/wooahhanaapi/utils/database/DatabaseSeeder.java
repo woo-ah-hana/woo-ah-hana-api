@@ -77,7 +77,7 @@ public class DatabaseSeeder implements CommandLineRunner {
         }
 
         //member seed
-        MemberEntity member1 = MemberEntity.create("hj1234","함형주",passwordEncoder.encode("hj1234!"),"01026530957","3560000000000","002");//농협:bank_tran_id="002"
+        MemberEntity member1 = MemberEntity.create("01026530957","함형주",passwordEncoder.encode("hj1234!"),"01026530957","3560000000000","002");//농협:bank_tran_id="002"
         memberRepository.save(member1);
         MemberEntity member2 = MemberEntity.create("sj1234","최선정",passwordEncoder.encode("sj1234!"),"01012341234","3561111111111","003");//우리:bank_tran_id="003"
         memberRepository.save(member2);
