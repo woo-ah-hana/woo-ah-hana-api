@@ -2,7 +2,6 @@ package org.hana.wooahhanaapi.domain.plan.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.hana.wooahhanaapi.domain.plan.dto.CreatePostRequestDto;
-import org.hana.wooahhanaapi.domain.plan.dto.CreatePostResponseDto;
 import org.hana.wooahhanaapi.domain.plan.dto.GetPostResponseDto;
 import org.hana.wooahhanaapi.domain.plan.service.PostService;
 import org.springframework.http.MediaType;
@@ -21,7 +20,7 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public CreatePostResponseDto createPost(
+    public UUID createPost(
             @RequestPart("data") CreatePostRequestDto requestDto,
             @RequestPart("image") MultipartFile image
     ) throws IOException {

@@ -14,7 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class GetPostResponseDto {
     private UUID id;
-    private UUID memberId;
+    private String memberName;
     private String imageUrl;
     private String description;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

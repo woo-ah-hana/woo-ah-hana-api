@@ -5,6 +5,7 @@ import org.hana.wooahhanaapi.domain.plan.domain.Plan;
 import org.hana.wooahhanaapi.domain.plan.dto.CreatePlanRequestDto;
 import org.hana.wooahhanaapi.domain.plan.dto.GetPlansResponseDto;
 
+import org.hana.wooahhanaapi.domain.plan.dto.GetReceiptResponseDto;
 import org.hana.wooahhanaapi.domain.plan.dto.UpdatePlanRequestDto;
 import org.hana.wooahhanaapi.domain.plan.service.PlanService;
 import org.springframework.web.bind.annotation.*;
@@ -49,6 +50,11 @@ public class PlanController {
     @GetMapping("/completed/{communityId}")
     public List<GetPlansResponseDto> getCompletedPlans(@PathVariable UUID communityId) {
         return planService.getCompletedPlans(communityId);
+    }
+
+    @GetMapping("/receipt/{planId}")
+    public GetReceiptResponseDto getPlanReceipt(@PathVariable UUID planId) {
+        return planService.getPlanReceipt(planId);
     }
 
 }
