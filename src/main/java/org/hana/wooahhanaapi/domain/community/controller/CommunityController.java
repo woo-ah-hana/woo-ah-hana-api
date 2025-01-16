@@ -4,12 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.hana.wooahhanaapi.domain.community.dto.*;
 import org.hana.wooahhanaapi.utils.redis.dto.SendValidationCodeReqDto;
 import org.hana.wooahhanaapi.domain.community.service.CommunityService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,6 +15,7 @@ import java.util.List;
 public class CommunityController {
     private final CommunityService communityService;
 
+    //모임 만들기 버튼
     @PostMapping("/new")
     public String createCommunity(@RequestBody CommunityCreateReqDto dto) {
         this.communityService.createCommunity(dto);
@@ -30,24 +29,18 @@ public class CommunityController {
         return "success";
     }
 
-//    @PostMapping("/new/validAccountConfirm")
-//    public boolean validateAccountConfirm(AccountValidationConfirmDto dto) {
-//        return this.communityService.validateAccountConfirm(dto);
-//    }
-
-    // 모임 계주 변경
-    @PostMapping("/changeManager")
-    public String changeManager(@RequestBody CommunityChgManagerReqDto dto) {
-        this.communityService.changeCommunityManager(dto);
-        return "success";
+    /**
+     * 0.모임통장 클릭
+     * */
+    // 모임통장 거래내역 확인
+    @PostMapping("/trsfRecords")
+    public List<CommunityTrsfRecordRespDto> getTransferRecords(@RequestBody CommunityTrsfRecordReqDto dto) {
+        return this.communityService.getTransferRecord(dto);
     }
 
-    // 회비 입금 현황
-    @PostMapping("/feeStatus")
-    public CommunityFeeStatusRespDto feeStatus(@RequestBody CommunityFeeStatusReqDto dto) {
-        return this.communityService.checkFeeStatus(dto);
-    }
-
+    /**
+     * 1.모임통장에 입금
+     * */
     // 모임통장에 입금 클릭 후 정보 불러오기
     @PostMapping("/deposit/info")
     public CommunityDepositInfoRespDto depositInfo(@RequestBody CommunityDepositInfoReqDto dto) {
@@ -61,10 +54,28 @@ public class CommunityController {
         return "success";
     }
 
-    // 모임통장 거래내역 확인
-    @PostMapping("/trsfRecords")
-    public List<CommunityTrsfRecordRespDto> getTransferRecords(@RequestBody CommunityTrsfRecordReqDto dto) {
-        return this.communityService.getTransferRecord(dto);
+    /**
+     * 2. 내/모임 계좌관리
+     * */
+    // 모임 계주 변경
+    @PostMapping("/account/changeManager")
+    public String changeManager(@RequestBody CommunityChgManagerReqDto dto) {
+        this.communityService.changeCommunityManager(dto);
+        return "success";
+    }
+
+    // 모임통장 회비 금액 / 주기 수정
+    @PostMapping("/account/changeFeeInfo")
+    public String changeFeeInfo(@RequestBody CommunityChgFeeInfoReqDto dto) {
+        this.communityService.changeFeeInfo(dto);
+        return "success";
+    }
+
+    // 자동이체 설정
+    @PostMapping("/account/autoDeposit")
+    public String setAutoDeposit(@RequestBody CommunityAutoDepositReqDto dto) {
+        this.communityService.setAutoDeposit(dto);
+        return "success";
     }
 
     // 개인 계좌 변경
@@ -72,6 +83,27 @@ public class CommunityController {
     public String changeMemberAccount(@RequestBody CommunityChgMemAccReqDto dto) {
         this.communityService.changeMemberAccount(dto);
         return "success";
+    }
+
+    /**
+     * 6. 회비 입금현황
+     * */
+    // 회비 입금 현황
+    @PostMapping("/feeStatus")
+    public CommunityFeeStatusRespDto feeStatus(@RequestBody CommunityFeeStatusReqDto dto) {
+        return this.communityService.checkFeeStatus(dto);
+    }
+
+    //메인화면:모임 목록 가져오기
+    @GetMapping("/list")
+    public List<CommunitiesResponseDto> getCommunityList() {
+        return this.communityService.getCommunities();
+    }
+
+    //메인화면:모임 통장 정보 가져오기
+    @GetMapping("/info")
+    public CommunityInfoResponseDto getCommunityInfo(@RequestParam UUID communityId) {
+        return this.communityService.getCommunityInfo(communityId);
     }
 
 }
