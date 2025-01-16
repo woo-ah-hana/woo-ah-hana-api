@@ -15,5 +15,5 @@ public class SignUpRequestDto {
     private String name;
     private String phoneNumber;
     private String accountNumber;
-    private String accountBank;
+    private String bankTranId;
 }
