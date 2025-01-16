@@ -2,6 +2,7 @@ package org.hana.wooahhanaapi.service;
 
 import org.hana.wooahhanaapi.domain.member.entity.MemberEntity;
 import org.hana.wooahhanaapi.domain.member.repository.MemberRepository;
+import org.hana.wooahhanaapi.domain.plan.domain.Plan;
 import org.hana.wooahhanaapi.domain.plan.dto.GetPlansResponseDto;
 import org.hana.wooahhanaapi.domain.plan.entity.PlanEntity;
 import org.hana.wooahhanaapi.domain.plan.repository.PlanRepository;
@@ -59,7 +60,7 @@ public class PlanServiceTest {
         planRepository.save(planEntity);
 
         // when
-        List<GetPlansResponseDto> plan = planService.getPlans(UUID.fromString("3fa85f64-5717-4562-b3fc-2c963f66afa6"));
+        List<Plan> plan = planService.getPlans(UUID.fromString("3fa85f64-5717-4562-b3fc-2c963f66afa6"));
 
         // then
         Assertions.assertEquals(1, plan.size());

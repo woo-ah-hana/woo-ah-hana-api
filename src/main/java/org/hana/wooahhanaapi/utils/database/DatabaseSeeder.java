@@ -11,6 +11,7 @@ import org.hana.wooahhanaapi.domain.community.repository.CommunityRepository;
 import org.hana.wooahhanaapi.domain.community.repository.MembershipRepository;
 import org.hana.wooahhanaapi.domain.member.entity.MemberEntity;
 import org.hana.wooahhanaapi.domain.member.repository.MemberRepository;
+import org.hana.wooahhanaapi.domain.plan.entity.PlanEntity;
 import org.hana.wooahhanaapi.utils.exception.SeederException;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,100 +32,74 @@ public class DatabaseSeeder implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) throws SeederException {
-        //은행 시딩
-        BankCreateReqDto hanaBank = new BankCreateReqDto("하나은행","001","097U12345");
-        BankCreateReqDto nonghyupBank = new BankCreateReqDto("농협은행","002","097U12345");
-        BankCreateReqDto wooriBank = new BankCreateReqDto("우리은행","003","097U12345");
-        BankCreateReqDto shinhanBank = new BankCreateReqDto("신한은행","004","097U12345");
-        BankCreateReqDto giupBank = new BankCreateReqDto("기업은행","005","097U12345");
-        BankCreateReqDto kakaoBank = new BankCreateReqDto("카카오뱅크","006","097U12345");
-        BankCreateReqDto tossBank = new BankCreateReqDto("토스뱅크","007","097U12345");
-        BankCreateReqDto kbBank = new BankCreateReqDto("KB국민은행", "008", "097U12345");
-        BankCreateReqDto busanBank = new BankCreateReqDto("부산은행", "009", "097U12345");
-        BankCreateReqDto daeguBank = new BankCreateReqDto("대구은행", "010", "097U12345");
-        BankCreateReqDto gwangjuBank = new BankCreateReqDto("광주은행", "011", "097U12345");
-        BankCreateReqDto jeonbukBank = new BankCreateReqDto("전북은행", "012", "097U12345");
-        BankCreateReqDto jejuBank = new BankCreateReqDto("제주은행", "013", "097U12345");
-        List<BankCreateReqDto> banks = Arrays.asList(hanaBank, nonghyupBank, wooriBank, shinhanBank, giupBank, kakaoBank, tossBank, kbBank, busanBank, daeguBank,gwangjuBank,jeonbukBank,jejuBank,jejuBank);
-        for (BankCreateReqDto bank : banks) {
-            try {
-                accountService.createBank(bank);
-            } catch (Exception e) {
-                System.out.println("은행 중복 생성");
-            }
-        }
-        //계좌 시딩
-        AccountCreateReqDto hjAccount = new AccountCreateReqDto("002","0","3560000000000","자유입출금계좌");//함형주 계좌 생성
-        AccountCreateReqDto sjAccount = new AccountCreateReqDto("003","0","3561111111111","자유입출금계좌");
-        AccountCreateReqDto yhAccount = new AccountCreateReqDto("002","0","3562222222222","자유입출금계좌");
-        AccountCreateReqDto shAccount = new AccountCreateReqDto("001","0","3563333333333","자유입출금계좌");
-        AccountCreateReqDto cwAccount = new AccountCreateReqDto("001","0","3564444444444","자유입출금계좌");
-        AccountCreateReqDto mkAccount = new AccountCreateReqDto("004","0","3565555555555","자유입출금계좌");
-        AccountCreateReqDto dtAccount = new AccountCreateReqDto("001","0","3560603895413","자유입출금계좌");
-        AccountCreateReqDto matJipTamBangAccount = new AccountCreateReqDto("001","0","3561111222222","자유입출금계좌");
-        AccountCreateReqDto goTravelAccount = new AccountCreateReqDto("001","0","3561234123412","자유입출금계좌");
-        AccountCreateReqDto bagAccount = new AccountCreateReqDto("001","0","3564321432143","자유입출금계좌");
-        AccountCreateReqDto goGapyeongAccount = new AccountCreateReqDto("001","0","3561111222233","자유입출금계좌");
-        AccountCreateReqDto goJapanAccount = new AccountCreateReqDto("001","0","3563333222211","자유입출금계좌");
-
-        List<AccountCreateReqDto> accounts = Arrays.asList(hjAccount,sjAccount,yhAccount,shAccount,cwAccount,mkAccount,dtAccount,matJipTamBangAccount,goTravelAccount,bagAccount,goGapyeongAccount,goJapanAccount);
-        for (AccountCreateReqDto account : accounts) {
-            try {
-                accountService.createAccount(account);
-            } catch (Exception e) {
-                System.out.println("계좌 중복 생성");
-            }
-        }
 
         //member seed
-        MemberEntity member1 = MemberEntity.create("01026530957","함형주",passwordEncoder.encode("hj1234!"),"01026530957","3560000000000","002");//농협:bank_tran_id="002"
+        MemberEntity member1 = MemberEntity.create("01026530957","함형주",passwordEncoder.encode("hj1234!"),"01026530957","3561057204496","002");//농협:bank_tran_id="002"
         memberRepository.save(member1);
-        MemberEntity member2 = MemberEntity.create("sj1234","최선정",passwordEncoder.encode("sj1234!"),"01012341234","3561111111111","003");//우리:bank_tran_id="003"
+        MemberEntity member2 = MemberEntity.create("01012345678","최선정",passwordEncoder.encode("sj1234!"),"01012345678","2150094621845","003");//우리:bank_tran_id="003"
         memberRepository.save(member2);
-        MemberEntity member3 = MemberEntity.create("yh1234","윤영헌",passwordEncoder.encode("yh1234!"),"01012341234","3562222222222","002");//농협:bank_tran_id="002"
+        MemberEntity member3 = MemberEntity.create("01039388377","윤영헌",passwordEncoder.encode("yh1234!"),"01039388377","3561024215509","002");//농협:bank_tran_id="002"
         memberRepository.save(member3);
-        MemberEntity member4 = MemberEntity.create("sh1234","김상현",passwordEncoder.encode("sh1234!"),"01012341234","3563333333333","001");//하나:bank_tran_id="001"
+        MemberEntity member4 = MemberEntity.create("01089400634","김상현",passwordEncoder.encode("sh1234!"),"01089400634","1462665915101","001");//하나:bank_tran_id="001"
         memberRepository.save(member4);
-        MemberEntity member5 = MemberEntity.create("cw1234","김채운",passwordEncoder.encode("cw1234!"),"01012341234","3564444444444","001");//하나:bank_tran_id="001"
+        MemberEntity member5 = MemberEntity.create("01099153691","김채운",passwordEncoder.encode("cw1234!"),"01099153691","0181011629531","005");//기업:bank_tran_id="005"
         memberRepository.save(member5);
-        MemberEntity member6 = MemberEntity.create("mk1234","김미강",passwordEncoder.encode("mk1234!"),"01012341234","3565555555555","004");//신한:bank_tran_id="004"
+        MemberEntity member6 = MemberEntity.create("01029011957","김미강",passwordEncoder.encode("mk1234!"),"01029011957","3333057204496","006");//카카오:bank_tran_id="006"
         memberRepository.save(member6);
-        MemberEntity member7 = MemberEntity.create("dt1234","데이터",passwordEncoder.encode("dt1234!"),"01012341234","3560603895413","001"); //하나:bank_tran_id="001"
+        MemberEntity member7 = MemberEntity.create("01092469330","안유진",passwordEncoder.encode("yj1234!"),"01092469330","3561084512201","002"); //농협:bank_tran_id="002"
         memberRepository.save(member7);
+        MemberEntity member8 = MemberEntity.create("01026483859","김가을",passwordEncoder.encode("ge1234!"),"01092469330","3561084512201","001"); //하나:bank_tran_id="001"
+        memberRepository.save(member8);
+        MemberEntity member9 = MemberEntity.create("01024029471","장원영",passwordEncoder.encode("wy1234!"),"01092469330","3561084512201","001"); //하나:bank_tran_id="001"
+        memberRepository.save(member9);
+        MemberEntity member10 = MemberEntity.create("01099123592","김레이",passwordEncoder.encode("re1234!"),"01092469330","3561084512201","008"); //국민:bank_tran_id="008"
+        memberRepository.save(member10);
+        MemberEntity member11 = MemberEntity.create("01084595281","김지원",passwordEncoder.encode("jw1234!"),"01092469330","3561084512201","009"); //부산:bank_tran_id="009"
+        memberRepository.save(member11);
+        MemberEntity member12 = MemberEntity.create("01052548974","이현서",passwordEncoder.encode("hs1234!"),"01092469330","3561084512201","010"); //대구:bank_tran_id="010"
+        memberRepository.save(member12);
 
-        //community seed
-        MemberEntity yh = memberRepository.findByUsername("yh1234").orElse(null);
-        CommunityEntity yhCommunity1 = CommunityEntity.create(yh.getId(),"맛집탐방","3561111222222",3L,200000L,60L);
-        CommunityEntity yhCommunity2 = CommunityEntity.create(yh.getId(),"떠나요 여행","3561234123412",3L,50000L,30L);
-        CommunityEntity yhCommunity3 = CommunityEntity.create(yh.getId(),"가방","3564321432143",3L,100000L,20L);
-        communityRepository.save(yhCommunity1); communityRepository.save(yhCommunity2); communityRepository.save(yhCommunity3);
+        //community, membership seed
+        MemberEntity hj = memberRepository.findByUsername("01026530957").orElse(null); // 계주 : 함형주
+        CommunityEntity community = CommunityEntity.create(hj.getId(),"맛집탐방","1468152645150",3L,200000L,10L);
+        communityRepository.save(community);
+        MembershipEntity m1 = MembershipEntity.create(member1, community); membershipRepository.save(m1); // 1팀 전원
+        MembershipEntity m2 = MembershipEntity.create(member2, community); membershipRepository.save(m2);
+        MembershipEntity m3 = MembershipEntity.create(member3, community); membershipRepository.save(m3);
+        MembershipEntity m4 = MembershipEntity.create(member4, community); membershipRepository.save(m4);
+        MembershipEntity m5 = MembershipEntity.create(member5, community); membershipRepository.save(m5);
+        MembershipEntity m6 = MembershipEntity.create(member6, community); membershipRepository.save(m6);
 
-        MemberEntity sj = memberRepository.findByUsername("sj1234").orElse(null);
-        CommunityEntity sjCommunity1 = CommunityEntity.create(sj.getId(),"가평가자","3561111222233",3L,200000L,60L);
-        CommunityEntity sjCommunity2 = CommunityEntity.create(sj.getId(),"일본가자","3563333222211",3L,50000L,30L);
-        communityRepository.save(sjCommunity1); communityRepository.save(sjCommunity2);
+        MemberEntity yj = memberRepository.findByUsername("01092469330").orElse(null); // 계주 : 안유진
+        CommunityEntity community2 = CommunityEntity.create(yj.getId(),"떠나요 여행","1463056220188",3L,50000L,20L);
+        communityRepository.save(community2);
+        MembershipEntity m7 = MembershipEntity.create(member7, community2); membershipRepository.save(m7); // 아이브
+        MembershipEntity m8 = MembershipEntity.create(member8, community2); membershipRepository.save(m8);
+        MembershipEntity m9 = MembershipEntity.create(member9, community2); membershipRepository.save(m9);
+        MembershipEntity m10 = MembershipEntity.create(member10, community2); membershipRepository.save(m10);
+        MembershipEntity m11 = MembershipEntity.create(member11, community2); membershipRepository.save(m11);
+        MembershipEntity m12 = MembershipEntity.create(member12, community2); membershipRepository.save(m12);
 
-        //membership seed
-        List<CommunityEntity> communityList = communityRepository.findAllByManagerId(yh.getId());
-        communityList.forEach(communityEntity -> {
-            MembershipEntity membership = MembershipEntity.create(yh, communityEntity);
-            membershipRepository.save(membership);
-        });
+        MemberEntity yh = memberRepository.findByUsername("01039388377").orElse(null); // 계주 : 윤영헌
+        CommunityEntity community3 = CommunityEntity.create(yh.getId(),"성수 나들이","1464493512314",3L,100000L,5L);
+        communityRepository.save(community3);
+        MembershipEntity m13 = MembershipEntity.create(member3, community3); membershipRepository.save(m13); // 영헌
+        MembershipEntity m14 = MembershipEntity.create(member4, community3); membershipRepository.save(m14); // 상현
+        MembershipEntity m16 = MembershipEntity.create(member6, community3); membershipRepository.save(m16); // 미강
 
-        List<CommunityEntity> communityList2 = communityRepository.findAllByManagerId(sj.getId());
-        communityList2.forEach(communityEntity -> {
-            MembershipEntity membership = MembershipEntity.create(sj, communityEntity);
-            membershipRepository.save(membership);
-        });
+        MemberEntity mk = memberRepository.findByUsername("01029011957").orElse(null); // 계주 : 김미강
+        CommunityEntity community4 = CommunityEntity.create(mk.getId(),"가평가자","1465510634457",3L,200000L,60L);
+        communityRepository.save(community4);
+        MembershipEntity m17 = MembershipEntity.create(member3, community4); membershipRepository.save(m17); // 영헌
+        MembershipEntity m18 = MembershipEntity.create(member2, community4); membershipRepository.save(m18); // 선정
+        MembershipEntity m19 = MembershipEntity.create(member1, community); membershipRepository.save(m19); // 형주
+        MembershipEntity m20 = MembershipEntity.create(member6, community); membershipRepository.save(m20); // 미강
+        //CommunityEntity sjCommunity2 = CommunityEntity.create(sj.getId(),"일본가자","3563333222211",3L,50000L,30L);
+        //communityRepository.save(sjCommunity1); communityRepository.save(sjCommunity2);
 
-        List<MemberEntity> memberList = memberRepository.findAll();
-        memberList.forEach(memberEntity -> {
-            CommunityEntity communityEntity = communityRepository.findByName("맛집탐방");
-            MembershipEntity membership = MembershipEntity.create(memberEntity,communityEntity);
-            membershipRepository.save(membership);
-        });
-
-        //
+        // 커뮤니티 3개에 속하는 인원 : 영헌, 미강
+        // 2개 : 선정, 형주, 상현
+        // 1개 : 채운
 
     }
 }

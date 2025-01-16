@@ -58,19 +58,19 @@ public class PlanService {
         planRepository.delete(plan);
     }
 
-    public Plan getPlanDetail(UUID planId) {
+    public GetPlansResponseDto getPlanDetail(UUID planId) {
         PlanEntity planEntity = planRepository.findById(planId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 plan을 찾을 수 없습니다."));
 
-        return PlanMapper.mapEntityToDomain(planEntity);
+        return PlanMapper.mapPlansEntityToDto(planEntity, memberRepository);
 
 
     }
 
-    public List<GetPlansResponseDto> getPlans(UUID communityId) {
+    public List<Plan> getPlans(UUID communityId) {
         return planRepository.findAllByCommunityId(communityId)
                 .stream()
-                .map(entity -> PlanMapper.mapPlansEntityToDto(entity, memberRepository))
+                .map(PlanMapper::mapEntityToDomain)
                 .collect(Collectors.toList());
     }
 
@@ -94,10 +94,10 @@ public class PlanService {
         planRepository.save(PlanMapper.mapDomainToEntity(plan));
     }
 
-    public List<GetPlansResponseDto> getCompletedPlans(UUID communityId) {
+    public List<Plan> getCompletedPlans(UUID communityId) {
         return planRepository.findCompletedByCommunityId(communityId)
                 .stream()
-                .map(entity -> PlanMapper.mapPlansEntityToDto(entity, memberRepository))
+                .map(PlanMapper::mapEntityToDomain)
                 .collect(Collectors.toList());
     }
 
