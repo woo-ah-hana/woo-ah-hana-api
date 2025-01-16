@@ -126,7 +126,7 @@ public class CommunityService {
     public CommunityFeeStatusRespDto checkFeeStatus(CommunityFeeStatusReqDto dto) {
         // 모임 찾고
         CommunityEntity foundCommunity = communityRepository.findById(dto.getCommunityId())
-                .orElseThrow(() -> new CommunityNotFoundException("커뮤니티를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CommunityNotFoundException("모임을 찾을 수 없습니다."));
         List<MemberEntity> members = membershipRepository.findMembersByCommunityId(dto.getCommunityId());
 
         Long fee = foundCommunity.getFee();
@@ -275,7 +275,7 @@ public class CommunityService {
 
         // 모임 찾고
         CommunityEntity foundCommunity = communityRepository.findById(dto.getCommunityId())
-                .orElseThrow(() -> new CommunityNotFoundException("커뮤니티를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CommunityNotFoundException("모임을 찾을 수 없습니다."));
 
         // 모임에 등록된 모임통장 계좌번호 가져오기
         String communityAccountNumber = foundCommunity.getAccountNumber();
@@ -326,5 +326,23 @@ public class CommunityService {
                         .communityId(communityEntity.getId())
                         .name(communityEntity.getName())
                         .build()).toList();
+    }
+
+    public CommunityInfoResponseDto getCommunityInfo(UUID communityId) {
+        try{
+            //모임 통장 정보
+            CommunityEntity community = communityRepository.findById(communityId).orElseThrow();
+            //모임 통장 잔액
+            GetAccountInfoReqDto getAccountInfoReqDto = new GetAccountInfoReqDto("001","00","2025-01-17", community.getAccountNumber());
+            Long balance = getAccountInfoPort.getAccountInfo(getAccountInfoReqDto).getData().getBalanceAmt();
+
+            return CommunityInfoResponseDto.builder()
+                .name(community.getName())
+                .accountNumber(community.getAccountNumber())
+                .balance(balance)
+                .build();
+        }catch (Exception e){
+            throw new CommunityNotFoundException("모임 아이디를 찾을 수 없습니다.");
+        }
     }
 }

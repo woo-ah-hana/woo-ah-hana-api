@@ -7,6 +7,7 @@ import org.hana.wooahhanaapi.domain.community.service.CommunityService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -14,6 +15,7 @@ import java.util.List;
 public class CommunityController {
     private final CommunityService communityService;
 
+    //모임 만들기 버튼
     @PostMapping("/new")
     public String createCommunity(@RequestBody CommunityCreateReqDto dto) {
         this.communityService.createCommunity(dto);
@@ -64,10 +66,15 @@ public class CommunityController {
         return this.communityService.getTransferRecord(dto);
     }
 
-    //커뮤니티 목록 가져오기
+    //메인화면:모임 목록 가져오기
     @GetMapping("/list")
     public List<CommunitiesResponseDto> getCommunityList() {
         return this.communityService.getCommunities();
     }
 
+    //메인화면:모임 통장 정보 가져오기
+    @GetMapping("/info")
+    public CommunityInfoResponseDto getCommunityInfo(@RequestParam UUID communityId) {
+        return this.communityService.getCommunityInfo(communityId);
+    }
 }
