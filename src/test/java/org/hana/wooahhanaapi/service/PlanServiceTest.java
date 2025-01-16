@@ -1,5 +1,7 @@
 package org.hana.wooahhanaapi.service;
 
+import org.hana.wooahhanaapi.domain.member.entity.MemberEntity;
+import org.hana.wooahhanaapi.domain.member.repository.MemberRepository;
 import org.hana.wooahhanaapi.domain.plan.dto.GetPlansResponseDto;
 import org.hana.wooahhanaapi.domain.plan.entity.PlanEntity;
 import org.hana.wooahhanaapi.domain.plan.repository.PlanRepository;
@@ -20,13 +22,24 @@ import java.util.UUID;
 @SpringBootTest
 public class PlanServiceTest {
     @Autowired
+    private MemberRepository memberRepository;
+    @Autowired
     private PlanService planService;
     @Autowired
     private PlanRepository planRepository;
 
     @BeforeEach
-    void seedPlans() {
+    void seed() {
+        MemberEntity memberEntity = MemberEntity.create(
+                "010-7767-3813",
+                "윤영헌",
+                "1234",
+                "010-7767-3813",
+                "1111111111111",
+                "001"
+        );
 
+        memberRepository.save(memberEntity);
     }
 
     @Test
