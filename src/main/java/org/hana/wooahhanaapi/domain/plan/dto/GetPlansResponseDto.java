@@ -21,4 +21,5 @@ public class GetPlansResponseDto {
     private LocalDateTime endDate;
     private String category;
     private List<String> locations;
+    private List<String> memberNames;
 }

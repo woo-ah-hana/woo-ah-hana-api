@@ -4,13 +4,14 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.hana.wooahhanaapi.domain.member.entity.MemberEntity;
 import org.hana.wooahhanaapi.domain.member.repository.MemberRepository;
+import org.hana.wooahhanaapi.domain.plan.domain.Post;
 import org.hana.wooahhanaapi.domain.plan.dto.CreatePostRequestDto;
-import org.hana.wooahhanaapi.domain.plan.dto.CreatePostResponseDto;
 import org.hana.wooahhanaapi.domain.plan.dto.GetPostResponseDto;
 import org.hana.wooahhanaapi.domain.plan.entity.PlanEntity;
 import org.hana.wooahhanaapi.domain.plan.entity.PostEntity;
 import org.hana.wooahhanaapi.domain.plan.exception.*;
 import org.hana.wooahhanaapi.domain.plan.mapper.PlanMapper;
+import org.hana.wooahhanaapi.domain.plan.mapper.PostMapper;
 import org.hana.wooahhanaapi.domain.plan.repository.PlanRepository;
 import org.hana.wooahhanaapi.domain.plan.repository.PostRepository;
 import org.springframework.stereotype.Service;
@@ -30,12 +31,8 @@ public class PostService {
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
 
-    public CreatePostResponseDto createPost(CreatePostRequestDto requestDto, MultipartFile image) throws IOException {
+    public UUID createPost(CreatePostRequestDto requestDto, MultipartFile image) throws IOException {
 
-        if (requestDto.getPlanId() == null || requestDto.getMemberId() == null || requestDto.getDescription() == null
-                ||image == null || image.isEmpty()) {
-            throw new InvalidPostDataException("필수 데이터가 누락되었습니다.");
-        }
         if (!Objects.requireNonNull(image.getContentType()).startsWith("image/")) {
             throw new InvalidFileTypeException("지원되지 않는 파일 형식입니다.");
         }
@@ -43,31 +40,26 @@ public class PostService {
             throw new FileSizeExceededException("업로드 가능한 파일 크기를 초과했습니다.");
         }
 
-        PlanEntity plan = planRepository.findById(UUID.fromString(requestDto.getPlanId()))
-                .orElseThrow(() -> new EntityNotFoundException("해당 Plan이 존재하지 않습니다."));
-
-        MemberEntity member = memberRepository.findById(UUID.fromString(requestDto.getMemberId()))
-                .orElseThrow(() -> new EntityNotFoundException("해당 Member가 존재하지 않습니다."));
-
         String s3FileName = UUID.randomUUID() + "-" + image.getOriginalFilename();
         // TODO: S3 서비스에 저장
         String imageUrl = s3FileName;
 
-        PostEntity post = PostEntity.builder()
-                .plan(plan)
-                .member(member)
-                .imageUrl(imageUrl)
-                .description(requestDto.getDescription())
-                .createdAt(requestDto.getCreateAt())
-                .build();
-        postRepository.save(post);
+        PlanEntity plan = planRepository.findById(requestDto.getPlanId())
+                .orElseThrow(() -> new EntityNotFoundException("해당 Plan이 존재하지 않습니다."));
 
-        return CreatePostResponseDto.builder()
-                .postId(post.getId().toString())
-                .imageUrl(post.getImageUrl())
-                .description(post.getDescription())
-                .createAt(post.getCreatedAt())
-                .build();
+        MemberEntity member = memberRepository.findById(requestDto.getMemberId())
+                .orElseThrow(() -> new EntityNotFoundException("해당 Member가 존재하지 않습니다."));
+
+        Post post = Post.create(
+                UUID.randomUUID(),
+                plan,
+                member,
+                imageUrl,
+                requestDto.getDescription(),
+                requestDto.getCreateAt()
+        );
+
+        return  postRepository.save(PostMapper.mapDomainToEntity(post)).getId();
     }
 
     @Transactional

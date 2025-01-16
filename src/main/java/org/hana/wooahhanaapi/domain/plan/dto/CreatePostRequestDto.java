@@ -7,14 +7,15 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.UUID;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class CreatePostRequestDto {
-    private String planId;
-    private String memberId;
+    private UUID planId;
+    private UUID memberId;
     private String description;
     private LocalDateTime createAt;
 }
