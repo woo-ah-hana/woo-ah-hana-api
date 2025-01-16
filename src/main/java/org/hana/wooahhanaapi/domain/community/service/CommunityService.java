@@ -11,6 +11,7 @@ import org.hana.wooahhanaapi.domain.community.entity.AutoDepositEntity;
 import org.hana.wooahhanaapi.domain.community.exception.NoAuthorityException;
 import org.hana.wooahhanaapi.domain.community.mapper.AutoDepositMapper;
 import org.hana.wooahhanaapi.domain.community.repository.AutoDepositRepository;
+import org.hana.wooahhanaapi.domain.community.exception.NoAuthorityException;
 import org.hana.wooahhanaapi.utils.redis.ValidateAccountPort;
 import org.hana.wooahhanaapi.utils.redis.dto.AccountValidationConfirmDto;
 import org.hana.wooahhanaapi.utils.redis.SaveValidCodePort;
@@ -397,5 +398,34 @@ public class CommunityService {
             // 모임통장에 입금
             transfer(account.getCommunityAccNum(), "001", foundMember.getName(), "입금", account.getFee());
         }
+
+    public List<CommunitiesResponseDto> getCommunities() {
+        MemberEntity userDetails = (MemberEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<CommunityEntity> result = membershipRepository.findCommunitiesByMemberId(userDetails.getId());
+
+        return result.stream()
+                .map(communityEntity -> CommunitiesResponseDto.builder()
+                        .communityId(communityEntity.getId())
+                        .name(communityEntity.getName())
+                        .build()).toList();
+    }
+
+    public CommunityInfoResponseDto getCommunityInfo(UUID communityId) {
+        try{
+            //모임 통장 정보
+            CommunityEntity community = communityRepository.findById(communityId).orElseThrow();
+            //모임 통장 잔액
+            GetAccountInfoReqDto getAccountInfoReqDto = new GetAccountInfoReqDto("001","00","2025-01-17", community.getAccountNumber());
+            Long balance = getAccountInfoPort.getAccountInfo(getAccountInfoReqDto).getData().getBalanceAmt();
+
+            return CommunityInfoResponseDto.builder()
+                .name(community.getName())
+                .accountNumber(community.getAccountNumber())
+                .balance(balance)
+                .build();
+        }catch (Exception e){
+            throw new CommunityNotFoundException("모임 아이디를 찾을 수 없습니다.");
+        }
+
     }
 }

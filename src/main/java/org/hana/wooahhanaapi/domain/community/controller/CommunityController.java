@@ -4,12 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.hana.wooahhanaapi.domain.community.dto.*;
 import org.hana.wooahhanaapi.utils.redis.dto.SendValidationCodeReqDto;
 import org.hana.wooahhanaapi.domain.community.service.CommunityService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,7 +15,7 @@ import java.util.List;
 public class CommunityController {
     private final CommunityService communityService;
 
-    // 모임 생성
+    //모임 만들기 버튼
     @PostMapping("/new")
     public String createCommunity(@RequestBody CommunityCreateReqDto dto) {
         this.communityService.createCommunity(dto);
@@ -89,4 +87,28 @@ public class CommunityController {
         return this.communityService.checkFeeStatus(dto);
     }
 
+    // 모임통장 회비 금액 / 주기 수정
+    @PostMapping("/account/changeFeeInfo")
+    public String changeFeeInfo(@RequestBody CommunityChgFeeInfoReqDto dto) {
+        this.communityService.changeFeeInfo(dto);
+        return "success";
+    }
+
+    // 회비 입금 현황
+    @PostMapping("/feeStatus")
+    public CommunityFeeStatusRespDto feeStatus(@RequestBody CommunityFeeStatusReqDto dto) {
+        return this.communityService.checkFeeStatus(dto);
+    }
+
+    //메인화면:모임 목록 가져오기
+    @GetMapping("/list")
+    public List<CommunitiesResponseDto> getCommunityList() {
+        return this.communityService.getCommunities();
+    }
+
+    //메인화면:모임 통장 정보 가져오기
+    @GetMapping("/info")
+    public CommunityInfoResponseDto getCommunityInfo(@RequestParam UUID communityId) {
+        return this.communityService.getCommunityInfo(communityId);
+    }
 }
