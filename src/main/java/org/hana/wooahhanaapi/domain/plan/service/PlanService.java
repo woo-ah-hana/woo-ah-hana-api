@@ -136,7 +136,7 @@ public class PlanService {
                 .mapToLong(record -> Long.parseLong(record.getTranAmt()))
                 .sum();
 
-        long perAmt = (foundCommunity.getMemberships().isEmpty()) ? 0 : totalAmt / foundCommunity.getMemberships().size();
+        long perAmt = (plan.getMemberIds().isEmpty()) ? 0 : totalAmt / plan.getMemberIds().size();
 
         return GetReceiptResponseDto.builder()
                 .records(records) // 거래 기록 리스트
