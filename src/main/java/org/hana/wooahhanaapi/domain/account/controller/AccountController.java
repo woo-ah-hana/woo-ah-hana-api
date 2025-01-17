@@ -31,7 +31,7 @@ public class AccountController {
         return this.accountService.getAccountInfo(getAccountInfoReqDto);
     }
     @PostMapping("/transfer")
-    public AccountTransferRespDto transferAccount(@RequestBody AccountTransferReqDto accountTransferReqDto) {
-        return this.accountService.createTransfer(accountTransferReqDto);
+    public AccountTransferRespDto transferAccount(@RequestBody SimplifiedTransferReqDto simplifiedTransferReqDto) {
+        return this.accountService.createTransfer(simplifiedTransferReqDto);
     }
 }

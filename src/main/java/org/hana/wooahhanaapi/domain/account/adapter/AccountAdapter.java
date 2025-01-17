@@ -11,6 +11,8 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Service
 @Slf4j
@@ -34,26 +36,36 @@ public class AccountAdapter implements AccountCreatePort, AccountTransferPort, A
                     .build();
 
             HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-            System.out.println(response.statusCode());
-            System.out.println(response.body());
-
-            if(response.statusCode() == 400 || response.body().contains("이미 존재하는 계좌번호입니다.")) {
-                throw new DuplicateAccountException("이미 존재하는 계좌번호입니다.");
-            }
-            else {
-                return objectMapper.readValue(response.body(), AccountCreateRespDto.class);
-            }
-
+            return objectMapper.readValue(response.body(), AccountCreateRespDto.class);
         }
         catch (Exception e){
-            throw new RuntimeException(e);
+            throw new DuplicateAccountException("이미 존재하는 계좌번호입니다.");
         }
     }
 
     @Override
-    public AccountTransferRespDto createAccountTransfer(AccountTransferReqDto reqDto) {
+    public AccountTransferRespDto createAccountTransfer(SimplifiedTransferReqDto reqDto) {
         try {
-            String jsonBody = objectMapper.writeValueAsString(reqDto);
+            LocalDateTime currentDate = LocalDateTime.now();
+            DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("HH:mm");
+
+            // 날짜를 원하는 형식의 String으로 변환
+            String formattedDate = currentDate.format(formatter1);
+            String formattedTime = currentDate.format(formatter2);
+            AccountTransferReqDto accountTransferReqDto = AccountTransferReqDto.builder()
+                    .accountNumber(reqDto.getAccountNumber())
+                    .bankTranId(reqDto.getBankTranId())//하나은행:001, 우리은행:002
+                    .printContent(reqDto.getPrintContent())
+                    .tranDate(formattedDate)
+                    .tranTime(formattedTime)
+                    .inoutType(reqDto.getInoutType())
+                    .tranType("결재")
+                    .tranAmt(reqDto.getTranAmt())
+                    .branchName("우아하나")
+                    .build();
+
+            String jsonBody = objectMapper.writeValueAsString(accountTransferReqDto);
 
             HttpRequest httpRequest = HttpRequest.newBuilder()
                     .uri(URI.create("http://localhost:8000/transfer"))
@@ -63,18 +75,10 @@ public class AccountAdapter implements AccountCreatePort, AccountTransferPort, A
                     .build();
 
             HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-            System.out.println(response.statusCode());
-            System.out.println(response.body());
-            if(response.statusCode() == 400 || response.body().contains("(입출금) 잘못된 접근입니다.")) {
-                throw new TransferNotValidException("(입출금) 잘못된 접근입니다.");
-            }
-            else {
-                return objectMapper.readValue(response.body(), AccountTransferRespDto.class);
-            }
-
+            return objectMapper.readValue(response.body(), AccountTransferRespDto.class);
         }
         catch (Exception e){
-            throw new RuntimeException("Error occurred while fetching transfer records", e);
+            throw new TransferNotValidException("Error occurred while fetching transfer records");
         }
     }
 
