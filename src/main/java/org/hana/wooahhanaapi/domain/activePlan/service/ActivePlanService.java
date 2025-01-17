@@ -40,4 +40,12 @@ public class ActivePlanService {
                 .map(ActivePlanMapper::mapEntityToDomain)
                 .collect(Collectors.toList());
     }
+    @Transactional
+    public void deleteActivePlan(UUID planId) {
+        List<ActivePlanEntity> activePlan = activePlanRepository.findByPlanId(planId);
+        if (activePlan.isEmpty()) {
+            throw new EntityNotFoundException("해당 plan을 찾을 수 없습니다.");
+        }
+        activePlanRepository.deleteAll(activePlan);
+    }
 }
