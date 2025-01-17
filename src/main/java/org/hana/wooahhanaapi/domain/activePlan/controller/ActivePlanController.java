@@ -27,4 +27,10 @@ public class ActivePlanController {
         return activePlanService.getActivePlan(planId);
     }
 
+    @DeleteMapping("/{planId}")
+    public String deleteActivePlan(@PathVariable UUID planId){
+        activePlanService.deleteActivePlan(planId);
+        return "ActivePlan이 성공적으로 삭제되었습니다.";
+    }
+
 }
