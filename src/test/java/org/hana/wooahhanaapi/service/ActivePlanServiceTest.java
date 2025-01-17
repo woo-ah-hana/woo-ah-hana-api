@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +29,7 @@ public class ActivePlanServiceTest {
     void createActivePlan(){
         // given
         CreateActivePlanRequestDto requestDto = CreateActivePlanRequestDto.builder()
-                .planId(UUID.fromString("3fa85f64-5717-4562-b3fc-2c963f66afa6"))
+                .planId(UUID.randomUUID())
                 .date("2025-01-17")
                 .schedule("동화가든에서 아침 식사")
                 .time("14:00")
@@ -40,10 +41,16 @@ public class ActivePlanServiceTest {
                 .build();
 
         // when
-        UUID createActivePlanId = activePlanService.createActivePlan(requestDto);
+        UUID activePlanId = activePlanService.createActivePlan(requestDto);
+        UUID planId = requestDto.getPlanId();
+        List<ActivePlanEntity> savedPlan = activePlanRepository.findByPlanId(planId);
+
+        ActivePlanEntity savedEntity = savedPlan.get(0);
 
         // then
-        Assertions.assertNotNull(createActivePlanId);
+        Assertions.assertNotNull(activePlanId);
+        assertEquals("2025-01-17",savedEntity.getDate());
+        assertEquals("강원특별자치도 강릉시 초당순두부길77번길 15 동화가든",savedEntity.getAddress());
     }
 
     @Test
@@ -100,12 +107,12 @@ public class ActivePlanServiceTest {
         UUID failedPlanId = UUID.randomUUID();
 
         // when
-        EntityNotFoundException exception = Assertions.assertThrows(
+        EntityNotFoundException exception = assertThrows(
                 EntityNotFoundException.class,
                 () -> {
                     activePlanService.deleteActivePlan(failedPlanId);
                 });
         // then
-        Assertions.assertEquals("해당 plan을 찾을 수 없습니다.", exception.getMessage());
+        assertEquals("해당 plan을 찾을 수 없습니다.", exception.getMessage());
     }
 }
