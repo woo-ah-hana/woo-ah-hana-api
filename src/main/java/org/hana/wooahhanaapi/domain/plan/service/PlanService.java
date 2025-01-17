@@ -8,8 +8,11 @@ import org.hana.wooahhanaapi.domain.account.adapter.dto.AccountTransferRecordReq
 import org.hana.wooahhanaapi.domain.account.adapter.dto.AccountTransferRecordRespListDto;
 import org.hana.wooahhanaapi.domain.community.dto.CommunityTrsfRecordRespDto;
 import org.hana.wooahhanaapi.domain.community.entity.CommunityEntity;
+import org.hana.wooahhanaapi.domain.community.entity.MembershipEntity;
 import org.hana.wooahhanaapi.domain.community.exception.CommunityNotFoundException;
 import org.hana.wooahhanaapi.domain.community.repository.CommunityRepository;
+import org.hana.wooahhanaapi.domain.community.repository.MembershipRepository;
+import org.hana.wooahhanaapi.domain.member.entity.MemberEntity;
 import org.hana.wooahhanaapi.domain.member.repository.MemberRepository;
 import org.hana.wooahhanaapi.domain.plan.domain.Plan;
 import org.hana.wooahhanaapi.domain.plan.dto.CreatePlanRequestDto;
@@ -36,6 +39,7 @@ public class PlanService {
     private final CommunityRepository communityRepository;
     private final AccountTransferRecordPort accountTransferRecordPort;
     private final MemberRepository memberRepository;
+    private final MembershipRepository membershipRepository;
 
     public UUID createPlan(CreatePlanRequestDto dto) {
         Plan plan = Plan.create(
@@ -49,6 +53,11 @@ public class PlanService {
                 dto.getMemberIds()
         );
         return planRepository.save(PlanMapper.mapDomainToEntity(plan)).getId();
+    }
+
+    public List<String> getMembers(UUID communityId) {
+        List<MemberEntity> foundMembers = membershipRepository.findMembersByCommunityId(communityId);
+        return foundMembers.stream().map(MemberEntity::getName).collect(Collectors.toList());
     }
 
     @Transactional
