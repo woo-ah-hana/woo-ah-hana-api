@@ -22,4 +22,9 @@ public class ActivePlanController {
     public UUID createActivePlan(@RequestBody CreateActivePlanRequestDto requestDto) {
         return activePlanService.createActivePlan(requestDto);
     }
+    @GetMapping("/{planId}")
+    public List<ActivePlan> getActivePlan(@PathVariable UUID planId) {
+        return activePlanService.getActivePlan(planId);
+    }
+
 }
