@@ -45,21 +45,15 @@ public class MemberController {
                             loginRequestDto.getPassword()
                     )
             );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            String accessToken = jwtProvider.createAccessToken(loginRequestDto.getUsername(), authentication.getName());
+            String refreshToken = jwtProvider.createRefreshToken(loginRequestDto.getUsername(), authentication.getName());
+
+            return LoginResponseDto.builder().accessToken(accessToken).refreshToken(refreshToken).build();
         }catch (BadCredentialsException e){
             throw new PasswordNotMatchException("비밀번호가 일치하지 않습니다.");
         }
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequestDto.getUsername(),
-                        loginRequestDto.getPassword()
-                )
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        String accessToken = jwtProvider.createAccessToken(loginRequestDto.getUsername(), authentication.getName());
-        String refreshToken = jwtProvider.createRefreshToken(loginRequestDto.getUsername(), authentication.getName());
-
-        return LoginResponseDto.builder().accessToken(accessToken).refreshToken(refreshToken).build();
     }
 
     @GetMapping("/info")
