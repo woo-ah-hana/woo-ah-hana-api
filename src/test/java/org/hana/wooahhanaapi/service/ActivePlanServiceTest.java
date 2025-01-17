@@ -69,11 +69,14 @@ public class ActivePlanServiceTest {
                 .build();
         activePlanRepository.save(activeplanEntity);
         UUID activePlanId = activeplanEntity.getPlanId();
+
         // when
         List<ActivePlan> activePlan = activePlanService.getActivePlan(activePlanId);
-
+        ActivePlan savedEntity = activePlan.get(0);
         // then
         Assertions.assertEquals(1, activePlan.size());
+        assertEquals("2025-01-17",savedEntity.getDate());
+        assertEquals("동화가든에서 아침 식사",savedEntity.getSchedule());
     }
 
     @Test
