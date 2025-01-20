@@ -9,6 +9,7 @@ import org.hana.wooahhanaapi.domain.member.exception.DuplicateUsernameException;
 import org.hana.wooahhanaapi.domain.member.exception.UserNotFoundException;
 import org.hana.wooahhanaapi.domain.member.exception.UserNotLoginException;
 import org.hana.wooahhanaapi.domain.member.repository.MemberRepository;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -61,14 +62,20 @@ public class MemberService implements UserDetailsService {
     }
     public String getMemberName(UUID uuid) {
         try{
-            MemberEntity memberEntity1 = (MemberEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        } catch (Exception e) {
-            throw new UserNotLoginException("로그인이 안되어 있습니다");
-        }
-        try{
             return memberRepository.findById(uuid).get().getName();
         } catch (Exception e) {
             throw new MemberNotPresentException("id에 해당하는 member가 없습니다");
+        }
+    }
+
+    public String logout() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            SecurityContextHolder.clearContext();
+            return "로그아웃 성공";
+        } else {
+            throw new UserNotLoginException("로그인이 되어 있지 않습니다.");
         }
     }
 }
