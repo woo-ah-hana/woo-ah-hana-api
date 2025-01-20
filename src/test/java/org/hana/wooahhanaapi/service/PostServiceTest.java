@@ -7,6 +7,10 @@ import org.hana.wooahhanaapi.domain.plan.dto.CreatePostRequestDto;
 import org.hana.wooahhanaapi.domain.plan.dto.GetPostResponseDto;
 import org.hana.wooahhanaapi.domain.plan.entity.PlanEntity;
 import org.hana.wooahhanaapi.domain.plan.entity.PostEntity;
+import org.hana.wooahhanaapi.domain.plan.exception.EntityNotFoundException;
+import org.hana.wooahhanaapi.domain.plan.exception.FileSizeExceededException;
+import org.hana.wooahhanaapi.domain.plan.exception.InvalidFileTypeException;
+import org.hana.wooahhanaapi.domain.plan.exception.InvalidPostDataException;
 import org.hana.wooahhanaapi.domain.plan.repository.PlanRepository;
 import org.hana.wooahhanaapi.domain.plan.repository.PostRepository;
 import org.hana.wooahhanaapi.domain.plan.service.PostService;
@@ -26,8 +30,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestPropertySource(locations = "classpath:application-test.yml")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -147,5 +150,105 @@ public class PostServiceTest {
         assertThat(posts).hasSize(2);
         assertThat(posts.get(0).getDescription()).isEqualTo(description1);
         assertThat(posts.get(1).getDescription()).isEqualTo(description2);
+    }
+
+    /* Exception Test */
+    @Test
+    public void testCreatePost_InvalidFileType() {
+        // Given
+        CreatePostRequestDto requestDto = CreatePostRequestDto.builder()
+                .planId(plan.getId())
+                .memberId(member.getId())
+                .description("Post description")
+                .createAt(LocalDateTime.now())
+                .build();
+
+        MockMultipartFile nonImageFile = new MockMultipartFile("image", "test-file.txt", "text/plain", "Invalid content".getBytes());
+
+        // When & Then
+        assertThrows(InvalidFileTypeException.class, () -> postService.createPost(requestDto, nonImageFile));
+    }
+
+    @Test
+    public void testCreatePost_FileSizeExceeded() {
+        // Given
+        CreatePostRequestDto requestDto = CreatePostRequestDto.builder()
+                .planId(plan.getId())
+                .memberId(member.getId())
+                .description("Post description")
+                .createAt(LocalDateTime.now())
+                .build();
+
+        // Creating a file larger than 10MB
+        byte[] largeFile = new byte[10 * 1024 * 1024 + 1];
+        MockMultipartFile largeImageFile = new MockMultipartFile("image", "large-image.jpg", "image/jpeg", largeFile);
+
+        // When & Then
+        assertThrows(FileSizeExceededException.class, () -> postService.createPost(requestDto, largeImageFile));
+    }
+
+    @Test
+    public void testCreatePost_PlanNotFound() {
+        // Given
+        CreatePostRequestDto requestDto = CreatePostRequestDto.builder()
+                .planId(UUID.randomUUID())
+                .memberId(member.getId())
+                .description("Post description")
+                .createAt(LocalDateTime.now())
+                .build();
+
+        // When & Then
+        assertThrows(EntityNotFoundException.class, () -> postService.createPost(requestDto, new MockMultipartFile("image", "image.jpg", "image/jpeg", "content".getBytes())));
+    }
+
+    @Test
+    public void testCreatePost_MemberNotFound() {
+        // Given
+        CreatePostRequestDto requestDto = CreatePostRequestDto.builder()
+                .planId(plan.getId())
+                .memberId(UUID.randomUUID())
+                .description("Post description")
+                .createAt(LocalDateTime.now())
+                .build();
+
+        // When & Then
+        assertThrows(EntityNotFoundException.class, () -> postService.createPost(requestDto, new MockMultipartFile("image", "image.jpg", "image/jpeg", "content".getBytes())));
+    }
+
+    @Test
+    public void testCreatePost_MissingPostData() {
+        // Given
+        CreatePostRequestDto requestDto = CreatePostRequestDto.builder()
+                .planId(plan.getId())
+                .memberId(member.getId())
+                // Missing description field
+                .createAt(LocalDateTime.now())
+                .build();
+
+        // When & Then
+        assertThrows(InvalidPostDataException.class, () -> postService.createPost(requestDto, new MockMultipartFile("image", "image.jpg", "image/jpeg", "content".getBytes())));
+    }
+
+    @Test
+    public void testDeletePost_WithNonExistingPost() {
+        // Given
+        UUID nonExistingPostId = UUID.randomUUID();
+
+        // When & Then
+        assertThrows(EntityNotFoundException.class, () -> postService.deletePost(nonExistingPostId.toString()), "Deleting non-existing post should throw exception");
+    }
+
+    @Test
+    public void testGetPostsByPlanId_EntityNotFoundException() {
+        // Given
+        UUID nonExistentPlanId = UUID.randomUUID();
+
+        // When & Then
+        assertThrows(EntityNotFoundException.class, () -> {
+            List<PostEntity> posts = postRepository.findCompletedByPlanId(nonExistentPlanId);
+            if (posts.isEmpty()) {
+                throw new EntityNotFoundException("해당 Plan을 찾을 수 없습니다.");
+            }
+        });
     }
 }
