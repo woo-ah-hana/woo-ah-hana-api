@@ -6,9 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hana.wooahhanaapi.domain.activePlan.domain.ActivePlan;
-import org.hana.wooahhanaapi.domain.plan.entity.PlanEntity;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 
@@ -51,7 +49,7 @@ public class ActivePlanEntity {
     @Column(name="mapy",nullable = false)
     private String mapy;
 
-    public static ActivePlan create(UUID planId, String date, String schedule, String time, String description, String address, String link, String mapx, String mapy) {
-        return new ActivePlan(null, planId,date, schedule, time, description, address, link, mapx ,mapy);
+    public static ActivePlanEntity create(UUID id, UUID planId, String date, String schedule, String time, String description, String address, String link, String mapx, String mapy) {
+        return new ActivePlanEntity(id, planId, date, schedule, time, description, address, link, mapx ,mapy);
     }
 }
