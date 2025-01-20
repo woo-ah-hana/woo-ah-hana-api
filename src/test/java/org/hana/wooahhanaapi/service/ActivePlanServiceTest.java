@@ -30,9 +30,8 @@ public class ActivePlanServiceTest {
     @Autowired
     private ActivePlanRepository activePlanRepository;
 
-
     @BeforeAll
-    void seed(){
+    public void setUp(){
         ActivePlanEntity activeplanEntity = ActivePlanEntity.create(
                 UUID.randomUUID(),
                 UUID.randomUUID(),
