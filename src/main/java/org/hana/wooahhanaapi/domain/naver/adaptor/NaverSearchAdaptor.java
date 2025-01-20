@@ -1,12 +1,12 @@
 package org.hana.wooahhanaapi.domain.naver.adaptor;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.hana.wooahhanaapi.domain.naver.adaptor.dto.SearchResponseDto;
-import org.hana.wooahhanaapi.domain.naver.exception.EmptyResponseBodyException;
+import org.hana.wooahhanaapi.domain.naver.exception.InvalidJsonMappingException;
 import org.hana.wooahhanaapi.domain.naver.exception.InvalidSearchQueryException;
 import org.hana.wooahhanaapi.domain.naver.exception.NaverApiException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -52,8 +52,15 @@ public class NaverSearchAdaptor implements NaverSearchPort{
                 .map(future -> {
                     try {
                         return future.get();
-                    } catch (InterruptedException | ExecutionException e) {
-                        throw new RuntimeException("병렬 처리 중 오류 발생", e);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        throw new RuntimeException(e);
+                    } catch (ExecutionException e) {
+                        Throwable cause = e.getCause();
+                        if (cause instanceof NaverApiException || cause instanceof InvalidJsonMappingException) {
+                            throw (RuntimeException) cause;
+                        }
+                        throw new RuntimeException("병렬 처리 중 오류 발생", cause);
                     }
                 })
                 .collect(Collectors.toList());
@@ -73,7 +80,7 @@ public class NaverSearchAdaptor implements NaverSearchPort{
             String responseBody = get(apiURL, requestHeaders);
 
             if (responseBody == null || responseBody.isEmpty()) {
-                throw new EmptyResponseBodyException(query);
+                throw new NaverApiException("네이버 API 응답이 비어 있습니다: 검색어 [" + query + "]");
             }
 
             if (responseBody.contains("errorMessage")) {
@@ -83,8 +90,9 @@ public class NaverSearchAdaptor implements NaverSearchPort{
             ObjectMapper objectMapper = new ObjectMapper();
             return objectMapper.readValue(responseBody, SearchResponseDto.class);
 
-        } catch (IOException e) {
-            throw new NaverApiException("검색어 처리 중 문제가 발생했습니다: " + e.getMessage());
+
+        } catch (JsonProcessingException e) {
+            throw new InvalidJsonMappingException("잘못된 JSON 형식입니다: " + e.getMessage());
         } catch (NaverApiException e) {
             throw e;
         } catch (Exception e) {
