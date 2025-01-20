@@ -44,7 +44,15 @@ public class PostRepositoryTest {
     @BeforeAll
     public void setUp() {
         member = memberRepository.save(MemberEntity.create("username", "name", "password", "123456", "123-45-6789", "bank123"));
-        plan = planRepository.save(PlanEntity.create(UUID.randomUUID(), "Plan Title", LocalDateTime.now(), LocalDateTime.now().plusDays(1), "Category"));
+        plan = planRepository.save(PlanEntity.create(
+                UUID.randomUUID(),
+                "Plan Title",
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(1),
+                "Category",
+                List.of("Location 1", "Location 2"),
+                List.of(member.getId())
+        ));
     }
 
     @BeforeEach
