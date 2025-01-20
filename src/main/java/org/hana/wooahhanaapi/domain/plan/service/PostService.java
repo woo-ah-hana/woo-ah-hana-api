@@ -73,6 +73,11 @@ public class PostService {
 
     public List<GetPostResponseDto> getPostsByPlanId(UUID planId) {
         List<PostEntity> posts = postRepository.findCompletedByPlanId(planId);
+
+        if (posts.isEmpty()) {
+            throw new EntityNotFoundException("해당 Posts을 찾을 수 없습니다.");
+        }
+
         return posts.stream()
                 .map(PlanMapper::mapPostsEntityToDto)
                 .collect(Collectors.toList());
