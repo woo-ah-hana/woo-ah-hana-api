@@ -9,6 +9,6 @@ import java.util.UUID;
 
 public interface CommunityRepository extends JpaRepository<CommunityEntity, UUID> {
     List<CommunityEntity> findAllByManagerId(UUID managerId);
-    CommunityEntity findByName(String name);
+    Optional<CommunityEntity> findByName(String name);
     Optional<CommunityEntity> findByAccountNumber(String accountNumber);
 }

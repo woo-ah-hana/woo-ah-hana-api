@@ -37,4 +37,16 @@ public class CommunityEntity {
         return new CommunityEntity(null, managerId, name, accountNumber, credits, fee, feePeriod, null);
     }
 
+
+    // 기존 객체의 관리자만 수정
+    public void changeManagerId(UUID newManagerId) {
+        this.managerId = newManagerId;  // 기존 객체의 manager만 변경
+    }
+
+    // 회비 금액, 주기 수정
+    public void updateFeeInfo(Long fee, Long feePeriod) {
+        this.fee = fee;
+        this.feePeriod = feePeriod;
+    }
+
 }

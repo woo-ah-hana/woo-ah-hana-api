@@ -25,8 +25,4 @@ public class Community {
         return new Community(id, managerId, name, accountNumber, credits, fee, feePeriod);
     }
 
-    public void updateFeeInfo(Long fee, Long feePeriod) {
-        this.fee = fee;
-        this.feePeriod = feePeriod;
-    }
 }

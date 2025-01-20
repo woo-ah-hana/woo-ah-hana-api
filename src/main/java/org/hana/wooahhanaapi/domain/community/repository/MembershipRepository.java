@@ -17,4 +17,5 @@ public interface MembershipRepository extends JpaRepository<MembershipEntity, UU
     List<MemberEntity> findMembersByCommunityId(@Param("communityId") UUID communityId);
     @Query("SELECT m.community FROM MembershipEntity m WHERE m.member.id = :memberId")
     List<CommunityEntity> findCommunitiesByMemberId(@Param("memberId") UUID memberId);
+    boolean existsByMemberAndCommunity(MemberEntity member, CommunityEntity community);
 }
