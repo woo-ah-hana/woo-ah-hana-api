@@ -95,7 +95,7 @@ public class CommunityService {
     // 계주 변경
     public void changeCommunityManager(CommunityChgManagerReqDto dto) {
 
-        // 커뮤니티 찾기
+        // 모임 찾기
         CommunityEntity foundCommunity = communityRepository.findById(dto.getCommunityId())
                 .orElseThrow(() -> new CommunityNotFoundException("모임을 찾을 수 없습니다."));
 
@@ -112,7 +112,7 @@ public class CommunityService {
         // 관리자 변경 (기존 커뮤니티의 관리자 변경)
         foundCommunity.changeManagerId(foundMember.getId()); // 'setManager' 메서드는 커뮤니티의 관리자 속성을 변경한다고 가정
 
-        // 커뮤니티 저장
+        // 모임 저장
         communityRepository.save(foundCommunity);
 
     }
@@ -332,8 +332,7 @@ public class CommunityService {
     // 모임의 회비 금액, 주기 수정
     public void changeFeeInfo(CommunityChgFeeInfoReqDto dto) {
         // 현재 로그인한 사용자 정보 가져오기
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        MemberEntity userDetails = (MemberEntity) authentication.getPrincipal();
+        MemberEntity userDetails = (MemberEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         // 모임 찾고
         CommunityEntity foundCommunity = communityRepository.findById(dto.getCommunityId())
