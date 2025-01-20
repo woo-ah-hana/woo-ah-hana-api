@@ -3,6 +3,7 @@ package org.hana.wooahhanaapi.service;
 import org.hana.wooahhanaapi.domain.member.entity.MemberEntity;
 import org.hana.wooahhanaapi.domain.member.repository.MemberRepository;
 import org.hana.wooahhanaapi.domain.plan.domain.Plan;
+import org.hana.wooahhanaapi.domain.plan.dto.CreatePlanRequestDto;
 import org.hana.wooahhanaapi.domain.plan.dto.GetPlansResponseDto;
 import org.hana.wooahhanaapi.domain.plan.entity.PlanEntity;
 import org.hana.wooahhanaapi.domain.plan.repository.PlanRepository;
@@ -64,5 +65,27 @@ public class PlanServiceTest {
 
         // then
         Assertions.assertEquals(1, plan.size());
+    }
+    @Test
+    void createPlan(){
+        // given
+        List<String> locations = new ArrayList<>();
+        List<UUID> memberIds = new ArrayList<>();
+
+        CreatePlanRequestDto requestDto = CreatePlanRequestDto.builder()
+                .communityId(UUID.fromString("3fa85f64-5717-4562-b3fc-2c963f66afa6"))
+                .title("테스트 플랜")
+                .startDate(LocalDateTime.now())
+                .endDate(LocalDateTime.now().plusDays(1))
+                .locations(locations)
+                .category("shopping")
+                .memberIds(memberIds)
+                .build();
+        // when
+        UUID createPlanId = planService.createPlan(requestDto);
+
+        // then
+        Assertions.assertNotNull(createPlanId);
+
     }
 }

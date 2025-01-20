@@ -34,6 +34,7 @@ public class ActivePlanService {
         );
         return activePlanRepository.save(ActivePlanMapper.mapDomainToEntity(activePlan)).getId();
     }
+    
     public List<ActivePlan> getActivePlan(UUID planId) {
         return activePlanRepository.findByPlanId(planId)
                 .stream()
