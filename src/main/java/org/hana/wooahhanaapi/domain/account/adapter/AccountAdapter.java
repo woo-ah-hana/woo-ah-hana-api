@@ -75,6 +75,7 @@ public class AccountAdapter implements AccountCreatePort, AccountTransferPort, A
                     .build();
 
             HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+            System.out.println(response.body());
             return objectMapper.readValue(response.body(), AccountTransferRespDto.class);
         }
         catch (Exception e){
