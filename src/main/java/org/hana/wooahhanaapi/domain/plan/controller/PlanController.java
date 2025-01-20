@@ -1,6 +1,7 @@
 package org.hana.wooahhanaapi.domain.plan.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.hana.wooahhanaapi.domain.member.entity.MemberEntity;
 import org.hana.wooahhanaapi.domain.plan.domain.Plan;
 import org.hana.wooahhanaapi.domain.plan.dto.CreatePlanRequestDto;
 import org.hana.wooahhanaapi.domain.plan.dto.GetPlansResponseDto;
@@ -20,9 +21,16 @@ public class PlanController {
 
     private final PlanService planService;
 
+    // 계획 생성 폼 제출
     @PostMapping("/create")
     public UUID createPlan(@RequestBody CreatePlanRequestDto requestDto) {
         return planService.createPlan(requestDto);
+    }
+
+    // 계획 생성 버튼 누른 후 프론트엔드에 모임의 멤버 목록을 전송
+    @GetMapping("/createInfo/{communityId}")
+    public List<String> getCommunityMembers(@PathVariable UUID communityId) {
+        return planService.getMembers(communityId);
     }
 
     @DeleteMapping("/{planId}")
