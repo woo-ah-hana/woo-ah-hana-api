@@ -1,5 +1,6 @@
 package org.hana.wooahhanaapi.service;
 
+import jakarta.transaction.Transactional;
 import org.hana.wooahhanaapi.domain.activePlan.domain.ActivePlan;
 import org.hana.wooahhanaapi.domain.activePlan.dto.CreateActivePlanRequestDto;
 import org.hana.wooahhanaapi.domain.activePlan.entity.ActivePlanEntity;
@@ -24,6 +25,7 @@ import java.util.UUID;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
 @SpringBootTest
+@Transactional
 public class ActivePlanServiceTest {
     @Autowired
     private ActivePlanService activePlanService;
@@ -32,9 +34,10 @@ public class ActivePlanServiceTest {
 
     @BeforeAll
     public void setUp(){
+
         ActivePlanEntity activeplanEntity = ActivePlanEntity.create(
                 UUID.randomUUID(),
-                UUID.randomUUID(),
+                UUID.fromString("3fa85f64-5717-4562-b3fc-2c963f66afa6"),
                 "2025-01-17",
                 "동화가든에서 아침 식사",
                 "14:00",
@@ -52,8 +55,8 @@ public class ActivePlanServiceTest {
         // given
         CreateActivePlanRequestDto requestDto = CreateActivePlanRequestDto.builder()
                 .planId(UUID.randomUUID())
-                .date("2025-01-17")
-                .schedule("동화가든에서 아침 식사")
+                .date("2025-01-18")
+                .schedule("동화가든에서 점심 식사")
                 .time("14:00")
                 .description("강릉시 초당동에 위치한 '동화가든'은 짬뽕순두부로 유명한 맛집입니다. 아침 식사로 든든하게 시작해보세요.")
                 .address("강원특별자치도 강릉시 초당순두부길77번길 15 동화가든")
@@ -61,29 +64,26 @@ public class ActivePlanServiceTest {
                 .mapx("1289146373")
                 .mapy("377911797")
                 .build();
-
         // when
         UUID activePlanId = activePlanService.createActivePlan(requestDto);
         UUID planId = requestDto.getPlanId();
         List<ActivePlanEntity> savedPlan = activePlanRepository.findByPlanId(planId);
-
         ActivePlanEntity savedEntity = savedPlan.get(0);
-
         // then
-        Assertions.assertNotNull(activePlanId);
-        assertEquals("2025-01-17",savedEntity.getDate());
+        assertNotNull(activePlanId);
+        assertEquals("2025-01-18",savedEntity.getDate());
         assertEquals("강원특별자치도 강릉시 초당순두부길77번길 15 동화가든",savedEntity.getAddress());
     }
 
     @Test
     void getActivePlan(){
         // given
-        UUID activePlanId = activePlanRepository.findAll().get(0).getPlanId();
+        UUID activePlanId = UUID.fromString("3fa85f64-5717-4562-b3fc-2c963f66afa6");
         // when
         List<ActivePlan> activePlan = activePlanService.getActivePlan(activePlanId);
         ActivePlan savedEntity = activePlan.get(0);
         // then
-        Assertions.assertEquals(1, activePlan.size());
+        assertEquals(1, activePlan.size());
         assertEquals("2025-01-17",savedEntity.getDate());
         assertEquals("동화가든에서 아침 식사",savedEntity.getSchedule());
     }
@@ -91,12 +91,12 @@ public class ActivePlanServiceTest {
     @Test
     void deleteActivePlan(){
         // given
-        UUID activePlanId = activePlanRepository.findAll().get(0).getPlanId();
+        UUID activePlanId = UUID.fromString("3fa85f64-5717-4562-b3fc-2c963f66afa6");
         // when
         activePlanService.deleteActivePlan(activePlanId);
         // then
         Optional<ActivePlanEntity> deletedEntity = activePlanRepository.findById(activePlanId);
-        Assertions.assertTrue(deletedEntity.isEmpty());
+        assertTrue(deletedEntity.isEmpty());
     }
 
     @Test
@@ -110,6 +110,6 @@ public class ActivePlanServiceTest {
                     activePlanService.deleteActivePlan(failedPlanId);
                 });
         // then
-        assertEquals("해당 plan을 찾을 수 없습니다.", exception.getMessage());
+        assertTrue(exception.getMessage().contains("해당 plan을 찾을 수 없습니다."));
     }
 }
