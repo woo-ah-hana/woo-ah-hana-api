@@ -53,24 +53,24 @@ public class MemberServiceTest {
         // given
         //정상 아이디
         SignUpRequestDto request = SignUpRequestDto.builder()
-                .username("010-2653-0957")
+                .username("01026530999")
                 .password("hj1234!")
                 .name("함형주")
-                .phoneNumber("01026530957")
+                .phoneNumber("01026530999")
                 .accountNumber("3561417485843")
                 .bankTranId("002")
                 .build();
         //아이디 중복
         SignUpRequestDto request2 = SignUpRequestDto.builder()
-                .username("010-2653-0957")
+                .username("01026530999")
                 .password("hj1234!")
                 .name("함형주")
-                .phoneNumber("01026530957")
+                .phoneNumber("01026530999")
                 .accountNumber("3561417485843")
                 .bankTranId("002")
                 .build();
         // then
-        Assertions.assertEquals("010-2653-0957",memberService.signUp(request));
+        Assertions.assertEquals("01026530999",memberService.signUp(request));
         //에러 처리
         Assertions.assertThrows(DuplicateUsernameException.class, () -> memberService.signUp(request2));
     }
