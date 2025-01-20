@@ -78,7 +78,7 @@ public class AccountAdapter implements AccountCreatePort, AccountTransferPort, A
             return objectMapper.readValue(response.body(), AccountTransferRespDto.class);
         }
         catch (Exception e){
-            throw new TransferNotValidException("Error occurred while fetching transfer records");
+            throw new TransferNotValidException("거래에 실패했습니다.");
         }
     }
 
@@ -96,18 +96,10 @@ public class AccountAdapter implements AccountCreatePort, AccountTransferPort, A
                     .build();
 
             HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-            System.out.println(response.statusCode());
-            System.out.println(response.body());
-            if(response.statusCode() == 400 || response.body().contains("존재하지 않는 계좌입니다.")) {
-                throw new AccountNotFoundException("존재하지 않는 계좌입니다.");
-            }
-            else {
-                return objectMapper.readValue(response.body(), AccountTransferRecordRespDto.class);
-            }
-
+            return objectMapper.readValue(response.body(), AccountTransferRecordRespDto.class);
         }
         catch (Exception e){
-            throw new RuntimeException("Error occurred while fetching transfer", e);
+            throw new AccountNotFoundException("존재하지 않는 계좌입니다.");
         }
     }
 
@@ -154,7 +146,7 @@ public class AccountAdapter implements AccountCreatePort, AccountTransferPort, A
 
             return objectMapper.readValue(response.body(), GetAccountInfoRespDto.class);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new AccountNotFoundException("계좌 정보를 찾을 수 없습니다.");
         }
     }
 }
