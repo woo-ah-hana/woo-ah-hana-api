@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ActivePlanService {
     private final ActivePlanRepository activePlanRepository;
-
+    // TODO: 스웨거에서 id가 생성됨
     public UUID createActivePlan(CreateActivePlanRequestDto dto) {
         ActivePlan activePlan = ActivePlan.create(
                 null,
