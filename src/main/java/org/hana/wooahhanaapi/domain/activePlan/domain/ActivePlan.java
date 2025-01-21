@@ -22,6 +22,7 @@ public class ActivePlan {
     private String link;
     private String mapx;
     private String mapy;
+
     public static ActivePlan create(UUID id,UUID planId, String date,String schedule, String time, String description, String address, String link, String mapx, String mapy) {
         return new ActivePlan( id, planId,date, schedule, time, description, address, link, mapx ,mapy);
     }
