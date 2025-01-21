@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 public class PlanMapper {
     public static PlanEntity mapDomainToEntity(Plan plan) {
         return PlanEntity.builder()
+                .id(plan.getId())
                 .communityId(plan.getCommunityId())
                 .title(plan.getTitle())
                 .startDate(plan.getStartDate())

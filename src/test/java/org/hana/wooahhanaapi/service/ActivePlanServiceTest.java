@@ -7,7 +7,6 @@ import org.hana.wooahhanaapi.domain.activePlan.entity.ActivePlanEntity;
 import org.hana.wooahhanaapi.domain.activePlan.repository.ActivePlanRepository;
 import org.hana.wooahhanaapi.domain.activePlan.service.ActivePlanService;
 import org.hana.wooahhanaapi.domain.plan.exception.EntityNotFoundException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
