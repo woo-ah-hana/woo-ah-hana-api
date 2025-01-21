@@ -13,7 +13,6 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CommunityFeeStatusRespDto {
 
     private Set<CommunityFeeStatusRespListDto> paidMembers;
