@@ -20,7 +20,9 @@ import java.util.stream.Collectors;
 public class ActivePlanService {
     private final ActivePlanRepository activePlanRepository;
 
+    @Transactional
     public List<UUID> saveActivePlans(List<CreateActivePlanRequestDto> dtoList) {
+        activePlanRepository.deleteAll();
         List<ActivePlanEntity> result = new ArrayList<>();
         for (CreateActivePlanRequestDto dto : dtoList) {
             ActivePlan activePlan = ActivePlan.create(
