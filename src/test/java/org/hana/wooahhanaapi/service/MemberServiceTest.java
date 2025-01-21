@@ -50,8 +50,7 @@ public class MemberServiceTest {
 
     @Test
     void signUp() {
-        // given
-        //정상 아이디
+
         SignUpRequestDto request = SignUpRequestDto.builder()
                 .username("01026530999")
                 .password("hj1234!")
@@ -60,8 +59,8 @@ public class MemberServiceTest {
                 .accountNumber("3561417485843")
                 .bankTranId("002")
                 .build();
-        //아이디 중복
-        SignUpRequestDto request2 = SignUpRequestDto.builder()
+
+        SignUpRequestDto duplicatedRequest = SignUpRequestDto.builder()
                 .username("01026530999")
                 .password("hj1234!")
                 .name("함형주")
@@ -69,52 +68,47 @@ public class MemberServiceTest {
                 .accountNumber("3561417485843")
                 .bankTranId("002")
                 .build();
-        // then
+
         Assertions.assertEquals("01026530999",memberService.signUp(request));
-        //에러 처리
-        Assertions.assertThrows(DuplicateUsernameException.class, () -> memberService.signUp(request2));
+
+        Assertions.assertThrows(DuplicateUsernameException.class, () -> memberService.signUp(duplicatedRequest));
     }
 
     @Test
     void getMemberName() {
-        // given
         MemberEntity hj = memberRepository.findByUsername("01026530956").orElseThrow();
-        // when
+
         String result = memberService.getMemberName(hj.getId());
-        System.out.println(result);
-        // then
+
         Assertions.assertEquals("함형주",result);
-        //에러 처리
+
         UUID uuid = UUID.randomUUID();
         Assertions.assertThrows(MemberNotPresentException.class, () -> memberService.getMemberName(uuid));
     }
 
     @Test
     void logout() {
-        // given
         LoginRequestDto requestDto = new LoginRequestDto("01026530956","hj1234!");
         login(requestDto);
-        // when
+
         String result = memberService.logout();
-        // then
+
         Assertions.assertEquals("로그아웃 성공", result);
-        //에러처리
+
         Assertions.assertThrows(UserNotLoginException.class, () -> memberService.logout());
     }
 
     @Test
     void getMemberInfo() {
-        // given
         LoginRequestDto requestDto = new LoginRequestDto("01026530956","hj1234!");
         login(requestDto);
-        // when
+
         MemberResponseDto result = memberService.getMemberInfo();
-        // then
+
         Assertions.assertEquals("01026530956", result.getUsername());
     }
 
     void login(LoginRequestDto request) {
-        //when
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
