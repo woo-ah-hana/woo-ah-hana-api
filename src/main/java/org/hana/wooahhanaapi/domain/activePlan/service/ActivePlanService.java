@@ -10,6 +10,7 @@ import org.hana.wooahhanaapi.domain.activePlan.repository.ActivePlanRepository;
 import org.hana.wooahhanaapi.domain.plan.exception.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -18,6 +19,26 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ActivePlanService {
     private final ActivePlanRepository activePlanRepository;
+
+    public List<UUID> saveActivePlans(List<CreateActivePlanRequestDto> dtoList) {
+        List<ActivePlanEntity> result = new ArrayList<>();
+        for (CreateActivePlanRequestDto dto : dtoList) {
+            ActivePlan activePlan = ActivePlan.create(
+                    null,
+                    dto.getPlanId(),
+                    dto.getDate(),
+                    dto.getSchedule(),
+                    dto.getTime(),
+                    dto.getDescription(),
+                    dto.getAddress(),
+                    dto.getLink(),
+                    dto.getMapx(),
+                    dto.getMapy()
+            );
+            result.add(ActivePlanMapper.mapDomainToEntity(activePlan));
+        }
+        return result.stream().map(ActivePlanEntity::getId).collect(Collectors.toList());
+    }
 
     public UUID createActivePlan(CreateActivePlanRequestDto dto) {
         ActivePlan activePlan = ActivePlan.create(
