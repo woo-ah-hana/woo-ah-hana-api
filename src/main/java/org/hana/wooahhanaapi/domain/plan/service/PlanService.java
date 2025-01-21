@@ -15,10 +15,7 @@ import org.hana.wooahhanaapi.domain.community.repository.MembershipRepository;
 import org.hana.wooahhanaapi.domain.member.entity.MemberEntity;
 import org.hana.wooahhanaapi.domain.member.repository.MemberRepository;
 import org.hana.wooahhanaapi.domain.plan.domain.Plan;
-import org.hana.wooahhanaapi.domain.plan.dto.CreatePlanRequestDto;
-import org.hana.wooahhanaapi.domain.plan.dto.GetPlansResponseDto;
-import org.hana.wooahhanaapi.domain.plan.dto.GetReceiptResponseDto;
-import org.hana.wooahhanaapi.domain.plan.dto.UpdatePlanRequestDto;
+import org.hana.wooahhanaapi.domain.plan.dto.*;
 import org.hana.wooahhanaapi.domain.plan.entity.PlanEntity;
 import org.hana.wooahhanaapi.domain.plan.exception.EntityNotFoundException;
 import org.hana.wooahhanaapi.domain.plan.mapper.PlanMapper;
@@ -57,9 +54,13 @@ public class PlanService {
         return planRepository.save(PlanMapper.mapDomainToEntity(plan)).getId();
     }
 
-    public List<String> getMembers(UUID communityId) {
+    public List<GetMembersResponseDto> getMembers(UUID communityId) {
         List<MemberEntity> foundMembers = membershipRepository.findMembersByCommunityId(communityId);
-        return foundMembers.stream().map(MemberEntity::getName).collect(Collectors.toList());
+        return foundMembers.stream().map(
+                member -> GetMembersResponseDto.builder()
+                        .id(member.getId())
+                        .name(member.getName())
+                        .build()).toList();
     }
 
     @Transactional

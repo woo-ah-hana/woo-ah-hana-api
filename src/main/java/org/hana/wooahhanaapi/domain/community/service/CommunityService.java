@@ -10,6 +10,7 @@ import org.hana.wooahhanaapi.domain.community.entity.AutoDepositEntity;
 import org.hana.wooahhanaapi.domain.community.exception.NoAuthorityException;
 import org.hana.wooahhanaapi.domain.community.mapper.AutoDepositMapper;
 import org.hana.wooahhanaapi.domain.community.repository.AutoDepositRepository;
+import org.hana.wooahhanaapi.domain.plan.dto.GetMembersResponseDto;
 import org.hana.wooahhanaapi.utils.redis.ValidateAccountPort;
 import org.hana.wooahhanaapi.utils.redis.dto.AccountValidationConfirmDto;
 import org.hana.wooahhanaapi.utils.redis.SaveValidCodePort;
@@ -444,6 +445,14 @@ public class CommunityService {
         }catch (Exception e){
             throw new CommunityNotFoundException("모임 아이디를 찾을 수 없습니다.");
         }
+    }
 
+    public List<GetMembersResponseDto> getMembers(UUID communityId) {
+        List<MemberEntity> foundMembers = membershipRepository.findMembersByCommunityId(communityId);
+        return foundMembers.stream().map(
+                member -> GetMembersResponseDto.builder()
+                        .id(member.getId())
+                        .name(member.getName())
+                        .build()).toList();
     }
 }
