@@ -23,6 +23,7 @@ import org.hana.wooahhanaapi.domain.plan.entity.PlanEntity;
 import org.hana.wooahhanaapi.domain.plan.exception.EntityNotFoundException;
 import org.hana.wooahhanaapi.domain.plan.mapper.PlanMapper;
 import org.hana.wooahhanaapi.domain.plan.repository.PlanRepository;
+import org.hana.wooahhanaapi.domain.plan.repository.PostRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -40,6 +41,7 @@ public class PlanService {
     private final AccountTransferRecordPort accountTransferRecordPort;
     private final MemberRepository memberRepository;
     private final MembershipRepository membershipRepository;
+    private final PostRepository postRepository;
 
     public UUID createPlan(CreatePlanRequestDto dto) {
         Plan plan = Plan.create(
@@ -64,6 +66,7 @@ public class PlanService {
     public void deletePlan(String planId) {
         PlanEntity plan = planRepository.findById(UUID.fromString(planId))
                 .orElseThrow(() -> new EntityNotFoundException("해당 plan을 찾을 수 없습니다."));
+        postRepository.deleteByPlan(plan);
         planRepository.delete(plan);
     }
 
