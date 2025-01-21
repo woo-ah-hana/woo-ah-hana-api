@@ -2,6 +2,7 @@ package org.hana.wooahhanaapi.domain.community.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.hana.wooahhanaapi.domain.community.dto.*;
+import org.hana.wooahhanaapi.domain.community.dto.RegisterInCommunityRequestDto;
 import org.hana.wooahhanaapi.domain.plan.dto.GetMembersResponseDto;
 import org.hana.wooahhanaapi.utils.redis.dto.SendValidationCodeReqDto;
 import org.hana.wooahhanaapi.domain.community.service.CommunityService;
@@ -113,4 +114,8 @@ public class CommunityController {
         return this.communityService.getMembers(communityId);
     }
 
+    @PostMapping("/register")
+    public RegisterInCommunityResponseDto registerInCommunity(@RequestBody RegisterInCommunityRequestDto requestDto){
+        return this.communityService.registerInCommunity(requestDto);
+    }
 }
