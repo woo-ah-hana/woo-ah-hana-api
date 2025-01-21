@@ -2,6 +2,7 @@ package org.hana.wooahhanaapi.domain.community.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.hana.wooahhanaapi.domain.community.dto.*;
+import org.hana.wooahhanaapi.domain.plan.dto.GetMembersResponseDto;
 import org.hana.wooahhanaapi.utils.redis.dto.SendValidationCodeReqDto;
 import org.hana.wooahhanaapi.domain.community.service.CommunityService;
 import org.springframework.web.bind.annotation.*;
@@ -104,6 +105,12 @@ public class CommunityController {
     @GetMapping("/info")
     public CommunityInfoResponseDto getCommunityInfo(@RequestParam UUID communityId) {
         return this.communityService.getCommunityInfo(communityId);
+    }
+
+    //모임통장에 속한 멤버 리스트 가져오기
+    @GetMapping("/member-list/{communityId}")
+    public List<GetMembersResponseDto> getCommunityMembers(@PathVariable UUID communityId) {
+        return this.communityService.getMembers(communityId);
     }
 
 }
