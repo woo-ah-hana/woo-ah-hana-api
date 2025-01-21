@@ -22,6 +22,12 @@ public class ActivePlanController {
     public UUID createActivePlan(@RequestBody CreateActivePlanRequestDto requestDto) {
         return activePlanService.createActivePlan(requestDto);
     }
+
+    @PostMapping("/save")
+    public List<UUID> saveActivePlan(@RequestBody List<CreateActivePlanRequestDto> requestDto) {
+        return activePlanService.saveActivePlans(requestDto);
+    }
+
     @GetMapping("/{planId}")
     public List<ActivePlan> getActivePlan(@PathVariable UUID planId) {
         return activePlanService.getActivePlan(planId);
