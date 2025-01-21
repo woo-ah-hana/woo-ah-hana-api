@@ -37,7 +37,7 @@ public class ActivePlanService {
             );
             result.add(ActivePlanMapper.mapDomainToEntity(activePlan));
         }
-        return result.stream().map(ActivePlanEntity::getId).collect(Collectors.toList());
+        return this.activePlanRepository.saveAll(result).stream().map(ActivePlanEntity::getId).collect(Collectors.toList());
     }
 
     public UUID createActivePlan(CreateActivePlanRequestDto dto) {
