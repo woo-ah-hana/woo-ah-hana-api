@@ -1,5 +1,10 @@
 package org.hana.wooahhanaapi.service;
+
 import jakarta.transaction.Transactional;
+import org.hana.wooahhanaapi.domain.community.entity.CommunityEntity;
+import org.hana.wooahhanaapi.domain.community.entity.MembershipEntity;
+import org.hana.wooahhanaapi.domain.community.repository.CommunityRepository;
+import org.hana.wooahhanaapi.domain.community.repository.MembershipRepository;
 import org.hana.wooahhanaapi.domain.member.entity.MemberEntity;
 import org.hana.wooahhanaapi.domain.member.repository.MemberRepository;
 import org.hana.wooahhanaapi.domain.plan.domain.Plan;
@@ -30,24 +35,55 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 public class PlanServiceTest {
     @Autowired
+    private PlanService planService;
+    @Autowired
     private MemberRepository memberRepository;
     @Autowired
-    private PlanService planService;
+    private MembershipRepository membershipRepository;
+    @Autowired
+    private CommunityRepository communityRepository;
     @Autowired
     private PlanRepository planRepository;
 
     @BeforeAll
     public void setUp() {
-        // member
-        MemberEntity memberEntity = MemberEntity.create(
-                "010-7767-3813",
-                "윤영헌",
-                "1234",
-                "010-7767-3813",
-                "1111111111111",
-                "001"
+        //community
+        CommunityEntity community = CommunityEntity.create(
+                UUID.randomUUID(),
+                "맛집탐방",
+                "1468152645150",
+                3L,
+                200000L,
+                10L
         );
-        memberRepository.save(memberEntity);
+        communityRepository.save(community);
+
+        // member
+        MemberEntity memberEntity1 = MemberEntity.create(
+                "01026430957",
+                "함형주",
+                "1234",
+                "01026430957",
+                "3561057205496",
+                "002"
+        );
+        MemberEntity memberEntity2 = MemberEntity.create(
+                "01012345688",
+                "최선정",
+                "1234",
+                "01012345688",
+                "2150094621745",
+                "003"
+        );
+        memberRepository.save(memberEntity1);
+        memberRepository.save(memberEntity2);
+
+        MembershipEntity membership1 = MembershipEntity.create(memberEntity1, community);
+        MembershipEntity membership2 = MembershipEntity.create(memberEntity2, community);
+
+        membershipRepository.save(membership1);
+        membershipRepository.save(membership2);
+        System.out.println("Saved Community ID: " + community.getId());
 
         // plan
         List<String> locations = new ArrayList<>();
@@ -64,6 +100,20 @@ public class PlanServiceTest {
                 memberIds
         );
         planRepository.save(planEntity);
+    }
+
+    @Test
+    void getMembers() {
+        // given
+        CommunityEntity lastCommunity = communityRepository.findAll().get(communityRepository.findAll().size() - 1);
+        UUID communityId = lastCommunity.getId();
+        // when
+        List<String> memberNames = planService.getMembers(communityId);
+        // then
+        assertNotNull(memberNames);
+        assertEquals(2, memberNames.size());
+        assertTrue(memberNames.contains("함형주"));
+        assertTrue(memberNames.contains("최선정"));
     }
 
     @Test
@@ -85,7 +135,7 @@ public class PlanServiceTest {
         List<Plan> plan = planService.getPlans(UUID.fromString("3fa85f64-5717-4562-b3fc-2c963f66afa6"));
         // then
         assertEquals(1, plan.size());
-        assertEquals("aaa",plan.get(0).getCategory());
+        assertEquals("aaa", plan.get(0).getCategory());
     }
 
     @Test
@@ -186,7 +236,20 @@ public class PlanServiceTest {
         planService.updatePlan(planId, updateRequest);
         // then
         Optional<PlanEntity> updatedPlan = planRepository.findById(planId);
-        assertEquals("업데이트된 플랜",updatedPlan.get().getTitle());
-        assertEquals("meeting",updatedPlan.get().getCategory());
+        assertEquals("업데이트된 플랜", updatedPlan.get().getTitle());
+        assertEquals("meeting", updatedPlan.get().getCategory());
+    }
+
+    @Test
+    void EntityNotFoundException() {
+        // given
+        UUID planId = UUID.randomUUID();
+        // when
+        EntityNotFoundException exception = assertThrows(
+                EntityNotFoundException.class,
+                () -> planService.deletePlan(planId.toString())
+        );
+        // then
+        assertTrue(exception.getMessage().contains("해당 plan을 찾을 수 없습니다."));
     }
 }

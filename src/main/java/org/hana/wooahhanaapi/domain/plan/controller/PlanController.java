@@ -33,33 +33,38 @@ public class PlanController {
         return planService.getMembers(communityId);
     }
 
+    // plan 삭제하기
     @DeleteMapping("/{planId}")
     public String deletePlan(@PathVariable String planId){
         planService.deletePlan(planId);
         return "Plan이 성공적으로 삭제되었습니다.";
     }
-
+    // 완료되기전의 plan 상세 정보 가져오기
     @GetMapping("/{planId}")
     public GetPlansResponseDto getPlan(@PathVariable UUID planId) {
         return planService.getPlanDetail(planId);
     }
 
+    // community에 속한 모든 plan 가져오기
     @GetMapping("/list/{communityId}")
     public List<Plan> getPlans(@PathVariable UUID communityId) {
         return planService.getPlans(communityId);
     }
 
+    // plan 정보 업데이트 하기
     @PatchMapping("/update/{planId}")
     public String updatePlan(@PathVariable UUID planId, @RequestBody UpdatePlanRequestDto requestDto) {
         planService.updatePlan(planId, requestDto);
         return "Plan이 성공적으로 업데이트 되었습니다.";
     }
 
+    // 완료된 plan 가져오기
     @GetMapping("/completed/{communityId}")
     public List<Plan> getCompletedPlans(@PathVariable UUID communityId) {
         return planService.getCompletedPlans(communityId);
     }
 
+    // 영수증 조회하기
     @GetMapping("/receipt/{planId}")
     public GetReceiptResponseDto getPlanReceipt(@PathVariable UUID planId) {
         return planService.getPlanReceipt(planId);

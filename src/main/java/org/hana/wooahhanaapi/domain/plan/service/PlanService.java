@@ -83,7 +83,6 @@ public class PlanService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     public void updatePlan(UUID planId, UpdatePlanRequestDto dto) {
 
         PlanEntity existingPlanEntity = planRepository.findById(planId)
@@ -99,7 +98,6 @@ public class PlanService {
                 dto.getLocations() != null ? dto.getLocations() : existingPlanEntity.getLocations(),
                 dto.getMemberIds() != null ? dto.getMemberIds() : existingPlanEntity.getMemberIds()
         );
-
         planRepository.save(PlanMapper.mapDomainToEntity(plan));
     }
 
