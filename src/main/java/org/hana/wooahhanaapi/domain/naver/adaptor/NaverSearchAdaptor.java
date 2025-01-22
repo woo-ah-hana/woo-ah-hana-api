@@ -7,6 +7,7 @@ import org.hana.wooahhanaapi.domain.naver.adaptor.dto.SearchResponseDto;
 import org.hana.wooahhanaapi.domain.naver.exception.InvalidJsonMappingException;
 import org.hana.wooahhanaapi.domain.naver.exception.InvalidSearchQueryException;
 import org.hana.wooahhanaapi.domain.naver.exception.NaverApiException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -25,12 +26,18 @@ import java.util.stream.Collectors;
 @Service
 public class NaverSearchAdaptor implements NaverSearchPort{
 
-    private static Dotenv dotenv = Dotenv.load();
-    private static final String naverClientId = dotenv.get("NAVER_CLIENT_ID");
-    private static final String naverClientSecret = dotenv.get("NAVER_CLIENT_SECRET");
+//    private static Dotenv dotenv = Dotenv.load();
+//    private static final String naverClientId = dotenv.get("NAVER_CLIENT_ID");
+//    private static final String naverClientSecret = dotenv.get("NAVER_CLIENT_SECRET");
+//
+//
+//    private final String clientId = naverClientId;
+//    private final String clientSecret = naverClientSecret;
 
-    private final String clientId = naverClientId;
-    private final String clientSecret = naverClientSecret;
+    @Value("${NAVER_CLIENT_ID}")
+    private String clientId;
+    @Value("${NAVER_CLIENT_SECRET}")
+    private String clientSecret;
 
     @Override
     public List<SearchResponseDto> getSearchResultList(List<String> queries) {
