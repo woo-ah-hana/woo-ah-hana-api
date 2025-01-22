@@ -77,7 +77,9 @@ public class CommunityService {
                 dto.getFee(),
                 dto.getFeePeriod());
 
-        communityRepository.save(newCommunity);
+        CommunityEntity createdCommunity = communityRepository.save(newCommunity);
+        MembershipEntity newMembership = MembershipEntity.create(userDetails, createdCommunity);
+        membershipRepository.save(newMembership);
 
     }
 
