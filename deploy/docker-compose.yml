@@ -19,7 +19,7 @@ services:
     volumes:
       - ./postgresql/mount:/var/lib/postgresql/data
     environment:
-      - POSTGRES_USER=woo-ha-hana
+      - POSTGRES_USER=woo-ah-hana
       - POSTGRES_PASSWORD=woo-ah-hana
     networks:
       - api-net
