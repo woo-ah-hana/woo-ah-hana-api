@@ -123,4 +123,10 @@ public class CommunityController {
     public RegisterInCommunityResponseDto registerInCommunity(@RequestBody RegisterInCommunityRequestDto requestDto){
         return this.communityService.registerInCommunity(requestDto);
     }
+
+    @PostMapping("/quit/{communityId}")
+    public String quitFromCommunity(@PathVariable UUID communityId) {
+        this.communityService.quitFromCommunity(communityId);
+        return "success";
+    }
 }
