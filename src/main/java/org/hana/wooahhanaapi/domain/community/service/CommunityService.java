@@ -5,8 +5,10 @@ import org.hana.wooahhanaapi.domain.account.adapter.AccountTransferPort;
 import org.hana.wooahhanaapi.domain.account.adapter.AccountTransferRecordPort;
 import org.hana.wooahhanaapi.domain.account.adapter.GetAccountInfoPort;
 import org.hana.wooahhanaapi.domain.account.adapter.dto.*;
+import org.hana.wooahhanaapi.domain.account.exception.MemberNotPresentException;
 import org.hana.wooahhanaapi.domain.community.domain.AutoDeposit;
 import org.hana.wooahhanaapi.domain.community.entity.AutoDepositEntity;
+import org.hana.wooahhanaapi.domain.community.entity.MembershipEntity;
 import org.hana.wooahhanaapi.domain.community.exception.NoAuthorityException;
 import org.hana.wooahhanaapi.domain.community.mapper.AutoDepositMapper;
 import org.hana.wooahhanaapi.domain.community.repository.AutoDepositRepository;
@@ -454,5 +456,18 @@ public class CommunityService {
                         .id(member.getId())
                         .name(member.getName())
                         .build()).toList();
+    }
+
+    public RegisterInCommunityResponseDto registerInCommunity(RegisterInCommunityRequestDto requestDto) {
+        MemberEntity memberEntity = memberRepository.findById(requestDto.getMemberId())
+                .orElseThrow(() -> new MemberNotPresentException("가입된 멤버가 없습니다."));
+        CommunityEntity communityEntity = communityRepository.findById(requestDto.getCommunityId())
+                .orElseThrow(() -> new CommunityNotFoundException("모임 통장이 존재하지 않습니다."));
+        membershipRepository.save(MembershipEntity.create(memberEntity, communityEntity));
+        return RegisterInCommunityResponseDto.builder()
+                .communityName(communityEntity.getName())
+                .memberName(memberEntity.getName())
+                .success(true)
+                .build();
     }
 }
