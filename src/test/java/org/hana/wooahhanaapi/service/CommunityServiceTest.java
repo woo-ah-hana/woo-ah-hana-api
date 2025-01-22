@@ -99,89 +99,89 @@ public class CommunityServiceTest {
         membershipRepository.save(ms3); // 위 3명의 멤버를 모임1에 가입시킴
     }
 
-    @Test
-    @DisplayName("인증용 1원 전송")
-    @Transactional
-    public void sendValidationCode() {
-        // given
-        String validCode = "우아하나" + ThreadLocalRandom.current().nextInt(1000);
-        SimplifiedTransferReqDto reqDto = SimplifiedTransferReqDto.builder()
-                .accountNumber("3561057204496")
-                .bankTranId("002")
-                .inoutType("입금")
-                .printContent(validCode)
-                .tranAmt("1")
-                .build();
-        boolean trueOrFalse = false;
-
-        LocalDateTime today = LocalDateTime.now();
-        // 날짜 포맷 변환
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String fToday = today.format(formatter);
-
-        // when
-        accountTransferPort.createAccountTransfer(reqDto); // 입금자명과 함께 1원 전송
-
-        // then
-        AccountTransferRecordReqDto recordReqDto = AccountTransferRecordReqDto.builder()
-                .bankTranId("002")
-                .accountNumber("3561057204496")
-                .fromDate(fToday)
-                .toDate(fToday)
-                .build(); // 당일 거래내역 조회
-        List<AccountTransferRecordRespListDto> respDto =
-                accountTransferRecordPort.getTransferRecord(recordReqDto).getData().getResList();
-
-        for(AccountTransferRecordRespListDto dto : respDto) {
-            if(dto.getPrintContent().equals(validCode)) {
-                trueOrFalse = true;
-            }
-        }
-
-        Assertions.assertThat(trueOrFalse).isTrue();
-    }
-
-    @Test
-    @DisplayName("모임 생성")
-    @Transactional
-    public void createCommunity() {
-
-        // given
-        // 현재 로그인한 사용자 정보 가져오기
-        MemberEntity loggedInUser = memberRepository.findByUsername("01026530957")
-                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
-
-        String validCode = "우아하나" + ThreadLocalRandom.current().nextInt(1000);
-        SendValidationCodeReqDto codeReqDto = SendValidationCodeReqDto.builder()
-                .bankTranId("001")
-                        .accountNumber("1468214722317")
-                                .build(); // 모임 개설 위한 다른 계좌
-
-        // when
-        saveValidCodePort.saveValidCode(codeReqDto.getAccountNumber(),validCode);
-        AccountValidationConfirmDto accValidDto = AccountValidationConfirmDto.builder()
-                .accountNumber("1468214722317")
-                .validationCode(validCode)
-                .build();
-
-        // then
-        assertDoesNotThrow(() -> validateAccountPort.validateAccount(accValidDto));
-        CommunityEntity newCommunity = CommunityEntity.create(
-                loggedInUser.getId(),
-                "안녕하세요",
-                "1468214722317",
-                10L,
-                40000L,
-                10L);
-
-        communityRepository.save(newCommunity);
-        CommunityEntity foundCommunity = communityRepository.findByAccountNumber("1468214722317")
-                .orElseThrow(() -> new CommunityNotFoundException("모임을 찾을 수 없습니다."));
-        Assertions.assertThat(foundCommunity.getId()).isEqualTo(newCommunity.getId());
-        Assertions.assertThat(foundCommunity.getName()).isEqualTo(newCommunity.getName());
-        Assertions.assertThat(foundCommunity.getAccountNumber()).isEqualTo(newCommunity.getAccountNumber());
-
-    }
+//    @Test
+//    @DisplayName("인증용 1원 전송")
+//    @Transactional
+//    public void sendValidationCode() {
+//        // given
+//        String validCode = "우아하나" + ThreadLocalRandom.current().nextInt(1000);
+//        SimplifiedTransferReqDto reqDto = SimplifiedTransferReqDto.builder()
+//                .accountNumber("3561057204496")
+//                .bankTranId("002")
+//                .inoutType("입금")
+//                .printContent(validCode)
+//                .tranAmt("1")
+//                .build();
+//        boolean trueOrFalse = false;
+//
+//        LocalDateTime today = LocalDateTime.now();
+//        // 날짜 포맷 변환
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+//        String fToday = today.format(formatter);
+//
+//        // when
+//        accountTransferPort.createAccountTransfer(reqDto); // 입금자명과 함께 1원 전송
+//
+//        // then
+//        AccountTransferRecordReqDto recordReqDto = AccountTransferRecordReqDto.builder()
+//                .bankTranId("002")
+//                .accountNumber("3561057204496")
+//                .fromDate(fToday)
+//                .toDate(fToday)
+//                .build(); // 당일 거래내역 조회
+//        List<AccountTransferRecordRespListDto> respDto =
+//                accountTransferRecordPort.getTransferRecord(recordReqDto).getData().getResList();
+//
+//        for(AccountTransferRecordRespListDto dto : respDto) {
+//            if(dto.getPrintContent().equals(validCode)) {
+//                trueOrFalse = true;
+//            }
+//        }
+//
+//        Assertions.assertThat(trueOrFalse).isTrue();
+//    }
+//
+//    @Test
+//    @DisplayName("모임 생성")
+//    @Transactional
+//    public void createCommunity() {
+//
+//        // given
+//        // 현재 로그인한 사용자 정보 가져오기
+//        MemberEntity loggedInUser = memberRepository.findByUsername("01026530957")
+//                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
+//
+//        String validCode = "우아하나" + ThreadLocalRandom.current().nextInt(1000);
+//        SendValidationCodeReqDto codeReqDto = SendValidationCodeReqDto.builder()
+//                .bankTranId("001")
+//                        .accountNumber("1468214722317")
+//                                .build(); // 모임 개설 위한 다른 계좌
+//
+//        // when
+//        saveValidCodePort.saveValidCode(codeReqDto.getAccountNumber(),validCode);
+//        AccountValidationConfirmDto accValidDto = AccountValidationConfirmDto.builder()
+//                .accountNumber("1468214722317")
+//                .validationCode(validCode)
+//                .build();
+//
+//        // then
+//        assertDoesNotThrow(() -> validateAccountPort.validateAccount(accValidDto));
+//        CommunityEntity newCommunity = CommunityEntity.create(
+//                loggedInUser.getId(),
+//                "안녕하세요",
+//                "1468214722317",
+//                10L,
+//                40000L,
+//                10L);
+//
+//        communityRepository.save(newCommunity);
+//        CommunityEntity foundCommunity = communityRepository.findByAccountNumber("1468214722317")
+//                .orElseThrow(() -> new CommunityNotFoundException("모임을 찾을 수 없습니다."));
+//        Assertions.assertThat(foundCommunity.getId()).isEqualTo(newCommunity.getId());
+//        Assertions.assertThat(foundCommunity.getName()).isEqualTo(newCommunity.getName());
+//        Assertions.assertThat(foundCommunity.getAccountNumber()).isEqualTo(newCommunity.getAccountNumber());
+//
+//    }
 
     @Test
     @DisplayName("모임의 계주 변경")

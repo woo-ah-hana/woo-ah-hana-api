@@ -2,7 +2,7 @@ version: "3.7"
 services:
   spring:
     container_name: spring
-    image: yoonyounghun/hwachang-api
+    image: yoonyounghun/woo-ah-hana-api
     ports:
       - "8080:8080"
     volumes:

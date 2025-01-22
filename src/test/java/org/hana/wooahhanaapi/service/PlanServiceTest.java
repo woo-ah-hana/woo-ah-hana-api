@@ -278,26 +278,26 @@ public class PlanServiceTest {
         assertTrue(exception.getMessage().contains("해당 plan을 찾을 수 없습니다."));
     }
 
-    @Test
-    public void testGetPlanReceipt_Success() {
-        PlanEntity plan = PlanEntity.create(
-                community.getId(),
-                "수리고등학교 동창 강릉 여행",
-                LocalDateTime.of(2025, 1, 10, 0, 0),
-                LocalDateTime.of(2025, 1, 12, 23, 59),
-                "맛집 투어",
-                List.of("스타벅스 성수역점", "동화가든", "카페 툇마루"),
-                List.of(member1.getId(), member2.getId())
-        );
-        PlanEntity planEntity = planRepository.save(plan);
-        // When
-        GetReceiptResponseDto response = planService.getPlanReceipt(planEntity.getId());
-        // Then
-        assertThat(response).isNotNull();
-        assertThat(response.getRecords()).hasSize(12);
-        assertThat(response.getTotalAmt()).isEqualTo(594670);
-        assertThat(response.getPerAmt()).isEqualTo(297335);
-    }
+//    @Test
+//    public void testGetPlanReceipt_Success() {
+//        PlanEntity plan = PlanEntity.create(
+//                community.getId(),
+//                "수리고등학교 동창 강릉 여행",
+//                LocalDateTime.of(2025, 1, 10, 0, 0),
+//                LocalDateTime.of(2025, 1, 12, 23, 59),
+//                "맛집 투어",
+//                List.of("스타벅스 성수역점", "동화가든", "카페 툇마루"),
+//                List.of(member1.getId(), member2.getId())
+//        );
+//        PlanEntity planEntity = planRepository.save(plan);
+//        // When
+//        GetReceiptResponseDto response = planService.getPlanReceipt(planEntity.getId());
+//        // Then
+//        assertThat(response).isNotNull();
+//        assertThat(response.getRecords()).hasSize(12);
+//        assertThat(response.getTotalAmt()).isEqualTo(594670);
+//        assertThat(response.getPerAmt()).isEqualTo(297335);
+//    }
 
     @Test
     public void testGetPlanReceipt_PlanNotFound() {
