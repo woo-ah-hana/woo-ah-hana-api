@@ -19,6 +19,22 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ActivePlanService {
     private final ActivePlanRepository activePlanRepository;
+    // TODO: 스웨거에서 id가 생성됨
+    public UUID createActivePlan(CreateActivePlanRequestDto dto) {
+        ActivePlan activePlan = ActivePlan.create(
+                null,
+                dto.getPlanId(),
+                dto.getDate(),
+                dto.getSchedule(),
+                dto.getTime(),
+                dto.getDescription(),
+                dto.getAddress(),
+                dto.getLink(),
+                dto.getMapx(),
+                dto.getMapy()
+        );
+        return activePlanRepository.save(ActivePlanMapper.mapDomainToEntity(activePlan)).getId();
+    }
 
     @Transactional
     public List<UUID> saveActivePlans(List<CreateActivePlanRequestDto> dtoList) {
@@ -41,23 +57,6 @@ public class ActivePlanService {
         }
         return this.activePlanRepository.saveAll(result).stream().map(ActivePlanEntity::getId).collect(Collectors.toList());
     }
-
-    public UUID createActivePlan(CreateActivePlanRequestDto dto) {
-        ActivePlan activePlan = ActivePlan.create(
-                null,
-                dto.getPlanId(),
-                dto.getDate(),
-                dto.getSchedule(),
-                dto.getTime(),
-                dto.getDescription(),
-                dto.getAddress(),
-                dto.getLink(),
-                dto.getMapx(),
-                dto.getMapy()
-        );
-        return activePlanRepository.save(ActivePlanMapper.mapDomainToEntity(activePlan)).getId();
-    }
-    
     public List<ActivePlan> getActivePlan(UUID planId) {
         return activePlanRepository.findByPlanId(planId)
                 .stream()

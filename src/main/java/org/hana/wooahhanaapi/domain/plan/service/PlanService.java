@@ -2,13 +2,11 @@ package org.hana.wooahhanaapi.domain.plan.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.hana.wooahhanaapi.domain.account.adapter.AccountTransferPort;
 import org.hana.wooahhanaapi.domain.account.adapter.AccountTransferRecordPort;
 import org.hana.wooahhanaapi.domain.account.adapter.dto.AccountTransferRecordReqDto;
 import org.hana.wooahhanaapi.domain.account.adapter.dto.AccountTransferRecordRespListDto;
 import org.hana.wooahhanaapi.domain.community.dto.CommunityTrsfRecordRespDto;
 import org.hana.wooahhanaapi.domain.community.entity.CommunityEntity;
-import org.hana.wooahhanaapi.domain.community.entity.MembershipEntity;
 import org.hana.wooahhanaapi.domain.community.exception.CommunityNotFoundException;
 import org.hana.wooahhanaapi.domain.community.repository.CommunityRepository;
 import org.hana.wooahhanaapi.domain.community.repository.MembershipRepository;
@@ -23,7 +21,6 @@ import org.hana.wooahhanaapi.domain.plan.repository.PlanRepository;
 import org.hana.wooahhanaapi.domain.plan.repository.PostRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
@@ -87,7 +84,6 @@ public class PlanService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     public void updatePlan(UUID planId, UpdatePlanRequestDto dto) {
 
         PlanEntity existingPlanEntity = planRepository.findById(planId)
@@ -103,7 +99,6 @@ public class PlanService {
                 dto.getLocations() != null ? dto.getLocations() : existingPlanEntity.getLocations(),
                 dto.getMemberIds() != null ? dto.getMemberIds() : existingPlanEntity.getMemberIds()
         );
-
         planRepository.save(PlanMapper.mapDomainToEntity(plan));
     }
 
@@ -113,7 +108,6 @@ public class PlanService {
                 .map(PlanMapper::mapEntityToDomain)
                 .collect(Collectors.toList());
     }
-
 
     public GetReceiptResponseDto getPlanReceipt(UUID planId) {
         PlanEntity plan = planRepository.findById(planId)
@@ -128,7 +122,6 @@ public class PlanService {
                 .fromDate(plan.getStartDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .toDate(plan.getEndDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .build();
-
 
         List<AccountTransferRecordRespListDto> resultData = accountTransferRecordPort.getTransferRecord(reqDto)
                 .getData().getResList();
@@ -146,16 +139,16 @@ public class PlanService {
                 )).collect(Collectors.toList());
 
         long totalAmt = records.stream()
+                .filter(record -> "출금".equals(record.getInoutType()))
                 .mapToLong(record -> Long.parseLong(record.getTranAmt()))
                 .sum();
 
         long perAmt = (plan.getMemberIds().isEmpty()) ? 0 : totalAmt / plan.getMemberIds().size();
 
         return GetReceiptResponseDto.builder()
-                .records(records) // 거래 기록 리스트
-                .totalAmt(totalAmt) // 총 소비액
-                .perAmt(perAmt) // 1인당 소비액
+                .records(records)
+                .totalAmt(totalAmt)
+                .perAmt(perAmt)
                 .build();
     }
-
 }
