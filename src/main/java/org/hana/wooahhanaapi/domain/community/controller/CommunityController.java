@@ -108,6 +108,11 @@ public class CommunityController {
         return this.communityService.getCommunityInfo(communityId);
     }
 
+    // 모임 전체 정보 반환
+    @GetMapping("/{communityId}")
+    public CommunityFullInfoResponseDto getCommunityFullInfo(@PathVariable UUID communityId) {
+        return this.communityService.getCommunityFullInfo(communityId);
+    }
     //모임통장에 속한 멤버 리스트 가져오기
     @GetMapping("/member-list/{communityId}")
     public List<GetMembersResponseDto> getCommunityMembers(@PathVariable UUID communityId) {

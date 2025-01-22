@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.hana.wooahhanaapi.domain.account.adapter.GetAccountInfoPort;
 import org.hana.wooahhanaapi.domain.account.adapter.dto.GetAccountInfoReqDto;
 import org.hana.wooahhanaapi.domain.account.exception.MemberNotPresentException;
+import org.hana.wooahhanaapi.domain.member.dto.ChangePasswordReqDto;
 import org.hana.wooahhanaapi.domain.member.dto.MemberResponseDto;
 import org.hana.wooahhanaapi.domain.member.dto.MyAccountResponseDto;
 import org.hana.wooahhanaapi.domain.member.dto.SignUpRequestDto;
