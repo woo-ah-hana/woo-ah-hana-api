@@ -106,4 +106,9 @@ public class CommunityController {
         return this.communityService.getCommunityInfo(communityId);
     }
 
+    // 모임 전체 정보 반환
+    @GetMapping("/{communityId}")
+    public CommunityFullInfoResponseDto getCommunityFullInfo(@PathVariable UUID communityId) {
+        return this.communityService.getCommunityFullInfo(communityId);
+    }
 }
