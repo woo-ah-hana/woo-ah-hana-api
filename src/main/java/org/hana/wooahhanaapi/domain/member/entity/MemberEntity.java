@@ -84,4 +84,9 @@ public class MemberEntity implements UserDetails {
         this.bankTranId = bankTranId;
     }
 
+    public void updatePassword(String password) {
+        this.password = password;
+    }
+
+
 }

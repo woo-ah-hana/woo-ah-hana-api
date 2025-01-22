@@ -74,4 +74,9 @@ public class MemberController {
     public String getMemberName(@RequestParam(required = false) UUID id) {
         return this.memberService.getMemberName(id);
     }
+
+    @PostMapping("/changePassword")
+    public String changePassword(@RequestBody ChangePasswordReqDto reqDto) {
+        return this.memberService.changePassword(reqDto);
+    }
 }
