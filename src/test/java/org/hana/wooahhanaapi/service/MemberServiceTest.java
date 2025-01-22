@@ -79,7 +79,7 @@ public class MemberServiceTest {
 
     @Test
     void getMemberName() {
-        MemberEntity hj = memberRepository.findByUsername("01026530956").orElseThrow();
+        MemberEntity hj = memberRepository.findByUsername("01026530957").orElseThrow();
 
         String result = memberService.getMemberName(hj.getId());
 
@@ -91,7 +91,7 @@ public class MemberServiceTest {
 
     @Test
     void logout() {
-        LoginRequestDto requestDto = new LoginRequestDto("01026530956","hj1234!");
+        LoginRequestDto requestDto = new LoginRequestDto("01026530957","hj1234!");
         login(requestDto);
 
         String result = memberService.logout();
@@ -103,12 +103,12 @@ public class MemberServiceTest {
 
     @Test
     void getMemberInfo() {
-        LoginRequestDto requestDto = new LoginRequestDto("01026530956","hj1234!");
+        LoginRequestDto requestDto = new LoginRequestDto("01026530957","hj1234!");
         login(requestDto);
 
         MemberResponseDto result = memberService.getMemberInfo();
 
-        Assertions.assertEquals("01026530956", result.getUsername());
+        Assertions.assertEquals("01026530957", result.getUsername());
     }
 
     @Test

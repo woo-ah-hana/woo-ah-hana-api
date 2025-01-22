@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 public class PasswordNotSatisfyCondException extends GlobalException {
 
-    private final HttpStatus httpStatus = HttpStatus.UNAUTHORIZED;
+    private final HttpStatus httpStatus = HttpStatus.FORBIDDEN;
 
     private final String exceptionName = "Password Not Satisfy Condition Exception";
 
