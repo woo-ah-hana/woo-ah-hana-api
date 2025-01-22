@@ -24,4 +24,5 @@ public class CreatePlanRequestDto {
     private String category;
     private List<String> locations;
     private List<UUID> memberIds;
+
 }
