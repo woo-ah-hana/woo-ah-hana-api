@@ -45,9 +45,9 @@ services:
     environment:
       - FAST_DB_HOST=db
       - FAST_DB_PORT=5432
-      - FAST_POSTGRES_USER=woo-ha-hana
-      - FAST_POSTGRES_DATABASE_NAME=woo-ha-hana
-      - FAST_POSTGRES_PASSWORD=woo-ha-hana
+      - FAST_POSTGRES_USER=woo-ah-hana
+      - FAST_POSTGRES_DATABASE_NAME=woo-ah-hana
+      - FAST_POSTGRES_PASSWORD=woo-ah-hana
 
 networks:
   api-net:
