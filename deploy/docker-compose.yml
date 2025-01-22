@@ -10,6 +10,9 @@ services:
     depends_on:
       - redis
       - db
+    environment:
+      - NAVER_CLIENT_ID=${NAVER_CLIENT_ID}
+      - NAVER_CLIENT_SECRET=${NAVER_CLIENT_SECRET}
     networks:
       - api-net
   db:
