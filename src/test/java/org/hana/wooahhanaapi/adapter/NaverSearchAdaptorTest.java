@@ -69,33 +69,33 @@ public class NaverSearchAdaptorTest {
                 "유효하지 않은 검색어 예외가 발생해야 합니다.");
     }
 
-    @Test
-    void testGetSearchResultList_InvalidJsonMapping() {
-        // given
-        List<String> queries = Arrays.asList("강남 카페", "강릉 레스토랑");
-
-        // 조건: SearchResponseDto가 응답값과 다른 경우
-        // SearchResponseDto를 실제 네이버 api 응답값과 다르게 설정해야 테스트 가능
-        //ex) items -> item으로 변경
-
-        // when & then
-        Assertions.assertThrows(InvalidJsonMappingException.class,
-                () -> naverSearchAdaptor.getSearchResultList(queries),
-                "잘못된 JSON 맵핑예외가 발생해야 합니다.");
-    }
-
-
-    @Test
-    void testGetSearchResult_ApiError() {
-        // given
-        List<String> queries = Arrays.asList("강남 카페", "강릉 레스토랑");
-
-        // 조건: NAVER API Key가 잘못된 경우
-        // application-test.yml에서 클라이언트 ID/Secret을 빈값 또는 잘못된 값으로 설정해야 테스트 가능
-
-        // when & then
-        Assertions.assertThrows(NaverApiException.class,
-                () -> naverSearchAdaptor.getSearchResultList(queries),
-                "API 오류 예외가 발생해야 합니다.");
-    }
+//    @Test
+//    void testGetSearchResultList_InvalidJsonMapping() {
+//        // given
+//        List<String> queries = Arrays.asList("강남 카페", "강릉 레스토랑");
+//
+//        // 조건: SearchResponseDto가 응답값과 다른 경우
+//        // SearchResponseDto를 실제 네이버 api 응답값과 다르게 설정해야 테스트 가능
+//        //ex) items -> item으로 변경
+//
+//        // when & then
+//        Assertions.assertThrows(InvalidJsonMappingException.class,
+//                () -> naverSearchAdaptor.getSearchResultList(queries),
+//                "잘못된 JSON 맵핑예외가 발생해야 합니다.");
+//    }
+//
+//
+//    @Test
+//    void testGetSearchResult_ApiError() {
+//        // given
+//        List<String> queries = Arrays.asList("강남 카페", "강릉 레스토랑");
+//
+//        // 조건: NAVER API Key가 잘못된 경우
+//        // application-test.yml에서 클라이언트 ID/Secret을 빈값 또는 잘못된 값으로 설정해야 테스트 가능
+//
+//        // when & then
+//        Assertions.assertThrows(NaverApiException.class,
+//                () -> naverSearchAdaptor.getSearchResultList(queries),
+//                "API 오류 예외가 발생해야 합니다.");
+//    }
 }

@@ -16,7 +16,6 @@ import org.hana.wooahhanaapi.domain.community.exception.NoAuthorityException;
 import org.hana.wooahhanaapi.domain.community.repository.CommunityRepository;
 import org.hana.wooahhanaapi.domain.community.repository.MembershipRepository;
 import org.hana.wooahhanaapi.domain.community.service.CommunityService;
-import org.hana.wooahhanaapi.domain.member.dto.ChangePasswordReqDto;
 import org.hana.wooahhanaapi.domain.member.entity.MemberEntity;
 import org.hana.wooahhanaapi.domain.member.exception.UserNotFoundException;
 import org.hana.wooahhanaapi.domain.member.repository.MemberRepository;
@@ -103,7 +102,7 @@ public class CommunityServiceTest {
     @Test
     @DisplayName("인증용 1원 전송")
     @Transactional
-    public void sendValidationCodeTest() {
+    public void sendValidationCode() {
         // given
         String validCode = "우아하나" + ThreadLocalRandom.current().nextInt(1000);
         SimplifiedTransferReqDto reqDto = SimplifiedTransferReqDto.builder()
@@ -145,7 +144,7 @@ public class CommunityServiceTest {
     @Test
     @DisplayName("모임 생성")
     @Transactional
-    public void createCommunityTest() {
+    public void createCommunity() {
 
         // given
         // 현재 로그인한 사용자 정보 가져오기
@@ -187,7 +186,7 @@ public class CommunityServiceTest {
     @Test
     @DisplayName("모임의 계주 변경")
     @Transactional
-    public void changeManagerTest() {
+    public void changeManager() {
 
         // given
         CommunityEntity foundCommunity = communityRepository.findByAccountNumber("1468299555144")
@@ -215,7 +214,7 @@ public class CommunityServiceTest {
     @Test
     @DisplayName("회비 납입 여부 체크")
     @Transactional
-    public void checkFeeStatusTest() {
+    public void checkFeeStatus() {
         // given
         MemberEntity hj = memberRepository.findByUsername("01026530957")
                 .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
@@ -257,7 +256,7 @@ public class CommunityServiceTest {
     @DisplayName("모임의 회비 금액, 주기 수정")
     @Transactional
     //@WithMockUser(username = "01026530957")  // 로그인한 사용자 모킹
-    public void changeFeeInfoTest() {
+    public void changeFeeInfo() {
         // case 1 : 계주가 변경 시도
         // given
         MemberEntity hj = memberRepository.findByUsername("01026530957") // 함형주 : 계주
@@ -307,4 +306,6 @@ public class CommunityServiceTest {
         // 허가되지 않은 회원이므로 예외가 발생해야 함
 
     }
+
+
 }

@@ -51,23 +51,6 @@ public class PostServiceTest {
     @Autowired
     private MemberRepository memberRepository;
 
-    private PlanEntity plan;
-    private MemberEntity member;
-
-    @BeforeAll
-    public void setUp() {
-        member = memberRepository.save(MemberEntity.create("username", "name", "password", "123456", "123-45-6789", "bank123"));
-        plan = planRepository.save(PlanEntity.create(
-                UUID.randomUUID(),
-                "Plan Title",
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(1),
-                "Category",
-                List.of("Location 1", "Location 2"),
-                List.of(member.getId())
-        ));
-    }
-
     @BeforeEach
     public void cleanUp() {
         postRepository.deleteAll();
@@ -76,6 +59,17 @@ public class PostServiceTest {
     @Test
     public void testCreatePost() throws IOException {
         // Given
+        MemberEntity member = memberRepository.save(MemberEntity.create("username", "name", "password", "123456", "123-45-6789", "bank123"));
+        PlanEntity plan = planRepository.save(PlanEntity.create(
+                UUID.randomUUID(),
+                "Plan Title",
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(1),
+                "Category",
+                List.of("Location 1", "Location 2"),
+                List.of(member.getId())
+        ));
+
         String description = "Post description";
         CreatePostRequestDto requestDto = CreatePostRequestDto.builder()
                 .planId(plan.getId())
@@ -99,6 +93,17 @@ public class PostServiceTest {
     @Test
     public void testDeletePost() throws IOException {
         // Given
+        MemberEntity member = memberRepository.save(MemberEntity.create("username", "name", "password", "123456", "123-45-6789", "bank123"));
+        PlanEntity plan = planRepository.save(PlanEntity.create(
+                UUID.randomUUID(),
+                "Plan Title",
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(1),
+                "Category",
+                List.of("Location 1", "Location 2"),
+                List.of(member.getId())
+        ));
+
         String description = "Post to delete";
         CreatePostRequestDto requestDto = CreatePostRequestDto.builder()
                 .planId(plan.getId())
@@ -121,6 +126,17 @@ public class PostServiceTest {
     @Test
     public void testGetPostsByPlanId() throws IOException {
         // Given
+        MemberEntity member = memberRepository.save(MemberEntity.create("username1", "name1", "password1", "1234567", "123-45-678910", "bank1234"));
+        PlanEntity plan = planRepository.save(PlanEntity.create(
+                UUID.randomUUID(),
+                "Plan Title",
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(1),
+                "Category",
+                List.of("Location 1", "Location 2"),
+                List.of(member.getId())
+        ));
+
         String description1 = "Post 1 description";
         CreatePostRequestDto requestDto1 = CreatePostRequestDto.builder()
                 .planId(plan.getId())
@@ -156,6 +172,17 @@ public class PostServiceTest {
     @Test
     public void testCreatePost_InvalidFileType() {
         // Given
+        MemberEntity member = memberRepository.save(MemberEntity.create("username", "name", "password", "123456", "123-45-6789", "bank123"));
+        PlanEntity plan = planRepository.save(PlanEntity.create(
+                UUID.randomUUID(),
+                "Plan Title",
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(1),
+                "Category",
+                List.of("Location 1", "Location 2"),
+                List.of(member.getId())
+        ));
+
         CreatePostRequestDto requestDto = CreatePostRequestDto.builder()
                 .planId(plan.getId())
                 .memberId(member.getId())
@@ -172,6 +199,17 @@ public class PostServiceTest {
     @Test
     public void testCreatePost_FileSizeExceeded() {
         // Given
+        MemberEntity member = memberRepository.save(MemberEntity.create("username", "name", "password", "123456", "123-45-6789", "bank123"));
+        PlanEntity plan = planRepository.save(PlanEntity.create(
+                UUID.randomUUID(),
+                "Plan Title",
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(1),
+                "Category",
+                List.of("Location 1", "Location 2"),
+                List.of(member.getId())
+        ));
+
         CreatePostRequestDto requestDto = CreatePostRequestDto.builder()
                 .planId(plan.getId())
                 .memberId(member.getId())
@@ -190,6 +228,17 @@ public class PostServiceTest {
     @Test
     public void testCreatePost_PlanNotFound() {
         // Given
+        MemberEntity member = memberRepository.save(MemberEntity.create("username", "name", "password", "123456", "123-45-6789", "bank123"));
+        PlanEntity plan = planRepository.save(PlanEntity.create(
+                UUID.randomUUID(),
+                "Plan Title",
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(1),
+                "Category",
+                List.of("Location 1", "Location 2"),
+                List.of(member.getId())
+        ));
+
         CreatePostRequestDto requestDto = CreatePostRequestDto.builder()
                 .planId(UUID.randomUUID())
                 .memberId(member.getId())
@@ -204,6 +253,17 @@ public class PostServiceTest {
     @Test
     public void testCreatePost_MemberNotFound() {
         // Given
+        MemberEntity member = memberRepository.save(MemberEntity.create("username", "name", "password", "123456", "123-45-6789", "bank123"));
+        PlanEntity plan = planRepository.save(PlanEntity.create(
+                UUID.randomUUID(),
+                "Plan Title",
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(1),
+                "Category",
+                List.of("Location 1", "Location 2"),
+                List.of(member.getId())
+        ));
+
         CreatePostRequestDto requestDto = CreatePostRequestDto.builder()
                 .planId(plan.getId())
                 .memberId(UUID.randomUUID())
@@ -218,6 +278,17 @@ public class PostServiceTest {
     @Test
     public void testCreatePost_MissingPostData() {
         // Given
+        MemberEntity member = memberRepository.save(MemberEntity.create("username", "name", "password", "123456", "123-45-6789", "bank123"));
+        PlanEntity plan = planRepository.save(PlanEntity.create(
+                UUID.randomUUID(),
+                "Plan Title",
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(1),
+                "Category",
+                List.of("Location 1", "Location 2"),
+                List.of(member.getId())
+        ));
+
         CreatePostRequestDto requestDto = CreatePostRequestDto.builder()
                 .planId(plan.getId())
                 .memberId(member.getId())
