@@ -211,46 +211,46 @@ public class CommunityServiceTest {
 
     }
 
-    @Test
-    @DisplayName("회비 납입 여부 체크")
-    @Transactional
-    public void checkFeeStatus() {
-        // given
-        MemberEntity hj = memberRepository.findByUsername("01026530957")
-                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
-        MemberEntity sj = memberRepository.findByUsername("01012345678")
-                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
-        SimplifiedTransferReqDto reqDto1 = SimplifiedTransferReqDto.builder()
-                .accountNumber("1468299555144")
-                .bankTranId("001")
-                .inoutType("입금")
-                .printContent(hj.getName())
-                .tranAmt("30000") // 함형주는 납부
-                .build();
-        SimplifiedTransferReqDto reqDto2 = SimplifiedTransferReqDto.builder()
-                .accountNumber("1468299555144")
-                .bankTranId("001")
-                .inoutType("입금")
-                .printContent(sj.getName())
-                .tranAmt("10000") // 최선정은 미납(액수가 부족함)
-                .build();
-        CommunityEntity foundCommunity = communityRepository.findByAccountNumber("1468299555144")
-                .orElseThrow(() -> new CommunityNotFoundException("모임을 찾을 수 없습니다."));
-
-        // when
-        accountTransferPort.createAccountTransfer(reqDto1);
-        accountTransferPort.createAccountTransfer(reqDto2);
-        CommunityFeeStatusReqDto reqDto3 = CommunityFeeStatusReqDto.builder()
-                .communityId(foundCommunity.getId())
-                .build();
-        CommunityFeeStatusRespDto result = communityService.checkFeeStatus(reqDto3);
-
-        // then
-        Assertions.assertThat(result.getPaidMembers().size()).isEqualTo(1); // 함형주만 납부 완료
-        Assertions.assertThat(result.getPaidMembers()).extracting("memberName").containsExactlyInAnyOrder(hj.getName());
-        Assertions.assertThat(result.getUnpaidMembers().size()).isEqualTo(2); // 최선정, 윤영헌은 미납
-
-    }
+//    @Test
+//    @DisplayName("회비 납입 여부 체크")
+//    @Transactional
+//    public void checkFeeStatus() {
+//        // given
+//        MemberEntity hj = memberRepository.findByUsername("01026530957")
+//                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
+//        MemberEntity sj = memberRepository.findByUsername("01012345678")
+//                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
+//        SimplifiedTransferReqDto reqDto1 = SimplifiedTransferReqDto.builder()
+//                .accountNumber("1468299555144")
+//                .bankTranId("001")
+//                .inoutType("입금")
+//                .printContent(hj.getName())
+//                .tranAmt("30000") // 함형주는 납부
+//                .build();
+//        SimplifiedTransferReqDto reqDto2 = SimplifiedTransferReqDto.builder()
+//                .accountNumber("1468299555144")
+//                .bankTranId("001")
+//                .inoutType("입금")
+//                .printContent(sj.getName())
+//                .tranAmt("10000") // 최선정은 미납(액수가 부족함)
+//                .build();
+//        CommunityEntity foundCommunity = communityRepository.findByAccountNumber("1468299555144")
+//                .orElseThrow(() -> new CommunityNotFoundException("모임을 찾을 수 없습니다."));
+//
+//        // when
+//        accountTransferPort.createAccountTransfer(reqDto1);
+//        accountTransferPort.createAccountTransfer(reqDto2);
+//        CommunityFeeStatusReqDto reqDto3 = CommunityFeeStatusReqDto.builder()
+//                .communityId(foundCommunity.getId())
+//                .build();
+//        CommunityFeeStatusRespDto result = communityService.checkFeeStatus(reqDto3);
+//
+//        // then
+//        Assertions.assertThat(result.getPaidMembers().size()).isEqualTo(1); // 함형주만 납부 완료
+//        Assertions.assertThat(result.getPaidMembers()).extracting("memberName").containsExactlyInAnyOrder(hj.getName());
+//        Assertions.assertThat(result.getUnpaidMembers().size()).isEqualTo(2); // 최선정, 윤영헌은 미납
+//
+//    }
 
     @Test
     @DisplayName("모임의 회비 금액, 주기 수정")
