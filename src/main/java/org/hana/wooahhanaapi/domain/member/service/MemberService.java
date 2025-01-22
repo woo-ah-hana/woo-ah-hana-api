@@ -4,16 +4,16 @@ import lombok.RequiredArgsConstructor;
 import org.hana.wooahhanaapi.domain.account.adapter.GetAccountInfoPort;
 import org.hana.wooahhanaapi.domain.account.adapter.dto.GetAccountInfoReqDto;
 import org.hana.wooahhanaapi.domain.account.exception.MemberNotPresentException;
-import org.hana.wooahhanaapi.domain.member.dto.ChangePasswordReqDto;
-import org.hana.wooahhanaapi.domain.member.dto.MemberResponseDto;
-import org.hana.wooahhanaapi.domain.member.dto.MyAccountResponseDto;
-import org.hana.wooahhanaapi.domain.member.dto.SignUpRequestDto;
+import org.hana.wooahhanaapi.domain.member.dto.*;
 import org.hana.wooahhanaapi.domain.member.entity.MemberEntity;
-import org.hana.wooahhanaapi.domain.member.exception.DuplicateUsernameException;
-import org.hana.wooahhanaapi.domain.member.exception.PasswordNotSatisfyCondException;
-import org.hana.wooahhanaapi.domain.member.exception.UserNotFoundException;
-import org.hana.wooahhanaapi.domain.member.exception.UserNotLoginException;
+import org.hana.wooahhanaapi.domain.member.exception.*;
 import org.hana.wooahhanaapi.domain.member.repository.MemberRepository;
+import org.hana.wooahhanaapi.utils.security.JwtProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,8 +33,8 @@ public class MemberService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final GetAccountInfoPort getAccountInfoPort;
 
-    private static final String passwordPattern = "^(?=.*[a-z])(?=.*\\d)(?=.*[!@#$%^&*])[a-zA-Z\\d!@#$%^&*]{8,}$\n";
-    public static final Pattern pattern = Pattern.compile(passwordPattern);
+    private static final String passwordPattern = "^(?=.*[a-z])(?=.*\\d)(?=.*[!@#$%^&*])[a-zA-Z\\d!@#$%^&*]{8,}$";
+    private static final Pattern pattern = Pattern.compile(passwordPattern);
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -115,7 +115,7 @@ public class MemberService implements UserDetailsService {
         MemberEntity memberEntity = (MemberEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Matcher matcher = pattern.matcher(reqDto.getNewPassword());
         if(matcher.matches()) {
-            memberEntity.updatePassword(reqDto.getNewPassword());
+            memberEntity.updatePassword(passwordEncoder.encode(reqDto.getNewPassword()));
             memberRepository.save(memberEntity);
         }
         else {
