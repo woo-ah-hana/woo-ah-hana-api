@@ -14,7 +14,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-//@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CommunityCreateReqDto {
 
     @NotBlank

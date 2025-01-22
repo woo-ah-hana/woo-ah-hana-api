@@ -13,14 +13,12 @@ import org.hana.wooahhanaapi.domain.community.repository.MembershipRepository;
 import org.hana.wooahhanaapi.domain.member.entity.MemberEntity;
 import org.hana.wooahhanaapi.domain.member.repository.MemberRepository;
 import org.hana.wooahhanaapi.domain.plan.domain.Plan;
-import org.hana.wooahhanaapi.domain.plan.dto.CreatePlanRequestDto;
-import org.hana.wooahhanaapi.domain.plan.dto.GetPlansResponseDto;
-import org.hana.wooahhanaapi.domain.plan.dto.GetReceiptResponseDto;
-import org.hana.wooahhanaapi.domain.plan.dto.UpdatePlanRequestDto;
+import org.hana.wooahhanaapi.domain.plan.dto.*;
 import org.hana.wooahhanaapi.domain.plan.entity.PlanEntity;
 import org.hana.wooahhanaapi.domain.plan.exception.EntityNotFoundException;
 import org.hana.wooahhanaapi.domain.plan.mapper.PlanMapper;
 import org.hana.wooahhanaapi.domain.plan.repository.PlanRepository;
+import org.hana.wooahhanaapi.domain.plan.repository.PostRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
@@ -37,6 +35,7 @@ public class PlanService {
     private final AccountTransferRecordPort accountTransferRecordPort;
     private final MemberRepository memberRepository;
     private final MembershipRepository membershipRepository;
+    private final PostRepository postRepository;
 
     public UUID createPlan(CreatePlanRequestDto dto) {
         Plan plan = Plan.create(
@@ -52,15 +51,20 @@ public class PlanService {
         return planRepository.save(PlanMapper.mapDomainToEntity(plan)).getId();
     }
 
-    public List<String> getMembers(UUID communityId) {
+    public List<GetMembersResponseDto> getMembers(UUID communityId) {
         List<MemberEntity> foundMembers = membershipRepository.findMembersByCommunityId(communityId);
-        return foundMembers.stream().map(MemberEntity::getName).collect(Collectors.toList());
+        return foundMembers.stream().map(
+                member -> GetMembersResponseDto.builder()
+                        .id(member.getId())
+                        .name(member.getName())
+                        .build()).toList();
     }
 
     @Transactional
     public void deletePlan(String planId) {
         PlanEntity plan = planRepository.findById(UUID.fromString(planId))
                 .orElseThrow(() -> new EntityNotFoundException("해당 plan을 찾을 수 없습니다."));
+        postRepository.deleteByPlan(plan);
         planRepository.delete(plan);
     }
 

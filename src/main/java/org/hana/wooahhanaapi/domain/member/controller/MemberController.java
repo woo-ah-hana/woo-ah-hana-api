@@ -1,13 +1,12 @@
 package org.hana.wooahhanaapi.domain.member.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.hana.wooahhanaapi.domain.community.exception.NotAMemberException;
 import org.hana.wooahhanaapi.domain.member.dto.LoginResponseDto;
 import org.hana.wooahhanaapi.domain.member.dto.MemberResponseDto;
 import org.hana.wooahhanaapi.domain.member.dto.SignUpRequestDto;
 import org.hana.wooahhanaapi.domain.member.dto.LoginRequestDto;
+import org.hana.wooahhanaapi.domain.member.dto.*;
 import org.hana.wooahhanaapi.domain.member.exception.PasswordNotMatchException;
-import org.hana.wooahhanaapi.domain.member.exception.UserNotFoundException;
 import org.hana.wooahhanaapi.domain.member.service.MemberService;
 import org.hana.wooahhanaapi.utils.security.JwtProvider;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -56,9 +55,19 @@ public class MemberController {
         }
     }
 
+    @GetMapping("/logout")
+    public String logout(){
+        return memberService.logout();
+    }
+
     @GetMapping("/info")
     public MemberResponseDto getMemberInfo(){
         return this.memberService.getMemberInfo();
+    }
+
+    @GetMapping("/my-account/info")
+    public MyAccountResponseDto getMyAccountInfo(){
+        return this.memberService.getMyAccountInfo();
     }
 
     @GetMapping("/name")

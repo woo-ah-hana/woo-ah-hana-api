@@ -1,0 +1,54 @@
+version: "3.7"
+services:
+  spring:
+    container_name: spring
+    image: yoonyounghun/hwachang-api
+    ports:
+      - "8080:8080"
+    volumes:
+      - /var/log/:/logs/
+    depends_on:
+      - redis
+      - db
+    networks:
+      - api-net
+  db:
+    image: postgres:16
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./postgresql/mount:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=woo-ha-hana
+      - POSTGRES_PASSWORD=woo-ah-hana
+    networks:
+      - api-net
+  redis:
+    image: redis:latest
+    ports:
+      - '6379:6379'
+    networks:
+      - api-net
+  account:
+    image: yoonyounghun/woo-ah-account:latest
+    command: uvicorn main:app --host 0.0.0.0 --port 8000
+    ports:
+      - '8000:8000'
+    depends_on:
+      - db
+      - redis
+    restart: always
+    networks:
+      - api-net
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    environment:
+      - FAST_DB_HOST=db
+      - FAST_DB_PORT=5432
+      - FAST_POSTGRES_USER=woo-ha-hana
+      - FAST_POSTGRES_DATABASE_NAME=woo-ha-hana
+      - FAST_POSTGRES_PASSWORD=woo-ha-hana
+
+networks:
+  api-net:
+    driver: bridge

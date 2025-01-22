@@ -9,19 +9,22 @@ import org.hana.wooahhanaapi.domain.community.repository.MembershipRepository;
 import org.hana.wooahhanaapi.domain.member.entity.MemberEntity;
 import org.hana.wooahhanaapi.domain.member.repository.MemberRepository;
 import org.hana.wooahhanaapi.domain.plan.domain.Plan;
-import org.hana.wooahhanaapi.domain.plan.dto.CreatePlanRequestDto;
-import org.hana.wooahhanaapi.domain.plan.dto.GetReceiptResponseDto;
-import org.hana.wooahhanaapi.domain.plan.dto.UpdatePlanRequestDto;
+import org.hana.wooahhanaapi.domain.plan.dto.*;
 import org.hana.wooahhanaapi.domain.plan.entity.PlanEntity;
+import org.hana.wooahhanaapi.domain.plan.entity.PostEntity;
 import org.hana.wooahhanaapi.domain.plan.exception.EntityNotFoundException;
 import org.hana.wooahhanaapi.domain.plan.repository.PlanRepository;
+import org.hana.wooahhanaapi.domain.plan.repository.PostRepository;
 import org.hana.wooahhanaapi.domain.plan.service.PlanService;
+import org.hana.wooahhanaapi.domain.plan.service.PostService;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +50,10 @@ public class PlanServiceTest {
     private CommunityRepository communityRepository;
     @Autowired
     private PlanRepository planRepository;
+    @Autowired
+    private PostService postService;
+    @Autowired
+    private PostRepository postRepository;
 
     private MemberEntity member1;
     private MemberEntity member2;
@@ -54,8 +61,8 @@ public class PlanServiceTest {
 
     @BeforeAll
     public void setUp() {
-        member1 = MemberEntity.create("hj", "함형주", "hj1234!", "01011111111", "001", "1234123411111");
-        member2 = MemberEntity.create("mk", "김미강", "hj21234!", "01011111112", "002", "1234123411222");
+        member1 = MemberEntity.create("01011111111", "함형주", "hj1234!", "01011111111", "001", "1234123411111");
+        member2 = MemberEntity.create("01011111112", "김미강", "hj21234!", "01011111112", "002", "1234123411222");
         memberRepository.save(member1);
         memberRepository.save(member2);
         community = CommunityEntity.create(
@@ -89,12 +96,12 @@ public class PlanServiceTest {
     @Test
     void getMembers() {
         // given
-        List<String> memberNames = planService.getMembers(community.getId());
+        List<GetMembersResponseDto> memberNames = planService.getMembers(community.getId());
         // then
         assertNotNull(memberNames);
         assertEquals(2, memberNames.size());
-        assertTrue(memberNames.contains("함형주"));
-        assertTrue(memberNames.contains("김미강"));
+        assertEquals(memberNames.get(0).getName(),"함형주");
+        assertEquals(memberNames.get(1).getName(),"김미강");
     }
 
     @Test
@@ -110,7 +117,7 @@ public class PlanServiceTest {
                 "aaa",
                 locations,
                 memberIds
-                );
+        );
         planRepository.save(planEntity);
         // when
         List<Plan> plan = planService.getPlans(UUID.fromString("3fa85f64-5717-4562-b3fc-2c963f66afa6"));
@@ -142,16 +149,45 @@ public class PlanServiceTest {
         assertEquals("테스트플랜", savedEntity.getTitle());
     }
 
+
     @Test
-    void deletePlan() {
+    public void deletePlan() throws IOException {
         // given
-        List<PlanEntity> savedPlans = planRepository.findAll();
-        UUID planId = savedPlans.get(0).getId();
-        // when
-        planService.deletePlan(String.valueOf(planId));
-        // then
-        Optional<PlanEntity> deletedEntity = planRepository.findById(planId);
-        assertTrue(deletedEntity.isEmpty());
+        List<String> locations = new ArrayList<>();
+        List<UUID> memberIds = new ArrayList<>();
+
+        CreatePlanRequestDto requestDto = CreatePlanRequestDto.builder()
+                .communityId(UUID.fromString("3fa85f64-5717-4562-b3fc-2c963f66afa6"))
+                .title("테스트 플랜")
+                .startDate(LocalDateTime.now())
+                .endDate(LocalDateTime.now().plusDays(1))
+                .locations(locations)
+                .category("shopping")
+                .memberIds(memberIds)
+                .build();
+        UUID createPlanId = planService.createPlan(requestDto);
+
+        String description = "Post description";
+        CreatePostRequestDto requestDto2 = CreatePostRequestDto.builder()
+                .planId(createPlanId)
+                .memberId(memberRepository.findByUsername("01011111111").get().getId())
+                .description(description)
+                .createAt(LocalDateTime.now())
+                .build();
+
+        MockMultipartFile image = new MockMultipartFile("image", "test-image.jpg", "image/jpeg", "image content".getBytes());
+        UUID postId = postService.createPost(requestDto2, image);
+
+        // When
+        planService.deletePlan(createPlanId.toString());
+
+        // Then
+        // 계획 삭제했을 때 추억들도 함께 삭제되어야 함(cascade하게)
+        PlanEntity foundPlan = planRepository.findById(createPlanId).orElse(null);
+        Assertions.assertNull(foundPlan);
+        List<PostEntity> foundPost = postRepository.findCompletedByPlanId(createPlanId);
+        Assertions.assertEquals(0, foundPost.size());
+
     }
 
     @Test
@@ -188,10 +224,10 @@ public class PlanServiceTest {
                 "테스트플랜3",
                 startDate,
                 endDate,
-        "shopping",
+                "shopping",
                 locations,
                 memberIds
-                );
+        );
 
         planRepository.save(planEntity);
         // when
@@ -286,7 +322,6 @@ public class PlanServiceTest {
                 List.of(member1.getId(), member2.getId())
         );
         PlanEntity planEntity = planRepository.save(plan);
-
         // When & Then
         assertThrows(CommunityNotFoundException.class, () -> {
             planService.getPlanReceipt(planEntity.getId());

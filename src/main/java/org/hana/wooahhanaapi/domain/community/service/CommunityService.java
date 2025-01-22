@@ -5,11 +5,14 @@ import org.hana.wooahhanaapi.domain.account.adapter.AccountTransferPort;
 import org.hana.wooahhanaapi.domain.account.adapter.AccountTransferRecordPort;
 import org.hana.wooahhanaapi.domain.account.adapter.GetAccountInfoPort;
 import org.hana.wooahhanaapi.domain.account.adapter.dto.*;
+import org.hana.wooahhanaapi.domain.account.exception.MemberNotPresentException;
 import org.hana.wooahhanaapi.domain.community.domain.AutoDeposit;
 import org.hana.wooahhanaapi.domain.community.entity.AutoDepositEntity;
+import org.hana.wooahhanaapi.domain.community.entity.MembershipEntity;
 import org.hana.wooahhanaapi.domain.community.exception.NoAuthorityException;
 import org.hana.wooahhanaapi.domain.community.mapper.AutoDepositMapper;
 import org.hana.wooahhanaapi.domain.community.repository.AutoDepositRepository;
+import org.hana.wooahhanaapi.domain.plan.dto.GetMembersResponseDto;
 import org.hana.wooahhanaapi.utils.redis.ValidateAccountPort;
 import org.hana.wooahhanaapi.utils.redis.dto.AccountValidationConfirmDto;
 import org.hana.wooahhanaapi.utils.redis.SaveValidCodePort;
@@ -27,8 +30,11 @@ import org.hana.wooahhanaapi.domain.member.entity.MemberEntity;
 import org.hana.wooahhanaapi.domain.member.exception.UserNotFoundException;
 import org.hana.wooahhanaapi.domain.member.repository.MemberRepository;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -92,29 +98,30 @@ public class CommunityService {
     // 계주 변경
     public void changeCommunityManager(CommunityChgManagerReqDto dto) {
 
-        // 모임 찾고
+        // 모임 찾기
         CommunityEntity foundCommunity = communityRepository.findById(dto.getCommunityId())
                 .orElseThrow(() -> new CommunityNotFoundException("모임을 찾을 수 없습니다."));
 
-        // 멤버 찾고
+        // 멤버 찾기
         MemberEntity foundMember = memberRepository.findById(dto.getMemberId())
                 .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
 
         // 지정하고자 하는 멤버가 그 커뮤니티의 멤버인지 확인
-        if(!membershipRepository.findAllByMemberAndCommunity(foundMember, foundCommunity).isEmpty()) {
-            Community community = Community.create(
-                    foundCommunity.getId(), dto.getMemberId(), foundCommunity.getName(),
-                    foundCommunity.getAccountNumber(), foundCommunity.getCredits(), foundCommunity.getFee(), foundCommunity.getFeePeriod()
-            );
-            communityRepository.save(CommunityMapper.mapDomainToEntity(community));
-        }
-        else {
+        boolean isMember = membershipRepository.existsByMemberAndCommunity(foundMember, foundCommunity);
+        if (!isMember) {
             throw new NotAMemberException("해당 회원은 모임의 멤버가 아닙니다.");
         }
+
+        // 관리자 변경 (기존 커뮤니티의 관리자 변경)
+        foundCommunity.changeManagerId(foundMember.getId()); // 'setManager' 메서드는 커뮤니티의 관리자 속성을 변경한다고 가정
+
+        // 모임 저장
+        communityRepository.save(foundCommunity);
 
     }
 
     // 회비 납입 여부 체크
+    @Transactional
     public CommunityFeeStatusRespDto checkFeeStatus(CommunityFeeStatusReqDto dto) {
         // 모임 찾고
         CommunityEntity foundCommunity = communityRepository.findById(dto.getCommunityId())
@@ -165,8 +172,13 @@ public class CommunityService {
         List<AccountTransferRecordRespListDto> resultData = accountTransferRecordPort.getTransferRecord(reqDto)
                 .getData().getResList();
 
+        // 일단 멤버 전체에 대해 누적 입금액 저장할 원소 추가
+        for(MemberEntity m : members) {
+            memberPayments.put(m, 0L);
+        }
+
         for (AccountTransferRecordRespListDto listDto : resultData) {
-            if ("입금".equals(listDto.getTranType())) {
+            if ("입금".equals(listDto.getInoutType())) {
                 // 입금 내역의 계좌 번호와 매핑된 멤버를 찾아서 입금액 누적
                 for (MemberEntity member : members) {
                     if (member.getName().equals(listDto.getPrintContent())) {
@@ -329,16 +341,15 @@ public class CommunityService {
         CommunityEntity foundCommunity = communityRepository.findById(dto.getCommunityId())
                 .orElseThrow(() -> new CommunityNotFoundException("모임을 찾을 수 없습니다."));
 
+        System.out.println(userDetails.getId());
         // 현재 로그인 유저가 계주가 아닐 때 => 권한 없음
-        if(userDetails.getId() != foundCommunity.getManagerId()) {
+        if(!userDetails.getId().equals(foundCommunity.getManagerId())) {
             throw new NoAuthorityException("권한이 없습니다.");
         }
 
-        Community foundCommunityDomain = CommunityMapper.mapEntityToDomain(foundCommunity);
-        foundCommunityDomain.updateFeeInfo(dto.getFee(), dto.getFeePeriod());
-        CommunityEntity editedCommunity = CommunityMapper.mapDomainToEntity(foundCommunityDomain);
+        foundCommunity.updateFeeInfo(dto.getFee(), dto.getFeePeriod());
 
-        communityRepository.save(editedCommunity);
+        communityRepository.save(foundCommunity);
 
     }
 
@@ -436,6 +447,48 @@ public class CommunityService {
         }catch (Exception e){
             throw new CommunityNotFoundException("모임 아이디를 찾을 수 없습니다.");
         }
-
     }
+
+    public List<GetMembersResponseDto> getMembers(UUID communityId) {
+        List<MemberEntity> foundMembers = membershipRepository.findMembersByCommunityId(communityId);
+        return foundMembers.stream().map(
+                member -> GetMembersResponseDto.builder()
+                        .id(member.getId())
+                        .name(member.getName())
+                        .build()).toList();
+    }
+
+    public RegisterInCommunityResponseDto registerInCommunity(RegisterInCommunityRequestDto requestDto) {
+        MemberEntity memberEntity = memberRepository.findById(requestDto.getMemberId())
+                .orElseThrow(() -> new MemberNotPresentException("가입된 멤버가 없습니다."));
+        CommunityEntity communityEntity = communityRepository.findById(requestDto.getCommunityId())
+                .orElseThrow(() -> new CommunityNotFoundException("모임 통장이 존재하지 않습니다."));
+        membershipRepository.save(MembershipEntity.create(memberEntity, communityEntity));
+        return RegisterInCommunityResponseDto.builder()
+                .communityName(communityEntity.getName())
+                .memberName(memberEntity.getName())
+                .success(true)
+                .build();
+    }
+
+    public CommunityFullInfoResponseDto getCommunityFullInfo(UUID communityId) {
+        try{
+            // 모임 불러오기
+            CommunityEntity community = communityRepository.findById(communityId).orElseThrow();
+
+            // 모임 전체 정보 반환
+            return CommunityFullInfoResponseDto.builder()
+                    .id(community.getId())
+                    .managerId(community.getManagerId())
+                    .name(community.getName())
+                    .accountNumber(community.getAccountNumber())
+                    .credits(community.getCredits())
+                    .fee(community.getFee())
+                    .feePeriod(community.getFeePeriod())
+                    .build();
+        }catch (Exception e){
+            throw new CommunityNotFoundException("모임 아이디를 찾을 수 없습니다.");
+        }
+    }
+
 }

@@ -3,11 +3,8 @@ package org.hana.wooahhanaapi.domain.plan.controller;
 import lombok.RequiredArgsConstructor;
 import org.hana.wooahhanaapi.domain.member.entity.MemberEntity;
 import org.hana.wooahhanaapi.domain.plan.domain.Plan;
-import org.hana.wooahhanaapi.domain.plan.dto.CreatePlanRequestDto;
-import org.hana.wooahhanaapi.domain.plan.dto.GetPlansResponseDto;
+import org.hana.wooahhanaapi.domain.plan.dto.*;
 
-import org.hana.wooahhanaapi.domain.plan.dto.GetReceiptResponseDto;
-import org.hana.wooahhanaapi.domain.plan.dto.UpdatePlanRequestDto;
 import org.hana.wooahhanaapi.domain.plan.service.PlanService;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +26,7 @@ public class PlanController {
 
     // 계획 생성 버튼 누른 후 프론트엔드에 모임의 멤버 목록을 전송
     @GetMapping("/createInfo/{communityId}")
-    public List<String> getCommunityMembers(@PathVariable UUID communityId) {
+    public List<GetMembersResponseDto> getCommunityMembers(@PathVariable UUID communityId) {
         return planService.getMembers(communityId);
     }
 

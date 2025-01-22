@@ -16,6 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,7 +34,6 @@ public class ActivePlanServiceTest {
 
     @BeforeAll
     public void setUp(){
-
         ActivePlanEntity activeplanEntity = ActivePlanEntity.create(
                 UUID.randomUUID(),
                 UUID.fromString("3fa85f64-5717-4562-b3fc-2c963f66afa6"),
@@ -47,6 +47,42 @@ public class ActivePlanServiceTest {
                 "377911797"
         );
         activePlanRepository.save(activeplanEntity);
+    }
+
+    @Test
+    void saveActivePlans() {
+        // given
+        List<CreateActivePlanRequestDto> requestDtos = new ArrayList<>();
+        CreateActivePlanRequestDto requestDto1 = CreateActivePlanRequestDto.builder()
+                .planId(UUID.randomUUID())
+                .date("2025-01-18")
+                .schedule("동화가든에서 점심 식사")
+                .time("14:00")
+                .description("강릉시 초당동에 위치한 '동화가든'은 짬뽕순두부로 유명한 맛집입니다. 아침 식사로 든든하게 시작해보세요.")
+                .address("강원특별자치도 강릉시 초당순두부길77번길 15 동화가든")
+                .link("https://www.donghwagarden.com/")
+                .mapx("1289146373")
+                .mapy("377911797")
+                .build();
+        CreateActivePlanRequestDto requestDto2 = CreateActivePlanRequestDto.builder()
+                .planId(UUID.randomUUID())
+                .date("2025-01-18")
+                .schedule("동화가든에서 점심 식사1")
+                .time("14:00")
+                .description("강릉시 초당동에 위치한 '동화가든'은 짬뽕순두부로 유명한 맛집입니다. 아침 식사로 든든하게 시작해보세요.")
+                .address("강원특별자치도 강릉시 초당순두부길77번길 15 동화가든")
+                .link("https://www.donghwagarden.com/")
+                .mapx("1289146373")
+                .mapy("377911797")
+                .build();
+        requestDtos.add(requestDto1);
+        requestDtos.add(requestDto2);
+
+        // when
+        List<UUID> planIds = activePlanService.saveActivePlans(requestDtos);
+
+        // then
+        assertEquals(2, planIds.size());
     }
 
     @Test

@@ -84,10 +84,4 @@ public class MemberEntity implements UserDetails {
         this.bankTranId = bankTranId;
     }
 
-    @PrePersist
-    public void prePersist() {
-        if (id == null) {
-            id = UUID.randomUUID();  // UUID 값을 자동 생성
-        }
-    }
 }

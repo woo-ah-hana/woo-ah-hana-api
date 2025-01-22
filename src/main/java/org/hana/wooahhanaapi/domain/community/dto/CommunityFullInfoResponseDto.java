@@ -1,7 +1,5 @@
 package org.hana.wooahhanaapi.domain.community.dto;
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,8 +11,13 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CommunityChgManagerReqDto {
-    private UUID communityId;
-    private UUID memberId;
+public class CommunityFullInfoResponseDto {
 
+    private UUID id;
+    private UUID managerId;
+    private String name;
+    private String accountNumber;
+    private Long credits;
+    private Long fee;
+    private Long feePeriod;
 }

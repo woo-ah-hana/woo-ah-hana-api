@@ -2,6 +2,8 @@ package org.hana.wooahhanaapi.domain.community.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.hana.wooahhanaapi.domain.community.dto.*;
+import org.hana.wooahhanaapi.domain.community.dto.RegisterInCommunityRequestDto;
+import org.hana.wooahhanaapi.domain.plan.dto.GetMembersResponseDto;
 import org.hana.wooahhanaapi.utils.redis.dto.SendValidationCodeReqDto;
 import org.hana.wooahhanaapi.domain.community.service.CommunityService;
 import org.springframework.web.bind.annotation.*;
@@ -106,4 +108,19 @@ public class CommunityController {
         return this.communityService.getCommunityInfo(communityId);
     }
 
+    // 모임 전체 정보 반환
+    @GetMapping("/{communityId}")
+    public CommunityFullInfoResponseDto getCommunityFullInfo(@PathVariable UUID communityId) {
+        return this.communityService.getCommunityFullInfo(communityId);
+    }
+    //모임통장에 속한 멤버 리스트 가져오기
+    @GetMapping("/member-list/{communityId}")
+    public List<GetMembersResponseDto> getCommunityMembers(@PathVariable UUID communityId) {
+        return this.communityService.getMembers(communityId);
+    }
+
+    @PostMapping("/register")
+    public RegisterInCommunityResponseDto registerInCommunity(@RequestBody RegisterInCommunityRequestDto requestDto){
+        return this.communityService.registerInCommunity(requestDto);
+    }
 }
