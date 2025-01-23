@@ -12,14 +12,18 @@ import org.hana.wooahhanaapi.domain.community.repository.MembershipRepository;
 import org.hana.wooahhanaapi.domain.member.entity.MemberEntity;
 import org.hana.wooahhanaapi.domain.member.repository.MemberRepository;
 import org.hana.wooahhanaapi.domain.plan.entity.PlanEntity;
+import org.hana.wooahhanaapi.domain.plan.repository.PlanRepository;
 import org.hana.wooahhanaapi.utils.exception.SeederException;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 @AllArgsConstructor
@@ -30,6 +34,7 @@ public class DatabaseSeeder implements CommandLineRunner {
     private final CommunityRepository communityRepository;
     private final MembershipRepository membershipRepository;
     private final AccountService accountService;
+    private final PlanRepository planRepository;
 
     @Override
     @Transactional
@@ -73,7 +78,7 @@ public class DatabaseSeeder implements CommandLineRunner {
         MembershipEntity m6 = MembershipEntity.create(member6, community); membershipRepository.save(m6);
 
         MemberEntity yj = memberRepository.findByUsername("01092469330").orElse(null); // 계주 : 안유진
-        CommunityEntity community2 = CommunityEntity.create(yj.getId(),"떠나요 여행","1463056220188",3L,50000L,20L);
+        CommunityEntity community2 = CommunityEntity.create(yj.getId(),"어쩌다6인조","1463056220188",3L,50000L,20L);
         communityRepository.save(community2);
         MembershipEntity m7 = MembershipEntity.create(member7, community2); membershipRepository.save(m7); // 아이브
         MembershipEntity m8 = MembershipEntity.create(member8, community2); membershipRepository.save(m8);
@@ -83,25 +88,119 @@ public class DatabaseSeeder implements CommandLineRunner {
         MembershipEntity m12 = MembershipEntity.create(member12, community2); membershipRepository.save(m12);
 
         MemberEntity yh = memberRepository.findByUsername("01039388377").orElse(null); // 계주 : 윤영헌
-        CommunityEntity community3 = CommunityEntity.create(yh.getId(),"성수 나들이","1464493512314",3L,100000L,5L);
+        CommunityEntity community3 = CommunityEntity.create(yh.getId(),"솔바람산악회","1464493512314",3L,100000L,5L);
         communityRepository.save(community3);
         MembershipEntity m13 = MembershipEntity.create(member3, community3); membershipRepository.save(m13); // 영헌
         MembershipEntity m14 = MembershipEntity.create(member4, community3); membershipRepository.save(m14); // 상현
         MembershipEntity m16 = MembershipEntity.create(member6, community3); membershipRepository.save(m16); // 미강
+        MembershipEntity m21 = MembershipEntity.create(member8, community3); membershipRepository.save(m21); // 가을
+        MembershipEntity m22 = MembershipEntity.create(member11, community3); membershipRepository.save(m22); // 지원
+        MembershipEntity m23 = MembershipEntity.create(member12, community3); membershipRepository.save(m23); // 현서
 
         MemberEntity mk = memberRepository.findByUsername("01029011957").orElse(null); // 계주 : 김미강
         CommunityEntity community4 = CommunityEntity.create(mk.getId(),"가평가자","1465510634457",3L,200000L,60L);
         communityRepository.save(community4);
         MembershipEntity m17 = MembershipEntity.create(member3, community4); membershipRepository.save(m17); // 영헌
         MembershipEntity m18 = MembershipEntity.create(member2, community4); membershipRepository.save(m18); // 선정
-        MembershipEntity m19 = MembershipEntity.create(member1, community); membershipRepository.save(m19); // 형주
-        MembershipEntity m20 = MembershipEntity.create(member6, community); membershipRepository.save(m20); // 미강
+        MembershipEntity m19 = MembershipEntity.create(member1, community4); membershipRepository.save(m19); // 형주
+        MembershipEntity m20 = MembershipEntity.create(member6, community4); membershipRepository.save(m20); // 미강
         //CommunityEntity sjCommunity2 = CommunityEntity.create(sj.getId(),"일본가자","3563333222211",3L,50000L,30L);
         //communityRepository.save(sjCommunity1); communityRepository.save(sjCommunity2);
 
         // 커뮤니티 3개에 속하는 인원 : 영헌, 미강
         // 2개 : 선정, 형주, 상현
         // 1개 : 채운
+
+        // 모임 : 맛집탐방, 계획 : 수리고등학교 동창 강릉 여행, 일정 : 2025/1/10 - 2025/1/11
+        ArrayList<String> gangneung = new ArrayList<>();
+        gangneung.add("강릉 순두부마을");
+        gangneung.add("강릉 횟집");
+        gangneung.add("강릉 카페거리");
+
+        ArrayList<UUID> p1members = new ArrayList<>();
+        p1members.add(member1.getId()); // 형주
+        p1members.add(member2.getId()); // 선정
+        p1members.add(member3.getId()); // 영헌
+        p1members.add(member4.getId()); // 상현
+
+        LocalDateTime p1from = LocalDateTime.of(2025, 1, 10, 7, 0, 0);
+        LocalDateTime p1to = LocalDateTime.of(2025, 1, 11, 13, 0, 0);
+
+        PlanEntity p1 = PlanEntity.create(community.getId(), "수리고등학교 동창 강릉 여행",
+                p1from, p1to,"여행", gangneung, p1members);
+        planRepository.save(p1);
+
+        // 모임 : 맛집탐방, 계획 : 성수 나들이, 일정 : 2025/1/15
+        ArrayList<String> seongsu = new ArrayList<>();
+        gangneung.add("성수 소금빵");
+        gangneung.add("성수 맛집");
+        gangneung.add("성수 무신사스토어");
+
+        ArrayList<UUID> p2members = new ArrayList<>();
+        p1members.add(member2.getId()); // 선정
+        p1members.add(member3.getId()); // 영헌
+        p1members.add(member4.getId()); // 상현
+
+        LocalDateTime p2from = LocalDateTime.of(2025, 1, 15, 7, 0, 0);
+        LocalDateTime p2to = LocalDateTime.of(2025, 1, 15, 20, 0, 0);
+
+        PlanEntity p2 = PlanEntity.create(community.getId(), "성수 나들이",
+                p2from, p2to,"나들이", seongsu, p2members);
+        planRepository.save(p2);
+
+        // 모임 : 가평가자, 계획 : 여름 빠지, 일정 : 2025/7/23 - 2025/7/25
+        ArrayList<String> gapyeong = new ArrayList<>();
+        gapyeong.add("가평 빠지");
+        gapyeong.add("남이섬");
+        gapyeong.add("가평 닭갈비");
+
+        ArrayList<UUID> p3members = new ArrayList<>();
+        p3members.add(member1.getId()); // 형주
+        p3members.add(member2.getId()); // 선정
+        p3members.add(member3.getId()); // 영헌
+        p3members.add(member6.getId()); // 미강
+
+        LocalDateTime p3from = LocalDateTime.of(2025, 7, 23, 7, 0, 0);
+        LocalDateTime p3to = LocalDateTime.of(2025, 7, 25, 20, 0, 0);
+
+        PlanEntity p3 = PlanEntity.create(community4.getId(), "여름 빠지",
+                p3from, p3to,"여행", gapyeong, p3members);
+        planRepository.save(p3);
+
+        // 모임 : 어쩌다6인조, 계획 : 서울 디저트 탐방, 일정 : 2025/2/11
+        ArrayList<String> seoul = new ArrayList<>();
+        seoul.add("서울 딸기 뷔페");
+        seoul.add("마포 디저트");
+        seoul.add("서울 크로플");
+
+        ArrayList<UUID> p4members = new ArrayList<>();
+        p4members.add(member7.getId()); // 유진
+        p4members.add(member8.getId()); // 가을
+        p4members.add(member9.getId()); // 원영
+
+        LocalDateTime p4from = LocalDateTime.of(2025, 2, 11, 7, 0, 0);
+        LocalDateTime p4to = LocalDateTime.of(2025, 2, 11, 20, 0, 0);
+
+        PlanEntity p4 = PlanEntity.create(community2.getId(), "서울 디저트 탐방",
+                p4from, p4to,"디저트", seoul, p4members);
+        planRepository.save(p4);
+
+        // 모임 : 솔바람산악회, 계획 : 3월 관악산 등반, 일정 : 2025/3/8
+        ArrayList<String> gwanak = new ArrayList<>();
+        gwanak.add("서울대입구 맛집");
+        gwanak.add("신림 맛집");
+
+        ArrayList<UUID> p5members = new ArrayList<>();
+        p5members.add(member7.getId()); // 유진
+        p5members.add(member8.getId()); // 가을
+        p5members.add(member9.getId()); // 원영
+
+        LocalDateTime p5from = LocalDateTime.of(2025, 3, 8, 7, 0, 0);
+        LocalDateTime p5to = LocalDateTime.of(2025, 3, 8, 20, 0, 0);
+
+        PlanEntity p5 = PlanEntity.create(community3.getId(), "3월 관악산 등반",
+                p5from, p5to,"디저트", gwanak, p5members);
+        planRepository.save(p5);
 
     }
 }
