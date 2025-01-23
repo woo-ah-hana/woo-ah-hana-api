@@ -308,5 +308,29 @@ public class CommunityServiceTest {
 
     }
 
+    @Test
+    @DisplayName("모임 탈퇴")
+    public void quitCommunityTest() {
+
+        //given
+        CommunityEntity foundCommunity = communityRepository.findByAccountNumber("1468299555144")
+                .orElseThrow(() -> new CommunityNotFoundException("모임을 찾을 수 없습니다.")); // 모임1
+
+        MemberEntity sj = memberRepository.findByUsername("01012345678")
+                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다.")); // 최선정
+        UsernamePasswordAuthenticationToken authentication2 =
+                new UsernamePasswordAuthenticationToken(sj, null, sj.getAuthorities());
+        SecurityContext context2 = SecurityContextHolder.createEmptyContext();
+        context2.setAuthentication(authentication2);
+        SecurityContextHolder.setContext(context2);
+
+        // when
+        communityService.quitFromCommunity(foundCommunity.getId());
+
+        // then
+        // 탈퇴 후 membership에서 제거되어 있어야 함
+        Assertions.assertThat(membershipRepository.existsByMemberAndCommunity(sj, foundCommunity)).isFalse();
+    }
+
 
 }

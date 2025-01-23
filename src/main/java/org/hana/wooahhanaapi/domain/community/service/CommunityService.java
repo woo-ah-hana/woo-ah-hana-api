@@ -474,23 +474,37 @@ public class CommunityService {
     }
 
     public CommunityFullInfoResponseDto getCommunityFullInfo(UUID communityId) {
-        try{
-            // 모임 불러오기
-            CommunityEntity community = communityRepository.findById(communityId).orElseThrow();
 
-            // 모임 전체 정보 반환
-            return CommunityFullInfoResponseDto.builder()
-                    .id(community.getId())
-                    .managerId(community.getManagerId())
-                    .name(community.getName())
-                    .accountNumber(community.getAccountNumber())
-                    .credits(community.getCredits())
-                    .fee(community.getFee())
-                    .feePeriod(community.getFeePeriod())
-                    .build();
-        }catch (Exception e){
-            throw new CommunityNotFoundException("모임 아이디를 찾을 수 없습니다.");
+        // 모임 불러오기
+        CommunityEntity community = communityRepository.findById(communityId)
+                .orElseThrow(() -> new CommunityNotFoundException("모임을 찾을 수 없습니다."));
+
+        // 모임 전체 정보 반환
+        return CommunityFullInfoResponseDto.builder()
+                .id(community.getId())
+                .managerId(community.getManagerId())
+                .name(community.getName())
+                .accountNumber(community.getAccountNumber())
+                .credits(community.getCredits())
+                .fee(community.getFee())
+                .feePeriod(community.getFeePeriod())
+                .build();
+
+    }
+
+    public void quitFromCommunity(UUID communityId) {
+        MemberEntity userDetails = (MemberEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        // 모임 불러오기
+        CommunityEntity community = communityRepository.findById(communityId)
+                .orElseThrow(() -> new CommunityNotFoundException("모임을 찾을 수 없습니다."));
+
+        if(membershipRepository.existsByMemberAndCommunity(userDetails, community)){
+            membershipRepository.deleteByMemberAndCommunity(userDetails, community);
         }
+        else {
+            throw new NotAMemberException("해당 회원은 모임의 멤버가 아닙니다.");
+        }
+
     }
 
 }
