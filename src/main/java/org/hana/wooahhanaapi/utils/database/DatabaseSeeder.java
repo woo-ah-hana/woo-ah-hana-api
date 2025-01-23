@@ -191,9 +191,12 @@ public class DatabaseSeeder implements CommandLineRunner {
         gwanak.add("신림 맛집");
 
         ArrayList<UUID> p5members = new ArrayList<>();
-        p5members.add(member7.getId()); // 유진
+        p5members.add(member3.getId()); // 영헌
+        p5members.add(member4.getId()); // 상현
+        p5members.add(member6.getId()); // 미강
         p5members.add(member8.getId()); // 가을
-        p5members.add(member9.getId()); // 원영
+        p5members.add(member11.getId()); // 지원
+        p5members.add(member12.getId()); // 현서
 
         LocalDateTime p5from = LocalDateTime.of(2025, 3, 8, 7, 0, 0);
         LocalDateTime p5to = LocalDateTime.of(2025, 3, 8, 20, 0, 0);
