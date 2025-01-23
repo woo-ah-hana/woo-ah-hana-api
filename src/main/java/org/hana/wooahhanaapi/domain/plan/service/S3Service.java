@@ -17,7 +17,7 @@ import java.nio.charset.StandardCharsets;
 @RequiredArgsConstructor
 @Service
 public class S3Service {
-    @Value("${cloud.aws.s3.bucket}")
+    @Value("${S3_BUCKET_NAME}")
     private String bucket;
 
     private final AmazonS3 amazonS3;
