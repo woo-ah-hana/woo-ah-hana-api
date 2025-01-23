@@ -38,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -131,30 +132,14 @@ public class CommunityService {
         List<MemberEntity> members = membershipRepository.findMembersByCommunityId(dto.getCommunityId());
 
         Long fee = foundCommunity.getFee();
-        // 매월 입금날 찾기
-        Long feePeriod = foundCommunity.getFeePeriod();
         // 현재 년, 월, 일 추출
         LocalDateTime now = LocalDateTime.now();
         int year = now.getYear();  // 년도
         int month = now.getMonthValue();  // 월 (1-12)
-        int dayOfMonth = now.getDayOfMonth();  // 일 (1-31)
-        String fromDate = "";
-        String toDate = "";
 
-        if(feePeriod > dayOfMonth) {
-            if(month-1 == 0) {
-                fromDate = (year-1) + "-" + 12 + "-" + feePeriod;
-            }
-            else {
-                fromDate = year + "-" + (month-1) + "-" + feePeriod;
-            }
-            toDate = year + "-" + month + "-" + dayOfMonth;
-
-        }
-        else if(feePeriod < dayOfMonth) {
-            fromDate = year + "-" + month + "-" + feePeriod;
-            toDate = year + "-" + month + "-" + dayOfMonth;
-        }
+        YearMonth yearMonth = YearMonth.from(now); // 오늘 달의 말일
+        String fromDate = year + "-" + month + "-" + "01"; // xx월 1일부터
+        String toDate = year + "-" + month + "-" + yearMonth; // xx월 말일까지 조회
 
         // 조회 조건 dto 생성
         AccountTransferRecordReqDto reqDto = AccountTransferRecordReqDto.builder()
@@ -195,10 +180,10 @@ public class CommunityService {
         for (Map.Entry<MemberEntity, Long> entry : memberPayments.entrySet()) {
             // 매월 입금액을 만족했으면 납입한 멤버 목록에 추가
             if (entry.getValue().compareTo(fee) >= 0) {
-                paidMembers.add(new CommunityFeeStatusRespListDto(entry.getKey().getName(), entry.getValue()));
+                paidMembers.add(new CommunityFeeStatusRespListDto(entry.getKey().getId(), entry.getKey().getName(), entry.getValue()));
             }
             else {
-                unpaidMembers.add(new CommunityFeeStatusRespListDto(entry.getKey().getName(), entry.getValue()));
+                unpaidMembers.add(new CommunityFeeStatusRespListDto(entry.getKey().getId(), entry.getKey().getName(), entry.getValue()));
             }
         }
 
