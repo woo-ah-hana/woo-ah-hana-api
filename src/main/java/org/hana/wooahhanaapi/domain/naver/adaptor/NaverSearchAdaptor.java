@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class NaverSearchAdaptor implements NaverSearchPort{
-
+    // 배포 환경 문제로 인해서 dotenv파일을 사용하지 않기로 결정함
 //    private static Dotenv dotenv = Dotenv.load();
 //    private static final String naverClientId = dotenv.get("NAVER_CLIENT_ID");
 //    private static final String naverClientSecret = dotenv.get("NAVER_CLIENT_SECRET");
