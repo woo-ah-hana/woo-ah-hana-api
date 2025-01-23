@@ -6,6 +6,7 @@ import org.hana.wooahhanaapi.domain.account.adapter.dto.*;
 import org.hana.wooahhanaapi.domain.account.exception.AccountNotFoundException;
 import org.hana.wooahhanaapi.domain.account.exception.DuplicateAccountException;
 import org.hana.wooahhanaapi.domain.account.exception.TransferNotValidException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -20,7 +21,8 @@ public class AccountAdapter implements AccountCreatePort, AccountTransferPort, A
 
     private static final HttpClient client = HttpClient.newHttpClient();
     private static final ObjectMapper objectMapper = new ObjectMapper();
-
+    @Value("${ACCOUNT_API_PATH}")
+    private String accountApiPath;
     @Override
     public AccountCreateRespDto createNewAccount(AccountCreateReqDto accountCreateReqDto) {
 
@@ -29,7 +31,7 @@ public class AccountAdapter implements AccountCreatePort, AccountTransferPort, A
             String jsonBody = objectMapper.writeValueAsString(accountCreateReqDto);
 
             HttpRequest httpRequest = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:8000/account"))
+                    .uri(URI.create(accountApiPath+"/account"))
                     .version(HttpClient.Version.HTTP_1_1)
                     .header("Content-Type", "application/json") // JSON 형식으로 전송
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
@@ -68,7 +70,7 @@ public class AccountAdapter implements AccountCreatePort, AccountTransferPort, A
             String jsonBody = objectMapper.writeValueAsString(accountTransferReqDto);
 
             HttpRequest httpRequest = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:8000/transfer"))
+                    .uri(URI.create(accountApiPath+"/transfer"))
                     .version(HttpClient.Version.HTTP_1_1)
                     .header("Content-Type", "application/json") // JSON 형식으로 전송
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
@@ -90,7 +92,7 @@ public class AccountAdapter implements AccountCreatePort, AccountTransferPort, A
             String jsonBody = objectMapper.writeValueAsString(reqDto);
 
             HttpRequest httpRequest = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:8000/transfer/list"))
+                    .uri(URI.create(accountApiPath+"/transfer/list"))
                     .version(HttpClient.Version.HTTP_1_1)
                     .header("Content-Type", "application/json") // JSON 형식으로 전송
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
@@ -113,7 +115,7 @@ public class AccountAdapter implements AccountCreatePort, AccountTransferPort, A
             String jsonBody = objectMapper.writeValueAsString(requestDto);
 
             HttpRequest httpRequest = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:8000/bank"))
+                    .uri(URI.create(accountApiPath+"/bank"))
                     .version(HttpClient.Version.HTTP_1_1)
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
@@ -135,7 +137,7 @@ public class AccountAdapter implements AccountCreatePort, AccountTransferPort, A
         try{
             String jsonBody = objectMapper.writeValueAsString(getAccountInfoReqDto);
             HttpRequest httpRequest = HttpRequest.newBuilder()
-                    .uri(URI.create("http://localhost:8000/account/info"))
+                    .uri(URI.create(accountApiPath+"/account/info"))
                     .version(HttpClient.Version.HTTP_1_1)
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
