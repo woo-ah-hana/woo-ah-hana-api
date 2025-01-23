@@ -41,8 +41,9 @@ public class PostService {
         }
 
         String s3FileName = UUID.randomUUID() + "-" + image.getOriginalFilename();
+        String imageUrl = s3Service.upload(image, s3FileName);
         // TODO: S3 서비스에 저장
-        String imageUrl = s3FileName;
+        //String imageUrl = s3FileName;
 
         PlanEntity plan = planRepository.findById(requestDto.getPlanId())
                 .orElseThrow(() -> new EntityNotFoundException("해당 Plan이 존재하지 않습니다."));
@@ -50,6 +51,7 @@ public class PostService {
         MemberEntity member = memberRepository.findById(requestDto.getMemberId())
                 .orElseThrow(() -> new EntityNotFoundException("해당 Member가 존재하지 않습니다."));
 
+        System.out.println(imageUrl);
         Post post = Post.create(
                 UUID.randomUUID(),
                 plan,

@@ -48,6 +48,8 @@ dependencies {
 
 	implementation "com.amazonaws:aws-java-sdk-s3:1.12.281"
 
+	implementation 'javax.xml.bind:jaxb-api:2.3.0'
+
 	//redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
