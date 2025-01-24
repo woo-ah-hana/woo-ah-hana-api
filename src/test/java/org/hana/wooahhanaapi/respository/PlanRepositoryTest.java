@@ -2,13 +2,8 @@ package org.hana.wooahhanaapi.respository;
 
 import org.hana.wooahhanaapi.domain.member.entity.MemberEntity;
 import org.hana.wooahhanaapi.domain.member.repository.MemberRepository;
-import org.hana.wooahhanaapi.domain.plan.domain.Plan;
-import org.hana.wooahhanaapi.domain.plan.dto.CreatePlanRequestDto;
 import org.hana.wooahhanaapi.domain.plan.entity.PlanEntity;
-import org.hana.wooahhanaapi.domain.plan.entity.PostEntity;
-import org.hana.wooahhanaapi.domain.plan.entity.QPlanEntity;
 import org.hana.wooahhanaapi.domain.plan.repository.PlanRepository;
-import org.hana.wooahhanaapi.domain.plan.repository.PostRepository;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
