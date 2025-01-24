@@ -535,8 +535,8 @@ public class CommunityService {
                 .mapToLong(transfer -> Long.parseLong(transfer.getTranAmt()))
                 .sum();
 
-        LocalDateTime fromDateTime = localFromDate.atStartOfDay(); // 00:00:00으로 설정
-        LocalDateTime toDateTime = localToDate.atTime(23, 59, 59); // 23:59:59으로 설정
+        LocalDateTime fromDateTime = localFromDate.atStartOfDay();
+        LocalDateTime toDateTime = localToDate.atTime(23, 59, 59);
 
         List<PlanEntity> planList = planRepository.findPlansInPeriod(getExpenseInfoReqDto.getCommunityId(),fromDateTime,toDateTime);
         List<String> planTitleList = planList.stream().map(PlanEntity::getTitle).toList();
