@@ -86,7 +86,7 @@ public class CommunityService {
 
      // 모임 생성시 계좌 인증 1원 보내기
     public void sendValidationCode(SendValidationCodeReqDto sendValidationCodeReqDto) {
-        String validCode = "우아하나" + ThreadLocalRandom.current().nextInt(1000);
+        String validCode = "우아하나" + ThreadLocalRandom.current().nextInt(100, 1000);
         SimplifiedTransferReqDto reqDto = SimplifiedTransferReqDto.builder()
                 .accountNumber(sendValidationCodeReqDto.getAccountNumber())
                 .bankTranId(sendValidationCodeReqDto.getBankTranId())
