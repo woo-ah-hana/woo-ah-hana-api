@@ -1,6 +1,5 @@
 package org.hana.wooahhanaapi.domain.community.service;
 
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.hana.wooahhanaapi.domain.account.adapter.AccountTransferPort;
 import org.hana.wooahhanaapi.domain.account.adapter.AccountTransferRecordPort;
@@ -21,21 +20,17 @@ import org.hana.wooahhanaapi.utils.redis.dto.AccountValidationConfirmDto;
 import org.hana.wooahhanaapi.utils.redis.SaveValidCodePort;
 import org.hana.wooahhanaapi.utils.redis.dto.SendValidationCodeReqDto;
 import org.hana.wooahhanaapi.domain.account.exception.IncorrectValidationCodeException;
-import org.hana.wooahhanaapi.domain.community.domain.Community;
 import org.hana.wooahhanaapi.domain.community.dto.*;
 import org.hana.wooahhanaapi.domain.community.entity.CommunityEntity;
 import org.hana.wooahhanaapi.domain.community.exception.CommunityNotFoundException;
 import org.hana.wooahhanaapi.domain.community.exception.NotAMemberException;
-import org.hana.wooahhanaapi.domain.community.mapper.CommunityMapper;
 import org.hana.wooahhanaapi.domain.community.repository.CommunityRepository;
 import org.hana.wooahhanaapi.domain.community.repository.MembershipRepository;
 import org.hana.wooahhanaapi.domain.member.entity.MemberEntity;
 import org.hana.wooahhanaapi.domain.member.exception.UserNotFoundException;
 import org.hana.wooahhanaapi.domain.member.repository.MemberRepository;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -561,6 +556,8 @@ public class CommunityService {
                 .boxed()
                 .max(Comparator.comparingLong(monthlyExpenses::get))
                 .orElse(0);
+
+        highestMonth = localFromDate.getMonthValue() + highestMonth;
 
         Map<String, Long> planExpenses = new HashMap<>();
         for (PlanEntity plan : planList) {
