@@ -129,4 +129,9 @@ public class CommunityController {
         this.communityService.quitFromCommunity(communityId);
         return "success";
     }
+
+    @PostMapping("/expense-info")
+    public GetExpenseInfoRespDto getExpenseInfo(@RequestBody GetExpenseInfoReqDto dto) {
+        return this.communityService.getExpenseInfo(dto);
+    }
 }
