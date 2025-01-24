@@ -17,5 +17,6 @@ public class CommunityDepositInfoRespDto {
     private String memberAccountNumber;
     private Long memberAccountBalance ;
     private String communityAccountBank;
+    private String communityAccountName;
     private String communityAccountNumber;
 }

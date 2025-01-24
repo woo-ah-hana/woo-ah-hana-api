@@ -208,10 +208,12 @@ public class CommunityService {
         Long memberAccountBalance = getAccountInfoPort.getAccountInfo(getAccountInfoReqDto).getData().getBalanceAmt() ;
         // 모임통장 계좌의 은행
         String communityAccountBank = "하나은행";
+        // 모임 이름
+        String communityAccountName = foundCommunity.getName();
         // 모임통장 계좌번호
         String communityAccountNumber = foundCommunity.getAccountNumber();
 
-        return new CommunityDepositInfoRespDto(bankTranId, memberAccountNumber, memberAccountBalance, communityAccountBank, communityAccountNumber);
+        return new CommunityDepositInfoRespDto(bankTranId, memberAccountNumber, memberAccountBalance, communityAccountBank, communityAccountName, communityAccountNumber);
     }
 
     // 모임통장에 입금
