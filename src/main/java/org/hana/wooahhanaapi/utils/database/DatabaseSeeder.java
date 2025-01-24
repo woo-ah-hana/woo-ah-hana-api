@@ -127,7 +127,7 @@ public class DatabaseSeeder implements CommandLineRunner {
         LocalDateTime p1to = LocalDateTime.of(2025, 1, 11, 13, 0, 0);
 
         PlanEntity p1 = PlanEntity.create(community.getId(), "수리고등학교 동창 강릉 여행",
-                p1from, p1to,"여행", gangneung, p1members);
+                p1from, p1to,"location", gangneung, p1members);
         planRepository.save(p1);
 
         // 모임 : 맛집탐방, 계획 : 성수 나들이, 일정 : 2025/1/15
@@ -141,11 +141,11 @@ public class DatabaseSeeder implements CommandLineRunner {
         p1members.add(member3.getId()); // 영헌
         p1members.add(member4.getId()); // 상현
 
-        LocalDateTime p2from = LocalDateTime.of(2025, 1, 15, 7, 0, 0);
-        LocalDateTime p2to = LocalDateTime.of(2025, 1, 15, 20, 0, 0);
+        LocalDateTime p2from = LocalDateTime.of(2025, 1, 31, 7, 0, 0);
+        LocalDateTime p2to = LocalDateTime.of(2025, 1, 31, 20, 0, 0);
 
         PlanEntity p2 = PlanEntity.create(community.getId(), "성수 나들이",
-                p2from, p2to,"나들이", seongsu, p2members);
+                p2from, p2to,"meeting", seongsu, p2members);
         planRepository.save(p2);
 
         // 모임 : 가평가자, 계획 : 여름 빠지, 일정 : 2025/7/23 - 2025/7/25
@@ -164,7 +164,7 @@ public class DatabaseSeeder implements CommandLineRunner {
         LocalDateTime p3to = LocalDateTime.of(2025, 7, 25, 20, 0, 0);
 
         PlanEntity p3 = PlanEntity.create(community4.getId(), "여름 빠지",
-                p3from, p3to,"여행", gapyeong, p3members);
+                p3from, p3to,"location", gapyeong, p3members);
         planRepository.save(p3);
 
         // 모임 : 어쩌다6인조, 계획 : 서울 디저트 탐방, 일정 : 2025/2/11
@@ -182,7 +182,7 @@ public class DatabaseSeeder implements CommandLineRunner {
         LocalDateTime p4to = LocalDateTime.of(2025, 2, 11, 20, 0, 0);
 
         PlanEntity p4 = PlanEntity.create(community2.getId(), "서울 디저트 탐방",
-                p4from, p4to,"디저트", seoul, p4members);
+                p4from, p4to,"hobby", seoul, p4members);
         planRepository.save(p4);
 
         // 모임 : 솔바람산악회, 계획 : 3월 관악산 등반, 일정 : 2025/3/8
@@ -202,7 +202,7 @@ public class DatabaseSeeder implements CommandLineRunner {
         LocalDateTime p5to = LocalDateTime.of(2025, 3, 8, 20, 0, 0);
 
         PlanEntity p5 = PlanEntity.create(community3.getId(), "3월 관악산 등반",
-                p5from, p5to,"디저트", gwanak, p5members);
+                p5from, p5to,"exercise", gwanak, p5members);
         planRepository.save(p5);
 
     }
