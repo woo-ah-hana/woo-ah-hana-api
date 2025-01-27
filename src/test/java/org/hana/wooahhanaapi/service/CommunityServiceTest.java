@@ -16,8 +16,10 @@ import org.hana.wooahhanaapi.domain.community.exception.NoAuthorityException;
 import org.hana.wooahhanaapi.domain.community.repository.CommunityRepository;
 import org.hana.wooahhanaapi.domain.community.repository.MembershipRepository;
 import org.hana.wooahhanaapi.domain.community.service.CommunityService;
+import org.hana.wooahhanaapi.domain.member.dto.LoginRequestDto;
 import org.hana.wooahhanaapi.domain.member.entity.MemberEntity;
 import org.hana.wooahhanaapi.domain.member.exception.UserNotFoundException;
+import org.hana.wooahhanaapi.domain.member.exception.UserNotLoginException;
 import org.hana.wooahhanaapi.domain.member.repository.MemberRepository;
 import org.hana.wooahhanaapi.domain.member.service.MemberService;
 import org.hana.wooahhanaapi.utils.redis.SaveValidCodePort;
@@ -41,6 +43,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -91,6 +94,13 @@ public class CommunityServiceTest {
         );
         // 계주 : 함형주, 이름 : "모임1", 계좌번호 : 1468299555144인 모임 하나 개설
         communityRepository.save(community);
+
+        CommunityEntity community2 = CommunityEntity.create(
+                memberRepository.findByUsername("01026530957").get().getId(), "맛집탐방",
+                "1468152645150", 10L, 20000L, 5L
+        );
+        // 계주 : 함형주, 이름 : "맛집탐방", 계좌번호 : 1468152645150인 모임 하나 개설
+        communityRepository.save(community2);
 
         MembershipEntity ms1 = MembershipEntity.create(m1, community);
         MembershipEntity ms2 = MembershipEntity.create(m2, community);
@@ -332,5 +342,28 @@ public class CommunityServiceTest {
         Assertions.assertThat(membershipRepository.existsByMemberAndCommunity(sj, foundCommunity)).isFalse();
     }
 
+    @Test
+    @DisplayName("결산 정보")
+    void getExpenseInfoTest() {
+        CommunityEntity community = communityRepository.findByAccountNumber("1468152645150").orElseThrow();
+        System.out.println(community.getId());
+        GetExpenseInfoReqDto reqDto = GetExpenseInfoReqDto.builder()
+                .communityId(community.getId())
+                .fromDate("2024-10-01")
+                .toDate("2024-12-31")
+                .build();
 
+        GetExpenseInfoRespDto result = communityService.getExpenseInfo(reqDto);
+
+        Assertions.assertThat(result.getPlanTitleList()).isEqualTo(new ArrayList<>());
+        Assertions.assertThat(result.getNumberOfPlans()).isEqualTo(0);
+        Assertions.assertThat(result.getHowMuchSpentThanLastQuarter()).isEqualTo(224900L);
+        Assertions.assertThat(result.getThisQuarterExpense()).isEqualTo(224900L);
+        Assertions.assertThat(result.getThisQuarterIncome()).isEqualTo(0L);
+        Assertions.assertThat(result.getHighestMonth()).isEqualTo(12);
+        Assertions.assertThat(result.getMonthlyExpenses()).isEqualTo(Arrays.asList(0L,4900L,220000L));
+        Assertions.assertThat(result.getHighestPlanName()).isEqualTo("이번 분기, 여행한 기록이 없습니다.");
+        Assertions.assertThat(result.getHighestPlanExpense()).isEqualTo(0L);
+
+    }
 }
