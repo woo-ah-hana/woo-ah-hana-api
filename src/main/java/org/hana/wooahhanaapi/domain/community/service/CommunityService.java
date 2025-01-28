@@ -13,26 +13,24 @@ import org.hana.wooahhanaapi.domain.community.exception.NoAuthorityException;
 import org.hana.wooahhanaapi.domain.community.mapper.AutoDepositMapper;
 import org.hana.wooahhanaapi.domain.community.repository.AutoDepositRepository;
 import org.hana.wooahhanaapi.domain.plan.dto.GetMembersResponseDto;
+import org.hana.wooahhanaapi.domain.plan.entity.PlanEntity;
+import org.hana.wooahhanaapi.domain.plan.repository.PlanRepository;
 import org.hana.wooahhanaapi.utils.redis.ValidateAccountPort;
 import org.hana.wooahhanaapi.utils.redis.dto.AccountValidationConfirmDto;
 import org.hana.wooahhanaapi.utils.redis.SaveValidCodePort;
 import org.hana.wooahhanaapi.utils.redis.dto.SendValidationCodeReqDto;
 import org.hana.wooahhanaapi.domain.account.exception.IncorrectValidationCodeException;
-import org.hana.wooahhanaapi.domain.community.domain.Community;
 import org.hana.wooahhanaapi.domain.community.dto.*;
 import org.hana.wooahhanaapi.domain.community.entity.CommunityEntity;
 import org.hana.wooahhanaapi.domain.community.exception.CommunityNotFoundException;
 import org.hana.wooahhanaapi.domain.community.exception.NotAMemberException;
-import org.hana.wooahhanaapi.domain.community.mapper.CommunityMapper;
 import org.hana.wooahhanaapi.domain.community.repository.CommunityRepository;
 import org.hana.wooahhanaapi.domain.community.repository.MembershipRepository;
 import org.hana.wooahhanaapi.domain.member.entity.MemberEntity;
 import org.hana.wooahhanaapi.domain.member.exception.UserNotFoundException;
 import org.hana.wooahhanaapi.domain.member.repository.MemberRepository;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,6 +41,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -56,6 +55,7 @@ public class CommunityService {
     private final AccountTransferRecordPort accountTransferRecordPort;
     private final AutoDepositRepository autoDepositRepository;
     private final GetAccountInfoPort getAccountInfoPort;
+    private final PlanRepository planRepository;
 
     // 모임 생성
     public void createCommunity(CommunityCreateReqDto dto) {
@@ -491,7 +491,103 @@ public class CommunityService {
         else {
             throw new NotAMemberException("해당 회원은 모임의 멤버가 아닙니다.");
         }
-
     }
 
+    public GetExpenseInfoRespDto getExpenseInfo(GetExpenseInfoReqDto getExpenseInfoReqDto) {
+        CommunityEntity community = communityRepository.findById(getExpenseInfoReqDto.getCommunityId()).orElseThrow(()->new CommunityNotFoundException("모임 정보를 찾을 수 없습니다."));
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate localFromDate = LocalDate.parse(getExpenseInfoReqDto.getFromDate(), formatter);
+        LocalDate localToDate = LocalDate.parse(getExpenseInfoReqDto.getToDate(), formatter);
+
+        LocalDate localPreviousFromDate = localFromDate.minusMonths(3);
+        LocalDate localPreviousToDate = localToDate.minusMonths(3);
+
+        String previousFromDate = localPreviousFromDate.format(formatter);
+        String previousToDate = localPreviousToDate.format(formatter);
+
+        AccountTransferRecordReqDto thisQuarterReqDto = AccountTransferRecordReqDto.builder()
+                .bankTranId("001")
+                .accountNumber(community.getAccountNumber())
+                .fromDate(getExpenseInfoReqDto.getFromDate())
+                .toDate(getExpenseInfoReqDto.getToDate())
+                .build();
+        AccountTransferRecordRespDto thisQuarterResult = accountTransferRecordPort.getTransferRecord(thisQuarterReqDto);
+
+        AccountTransferRecordReqDto lastQuarterReqDto = AccountTransferRecordReqDto.builder()
+                .bankTranId("001")
+                .accountNumber(community.getAccountNumber())
+                .fromDate(previousFromDate)
+                .toDate(previousToDate)
+                .build();
+        AccountTransferRecordRespDto lastQuarterResult = accountTransferRecordPort.getTransferRecord(lastQuarterReqDto);
+
+        long thisQuarterExpense = thisQuarterResult.getData().getResList().stream()
+                .filter(transfer -> "출금".equals(transfer.getInoutType()))
+                .mapToLong(transfer -> Long.parseLong(transfer.getTranAmt()))
+                .sum();
+
+        long thisQuarterIncome = thisQuarterResult.getData().getResList().stream()
+                .filter(transfer -> "입금".equals(transfer.getInoutType()))
+                .mapToLong(transfer -> Long.parseLong(transfer.getTranAmt()))
+                .sum();
+
+        long lastQuarterExpense = lastQuarterResult.getData().getResList().stream()
+                .filter(transfer -> "출금".equals(transfer.getInoutType()))
+                .mapToLong(transfer -> Long.parseLong(transfer.getTranAmt()))
+                .sum();
+
+        LocalDateTime fromDateTime = localFromDate.atStartOfDay();
+        LocalDateTime toDateTime = localToDate.atTime(23, 59, 59);
+
+        List<PlanEntity> planList = planRepository.findPlansInPeriod(getExpenseInfoReqDto.getCommunityId(),fromDateTime,toDateTime);
+        List<String> planTitleList = planList.stream().map(PlanEntity::getTitle).toList();
+
+        List<Long> monthlyExpenses = new ArrayList<>(Collections.nCopies(3, 0L));
+        for (AccountTransferRecordRespListDto transfer : thisQuarterResult.getData().getResList()) {
+            if ("출금".equals(transfer.getInoutType())) {
+                LocalDate transferDate = LocalDate.parse(transfer.getTranDate(), formatter);
+                int monthIndex = transferDate.getMonthValue() - localFromDate.getMonthValue();
+                if (monthIndex >= 0 && monthIndex < 3) {
+                    monthlyExpenses.set(monthIndex, monthlyExpenses.get(monthIndex) + Long.parseLong(transfer.getTranAmt()));
+                }
+            }
+        }
+
+        int highestMonth = IntStream.range(0, 3)
+                .boxed()
+                .max(Comparator.comparingLong(monthlyExpenses::get))
+                .orElse(0);
+
+        highestMonth = localFromDate.getMonthValue() + highestMonth;
+
+        Map<String, Long> planExpenses = new HashMap<>();
+        for (PlanEntity plan : planList) {
+            long planExpense = thisQuarterResult.getData().getResList().stream()
+                    .filter(transfer -> "출금".equals(transfer.getInoutType()) && transfer.getTranDate().compareTo(plan.getStartDate().toString()) >= 0 && transfer.getTranDate().compareTo(plan.getEndDate().toString()) <= 0)
+                    .mapToLong(transfer -> Long.parseLong(transfer.getTranAmt()))
+                    .sum();
+
+            planExpenses.put(plan.getTitle(), planExpense);
+        }
+
+        String highestPlanName = planExpenses.entrySet().stream()
+                .max(Comparator.comparingLong(Map.Entry::getValue))
+                .map(Map.Entry::getKey)
+                .orElse("이번 분기, 여행한 기록이 없습니다.");
+
+        Long highestPlanExpense = planExpenses.getOrDefault(highestPlanName, 0L);
+
+        return GetExpenseInfoRespDto.builder()
+                .planTitleList(planTitleList)
+                .numberOfPlans(planList.size())
+                .howMuchSpentThanLastQuarter(thisQuarterExpense - lastQuarterExpense)
+                .thisQuarterExpense(thisQuarterExpense)
+                .thisQuarterIncome(thisQuarterIncome)
+                .highestMonth(highestMonth)
+                .monthlyExpenses(monthlyExpenses)
+                .highestPlanName(highestPlanName)
+                .highestPlanExpense(highestPlanExpense)
+                .build();
+    }
 }
