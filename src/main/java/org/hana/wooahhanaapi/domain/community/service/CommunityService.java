@@ -231,7 +231,7 @@ public class CommunityService {
                     .accountNumber(userDetails.getAccountNumber())
                     .bankTranId(userDetails.getBankTranId())
                     .inoutType("출금")
-                    .printContent(userDetails.getName())
+                    .printContent(foundCommunity.getName())
                     .tranAmt(dto.getAmount())
                     .build();
             accountTransferPort.createAccountTransfer(reqDto);
@@ -245,7 +245,7 @@ public class CommunityService {
                     .accountNumber(foundCommunity.getAccountNumber())
                     .bankTranId("001")
                     .inoutType("입금")
-                    .printContent(foundCommunity.getName())
+                    .printContent(userDetails.getName())
                     .tranAmt(dto.getAmount())
                     .build();
             accountTransferPort.createAccountTransfer(reqDto);
