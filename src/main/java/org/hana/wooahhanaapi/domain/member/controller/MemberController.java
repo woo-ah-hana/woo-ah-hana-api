@@ -24,9 +24,6 @@ public class MemberController {
         return this.memberService.signUp(signUpRequestDto);
     }
 
-//    @PostMapping("/signUp/accountAuth")
-//    public String signUpAccountAuth(@RequestBody SignUpRequestDto signUpRequestDto){}
-
     @PostMapping("/login")
     public LoginResponseDto login(@RequestBody LoginRequestDto loginRequestDto) {
         return this.authService.login(loginRequestDto);

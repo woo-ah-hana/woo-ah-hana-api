@@ -41,7 +41,6 @@ public class MemberService implements UserDetailsService {
             throw new DuplicateUsernameException("중복된 아이디입니다.");
         }
 
-        // 비밀번호 조건 먼저 검증
         Matcher matcher = pattern.matcher(request.getPassword());
         if (!matcher.matches()) {
             throw new PasswordNotSatisfyCondException("비밀번호 조건을 만족하지 않습니다.");
@@ -53,7 +52,8 @@ public class MemberService implements UserDetailsService {
                 passwordEncoder.encode(request.getPassword()),
                 request.getPhoneNumber(),
                 request.getAccountNumber(),
-                request.getBankTranId()
+                request.getBankTranId(),
+                request.getFcmToken()
         );
         memberRepository.save(memberEntity);
         return memberEntity.getUsername();
