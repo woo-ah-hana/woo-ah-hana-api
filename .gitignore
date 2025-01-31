@@ -41,3 +41,4 @@ out/
 /postgresql
 /src/main/resources/application-dev.properties
 /src/main/resources/application.properties
+/src/main/resources/wooahhana-firebase-adminsdk-fbsvc-bf90ef2598.json

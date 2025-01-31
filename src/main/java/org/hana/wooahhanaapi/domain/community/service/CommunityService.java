@@ -1,10 +1,10 @@
 package org.hana.wooahhanaapi.domain.community.service;
 
 import lombok.RequiredArgsConstructor;
-import org.hana.wooahhanaapi.domain.account.adapter.AccountTransferPort;
-import org.hana.wooahhanaapi.domain.account.adapter.AccountTransferRecordPort;
-import org.hana.wooahhanaapi.domain.account.adapter.GetAccountInfoPort;
-import org.hana.wooahhanaapi.domain.account.adapter.dto.*;
+import org.hana.wooahhanaapi.domain.account.port.AccountTransferPort;
+import org.hana.wooahhanaapi.domain.account.port.AccountTransferRecordPort;
+import org.hana.wooahhanaapi.domain.account.port.GetAccountInfoPort;
+import org.hana.wooahhanaapi.domain.account.dto.*;
 import org.hana.wooahhanaapi.domain.account.exception.MemberNotPresentException;
 import org.hana.wooahhanaapi.domain.community.domain.AutoDeposit;
 import org.hana.wooahhanaapi.domain.community.entity.AutoDepositEntity;

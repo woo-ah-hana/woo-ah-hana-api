@@ -2,8 +2,6 @@ package org.hana.wooahhanaapi.utils.database;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.hana.wooahhanaapi.domain.account.adapter.dto.AccountCreateReqDto;
-import org.hana.wooahhanaapi.domain.account.adapter.dto.BankCreateReqDto;
 import org.hana.wooahhanaapi.domain.account.service.AccountService;
 import org.hana.wooahhanaapi.domain.community.entity.CommunityEntity;
 import org.hana.wooahhanaapi.domain.community.entity.MembershipEntity;
@@ -21,8 +19,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
 @Component
