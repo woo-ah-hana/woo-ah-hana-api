@@ -1,4 +1,4 @@
-package org.hana.wooahhanaapi.domain.account.adapter.dto;
+package org.hana.wooahhanaapi.domain.account.dto;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -7,16 +7,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
-
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class BankCreateRespDataDto implements Serializable {
-    private String bankCodeTran;
-    private String id;
-    private String bankName;
+public class GetAccountInfoReqDto {
     private String bankTranId;
+    private String fintechUseNum;
+    private String tranDtime;
+    private String accountNumber;
 }

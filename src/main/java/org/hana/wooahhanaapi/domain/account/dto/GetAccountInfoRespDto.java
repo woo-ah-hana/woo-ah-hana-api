@@ -1,4 +1,4 @@
-package org.hana.wooahhanaapi.domain.account.adapter.dto;
+package org.hana.wooahhanaapi.domain.account.dto;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class BankCreateReqDto {
-    String bankName;
-    String bankTranId;
-    String bankCodeTran;
+public class GetAccountInfoRespDto {
+    private Boolean isSuccess;
+    private String message;
+    private GetAccountInfoRespDataDto data;
 }

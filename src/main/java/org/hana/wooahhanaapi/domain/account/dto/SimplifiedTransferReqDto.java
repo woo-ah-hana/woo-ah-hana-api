@@ -1,4 +1,4 @@
-package org.hana.wooahhanaapi.domain.account.adapter.dto;
+package org.hana.wooahhanaapi.domain.account.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

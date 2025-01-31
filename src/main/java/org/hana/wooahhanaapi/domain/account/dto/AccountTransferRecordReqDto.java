@@ -1,4 +1,4 @@
-package org.hana.wooahhanaapi.domain.account.adapter.dto;
+package org.hana.wooahhanaapi.domain.account.dto;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;

@@ -1,11 +1,8 @@
-package org.hana.wooahhanaapi.domain.account.adapter.dto;
+package org.hana.wooahhanaapi.domain.account.dto;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 
@@ -14,8 +11,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class BankCreateRespDto implements Serializable {
+public class AccountCreateRespDto implements Serializable {
     private Boolean isSuccess;
     private String message;
-    private BankCreateRespDataDto data;
+    private AccountCreateRespDataDto data;
 }

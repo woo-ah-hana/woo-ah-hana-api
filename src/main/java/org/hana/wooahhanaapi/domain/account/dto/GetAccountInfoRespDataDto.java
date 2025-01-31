@@ -1,4 +1,4 @@
-package org.hana.wooahhanaapi.domain.account.adapter.dto;
+package org.hana.wooahhanaapi.domain.account.dto;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -7,18 +7,15 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class AccountTransferRecordRespDataDto {
-
+public class GetAccountInfoRespDataDto {
     private String apiTranId;
     private String resCode;
-    private String resMessage;
+    private String rspMessage;
     private String apiTranDtm;
     private String bankTranId;
     private String bankTranDate;
@@ -26,9 +23,8 @@ public class AccountTransferRecordRespDataDto {
     private String bankRspCode;
     private String bankRspMessage;
     private String fintechUseNum;
-    private String balanceAmt;
-    private String pageRecordCnt;
-    private String nextPageYn;
-    private String beforeInquiryTraceInfo;
-    private List<AccountTransferRecordRespListDto> resList;
+    private Long balanceAmt;
+    private Long availableAmt;
+    private String accountType;
+    private String productName;
 }

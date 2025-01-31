@@ -1,7 +1,7 @@
 package org.hana.wooahhanaapi.adapter;
 
 import org.hana.wooahhanaapi.domain.account.adapter.AccountAdapter;
-import org.hana.wooahhanaapi.domain.account.adapter.dto.*;
+import org.hana.wooahhanaapi.domain.account.dto.*;
 import org.hana.wooahhanaapi.domain.account.exception.AccountNotFoundException;
 import org.hana.wooahhanaapi.domain.account.exception.DuplicateAccountException;
 import org.hana.wooahhanaapi.domain.account.exception.TransferNotValidException;

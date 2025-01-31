@@ -2,11 +2,11 @@ package org.hana.wooahhanaapi.domain.naver.adaptor;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.cdimascio.dotenv.Dotenv;
-import org.hana.wooahhanaapi.domain.naver.adaptor.dto.SearchResponseDto;
+import org.hana.wooahhanaapi.domain.naver.dto.SearchResponseDto;
 import org.hana.wooahhanaapi.domain.naver.exception.InvalidJsonMappingException;
 import org.hana.wooahhanaapi.domain.naver.exception.InvalidSearchQueryException;
 import org.hana.wooahhanaapi.domain.naver.exception.NaverApiException;
+import org.hana.wooahhanaapi.domain.naver.port.NaverSearchPort;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +24,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Service
-public class NaverSearchAdaptor implements NaverSearchPort{
+public class NaverSearchAdaptor implements NaverSearchPort {
     @Value("${NAVER_CLIENT_ID}")
     private String clientId;
     @Value("${NAVER_CLIENT_SECRET}")

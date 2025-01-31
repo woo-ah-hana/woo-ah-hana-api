@@ -1,6 +1,6 @@
-package org.hana.wooahhanaapi.domain.naver.adaptor;
+package org.hana.wooahhanaapi.domain.naver.port;
 
-import org.hana.wooahhanaapi.domain.naver.adaptor.dto.SearchResponseDto;
+import org.hana.wooahhanaapi.domain.naver.dto.SearchResponseDto;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package org.hana.wooahhanaapi.domain.naver.adaptor.dto;
+package org.hana.wooahhanaapi.domain.naver.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

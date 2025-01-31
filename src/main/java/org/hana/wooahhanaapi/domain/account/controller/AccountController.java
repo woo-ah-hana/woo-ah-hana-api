@@ -1,7 +1,7 @@
 package org.hana.wooahhanaapi.domain.account.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.hana.wooahhanaapi.domain.account.adapter.dto.*;
+import org.hana.wooahhanaapi.domain.account.dto.*;
 import org.hana.wooahhanaapi.domain.account.service.AccountService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

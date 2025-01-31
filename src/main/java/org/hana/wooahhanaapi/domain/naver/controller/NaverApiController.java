@@ -1,8 +1,8 @@
 package org.hana.wooahhanaapi.domain.naver.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.hana.wooahhanaapi.domain.naver.adaptor.NaverSearchPort;
-import org.hana.wooahhanaapi.domain.naver.adaptor.dto.SearchResponseDto;
+import org.hana.wooahhanaapi.domain.naver.port.NaverSearchPort;
+import org.hana.wooahhanaapi.domain.naver.dto.SearchResponseDto;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

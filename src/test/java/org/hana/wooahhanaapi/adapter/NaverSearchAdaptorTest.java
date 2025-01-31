@@ -1,12 +1,8 @@
 package org.hana.wooahhanaapi.adapter;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hana.wooahhanaapi.domain.naver.adaptor.NaverSearchAdaptor;
-import org.hana.wooahhanaapi.domain.naver.adaptor.dto.SearchResponseDto;
-import org.hana.wooahhanaapi.domain.naver.exception.InvalidJsonMappingException;
+import org.hana.wooahhanaapi.domain.naver.dto.SearchResponseDto;
 import org.hana.wooahhanaapi.domain.naver.exception.InvalidSearchQueryException;
-import org.hana.wooahhanaapi.domain.naver.exception.NaverApiException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,7 +10,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.Arrays;
@@ -22,7 +17,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.jayway.jsonpath.internal.path.PathCompiler.fail;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
