@@ -1,4 +1,4 @@
-package org.hana.wooahhanaapi.domain.naver.exception;
+package org.hana.wooahhanaapi.naver.exception;
 
 import lombok.Getter;
 import org.hana.wooahhanaapi.utils.exception.CustomExceptionData;

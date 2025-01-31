@@ -1,4 +1,4 @@
-package org.hana.wooahhanaapi.domain.naver.exception;
+package org.hana.wooahhanaapi.naver.exception;
 
 import lombok.Getter;
 import org.hana.wooahhanaapi.utils.exception.CustomExceptionData;
@@ -8,12 +8,12 @@ import org.springframework.http.HttpStatus;
 import java.time.LocalDateTime;
 
 @Getter
-public class InvalidSearchQueryException extends GlobalException {
+public class InvalidJsonMappingException extends GlobalException {
 
     private final HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
-    private final String exceptionName = "Invalid Search Query Exception";
+    private final String exceptionName = "Invalid Json Mapping Exception";
 
-    public InvalidSearchQueryException(String message) {
+    public InvalidJsonMappingException(String message) {
         super(message);
         this.customExceptionData = CustomExceptionData.create(httpStatus, exceptionName);
     }

@@ -1,4 +1,4 @@
-package org.hana.wooahhanaapi.domain.firebase.adapter;
+package org.hana.wooahhanaapi.firebase.adapter;
 
 import org.springframework.stereotype.Service;
 

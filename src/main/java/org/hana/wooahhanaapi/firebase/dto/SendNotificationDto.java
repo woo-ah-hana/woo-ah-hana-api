@@ -1,4 +1,4 @@
-package org.hana.wooahhanaapi.domain.firebase.dto;
+package org.hana.wooahhanaapi.firebase.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

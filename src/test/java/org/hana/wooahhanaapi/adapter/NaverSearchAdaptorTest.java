@@ -1,8 +1,8 @@
 package org.hana.wooahhanaapi.adapter;
 
-import org.hana.wooahhanaapi.domain.naver.adaptor.NaverSearchAdaptor;
-import org.hana.wooahhanaapi.domain.naver.dto.SearchResponseDto;
-import org.hana.wooahhanaapi.domain.naver.exception.InvalidSearchQueryException;
+import org.hana.wooahhanaapi.naver.adaptor.NaverSearchAdaptor;
+import org.hana.wooahhanaapi.naver.dto.SearchResponseDto;
+import org.hana.wooahhanaapi.naver.exception.InvalidSearchQueryException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

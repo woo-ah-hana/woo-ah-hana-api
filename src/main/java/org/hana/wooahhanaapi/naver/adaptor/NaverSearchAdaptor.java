@@ -1,12 +1,12 @@
-package org.hana.wooahhanaapi.domain.naver.adaptor;
+package org.hana.wooahhanaapi.naver.adaptor;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hana.wooahhanaapi.domain.naver.dto.SearchResponseDto;
-import org.hana.wooahhanaapi.domain.naver.exception.InvalidJsonMappingException;
-import org.hana.wooahhanaapi.domain.naver.exception.InvalidSearchQueryException;
-import org.hana.wooahhanaapi.domain.naver.exception.NaverApiException;
-import org.hana.wooahhanaapi.domain.naver.port.NaverSearchPort;
+import org.hana.wooahhanaapi.naver.dto.SearchResponseDto;
+import org.hana.wooahhanaapi.naver.exception.InvalidJsonMappingException;
+import org.hana.wooahhanaapi.naver.exception.InvalidSearchQueryException;
+import org.hana.wooahhanaapi.naver.exception.NaverApiException;
+import org.hana.wooahhanaapi.naver.port.NaverSearchPort;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
