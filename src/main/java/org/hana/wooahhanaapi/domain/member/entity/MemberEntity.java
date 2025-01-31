@@ -42,6 +42,9 @@ public class MemberEntity implements UserDetails {
     @Column(nullable=false)
     protected String bankTranId;
 
+    @Column(nullable=false)
+    protected String fcmToken;
+
     @OneToMany(mappedBy="member")
     protected List<MembershipEntity> memberships;
 
@@ -75,8 +78,8 @@ public class MemberEntity implements UserDetails {
         return UserDetails.super.isEnabled();
     }
 
-    public static MemberEntity create(String username, String name, String password, String phoneNumber, String accountNumber, String bankTranId) {
-        return new MemberEntity(null,username,password,name,phoneNumber,accountNumber,bankTranId, null);
+    public static MemberEntity create(String username, String name, String password, String phoneNumber, String accountNumber, String bankTranId, String fcmToken) {
+        return new MemberEntity(null,username,password,name,phoneNumber,accountNumber,bankTranId, fcmToken, null);
     }
 
     public void updateAccount(String accountNumber, String bankTranId) {

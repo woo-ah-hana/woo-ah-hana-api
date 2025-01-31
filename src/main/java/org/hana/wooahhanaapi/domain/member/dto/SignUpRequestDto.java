@@ -16,4 +16,5 @@ public class SignUpRequestDto {
     private String phoneNumber;
     private String accountNumber;
     private String bankTranId;
+    private String fcmToken;
 }

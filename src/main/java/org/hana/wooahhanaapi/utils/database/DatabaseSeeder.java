@@ -37,29 +37,29 @@ public class DatabaseSeeder implements CommandLineRunner {
     public void run(String... args) throws SeederException {
 
         //member seed
-        MemberEntity member1 = MemberEntity.create("01026530957","함형주",passwordEncoder.encode("hj1234!"),"01026530957","3561057204496","002");//농협:bank_tran_id="002"
+        MemberEntity member1 = MemberEntity.create("01026530957","함형주",passwordEncoder.encode("hj1234!"),"01026530957","3561057204496","002", "mock-fcm-token");//농협:bank_tran_id="002"
         memberRepository.save(member1);
-        MemberEntity member2 = MemberEntity.create("01012345678","최선정",passwordEncoder.encode("sj1234!"),"01012345678","2150094621845","003");//우리:bank_tran_id="003"
+        MemberEntity member2 = MemberEntity.create("01012345678","최선정",passwordEncoder.encode("sj1234!"),"01012345678","2150094621845","003", "mock-fcm-token");//우리:bank_tran_id="003"
         memberRepository.save(member2);
-        MemberEntity member3 = MemberEntity.create("01039388377","윤영헌",passwordEncoder.encode("yh1234!"),"01039388377","3561024215509","002");//농협:bank_tran_id="002"
+        MemberEntity member3 = MemberEntity.create("01039388377","윤영헌",passwordEncoder.encode("yh1234!"),"01039388377","3561024215509","002", "mock-fcm-token");//농협:bank_tran_id="002"
         memberRepository.save(member3);
-        MemberEntity member4 = MemberEntity.create("01089400634","김상현",passwordEncoder.encode("sh1234!"),"01089400634","1462665915101","001");//하나:bank_tran_id="001"
+        MemberEntity member4 = MemberEntity.create("01089400634","김상현",passwordEncoder.encode("sh1234!"),"01089400634","1462665915101","001", "mock-fcm-token");//하나:bank_tran_id="001"
         memberRepository.save(member4);
-        MemberEntity member5 = MemberEntity.create("01099153691","김채운",passwordEncoder.encode("cw1234!"),"01099153691","0181011629531","005");//기업:bank_tran_id="005"
+        MemberEntity member5 = MemberEntity.create("01099153691","김채운",passwordEncoder.encode("cw1234!"),"01099153691","0181011629531","005", "mock-fcm-token");//기업:bank_tran_id="005"
         memberRepository.save(member5);
-        MemberEntity member6 = MemberEntity.create("01029011957","김미강",passwordEncoder.encode("mk1234!"),"01029011957","3333057204496","006");//카카오:bank_tran_id="006"
+        MemberEntity member6 = MemberEntity.create("01029011957","김미강",passwordEncoder.encode("mk1234!"),"01029011957","3333057204496","006", "mock-fcm-token");//카카오:bank_tran_id="006"
         memberRepository.save(member6);
-        MemberEntity member7 = MemberEntity.create("01092469330","안유진",passwordEncoder.encode("yj1234!"),"01092469330","3561084512201","002"); //농협:bank_tran_id="002"
+        MemberEntity member7 = MemberEntity.create("01092469330","안유진",passwordEncoder.encode("yj1234!"),"01092469330","3561084512201","002", "mock-fcm-token"); //농협:bank_tran_id="002"
         memberRepository.save(member7);
-        MemberEntity member8 = MemberEntity.create("01026483859","김가을",passwordEncoder.encode("ge1234!"),"01092469330","3561084512201","001"); //하나:bank_tran_id="001"
+        MemberEntity member8 = MemberEntity.create("01026483859","김가을",passwordEncoder.encode("ge1234!"),"01092469330","3561084512201","001", "mock-fcm-token"); //하나:bank_tran_id="001"
         memberRepository.save(member8);
-        MemberEntity member9 = MemberEntity.create("01024029471","장원영",passwordEncoder.encode("wy1234!"),"01092469330","3561084512201","001"); //하나:bank_tran_id="001"
+        MemberEntity member9 = MemberEntity.create("01024029471","장원영",passwordEncoder.encode("wy1234!"),"01092469330","3561084512201","001", "mock-fcm-token"); //하나:bank_tran_id="001"
         memberRepository.save(member9);
-        MemberEntity member10 = MemberEntity.create("01099123592","김레이",passwordEncoder.encode("re1234!"),"01092469330","3561084512201","008"); //국민:bank_tran_id="008"
+        MemberEntity member10 = MemberEntity.create("01099123592","김레이",passwordEncoder.encode("re1234!"),"01092469330","3561084512201","008", "mock-fcm-token"); //국민:bank_tran_id="008"
         memberRepository.save(member10);
-        MemberEntity member11 = MemberEntity.create("01084595281","김지원",passwordEncoder.encode("jw1234!"),"01092469330","3561084512201","009"); //부산:bank_tran_id="009"
+        MemberEntity member11 = MemberEntity.create("01084595281","김지원",passwordEncoder.encode("jw1234!"),"01092469330","3561084512201","009", "mock-fcm-token"); //부산:bank_tran_id="009"
         memberRepository.save(member11);
-        MemberEntity member12 = MemberEntity.create("01052548974","이현서",passwordEncoder.encode("hs1234!"),"01092469330","3561084512201","010"); //대구:bank_tran_id="010"
+        MemberEntity member12 = MemberEntity.create("01052548974","이현서",passwordEncoder.encode("hs1234!"),"01092469330","3561084512201","010", "mock-fcm-token"); //대구:bank_tran_id="010"
         memberRepository.save(member12);
 
         //community, membership seed
