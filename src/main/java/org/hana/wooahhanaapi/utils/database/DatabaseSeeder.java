@@ -29,7 +29,6 @@ public class DatabaseSeeder implements CommandLineRunner {
     private final MemberRepository memberRepository;
     private final CommunityRepository communityRepository;
     private final MembershipRepository membershipRepository;
-    private final AccountService accountService;
     private final PlanRepository planRepository;
 
     @Override

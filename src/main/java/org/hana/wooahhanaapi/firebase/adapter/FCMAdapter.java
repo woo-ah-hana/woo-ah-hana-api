@@ -6,14 +6,14 @@ import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import org.hana.wooahhanaapi.firebase.dto.SendNotificationDto;
 import org.hana.wooahhanaapi.firebase.exception.FirebaseException;
-import org.hana.wooahhanaapi.firebase.port.TestNotificationPort;
+import org.hana.wooahhanaapi.firebase.port.NotifyPort;
 import org.springframework.stereotype.Service;
 
 @Service
-public class FCMAdapter implements TestNotificationPort {
+public class FCMAdapter implements NotifyPort {
 
     @Override
-    public String testNotification(SendNotificationDto dto){
+    public String sendNotification(SendNotificationDto dto){
         Notification notification = Notification.builder()
                 .setTitle(dto.getTitle())
                 .setBody(dto.getBody())
