@@ -137,10 +137,17 @@ public class CommunityService {
         int year = now.getYear();  // 년도
         int month = now.getMonthValue();  // 월 (1-12)
 
-        YearMonth yearMonth = YearMonth.from(now); // 오늘 달의 말일
-        String fromDate = year + "-" + month + "-" + "01"; // xx월 1일부터
-        String toDate = year + "-" + month + "-" + yearMonth; // xx월 말일까지 조회
+        String str_month = "";
+        if(month < 10) {
+            str_month = "0" + month; // 두 자리수로 맞추어 주어야 함
+        }
 
+        int lastDay = YearMonth.now().lengthOfMonth(); // 오늘 달의 말일
+        String fromDate = year + "-" + str_month + "-" + "01"; // xx월 1일부터
+        String toDate = year + "-" + str_month + "-" + lastDay; // xx월 말일까지 조회
+
+        System.out.println(fromDate);
+        System.out.println(toDate);
         // 조회 조건 dto 생성
         AccountTransferRecordReqDto reqDto = AccountTransferRecordReqDto.builder()
                 .bankTranId("001")
