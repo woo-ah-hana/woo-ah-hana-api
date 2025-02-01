@@ -20,7 +20,7 @@ public class FirebaseConfig {
         }
 
         FileInputStream serviceAccount =
-                new FileInputStream("src/main/resources/wooahhana-firebase-adminsdk-fbsvc-48b0eb22cd.json");
+                new FileInputStream("src/main/resources/wooahhana-firebase-adminsdk-fbsvc-e6690a6e26.json");
 
         FirebaseOptions options = new FirebaseOptions.Builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
