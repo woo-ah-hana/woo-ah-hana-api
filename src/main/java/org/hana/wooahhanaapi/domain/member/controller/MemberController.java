@@ -24,9 +24,6 @@ public class MemberController {
         return this.memberService.signUp(signUpRequestDto);
     }
 
-//    @PostMapping("/signUp/accountAuth")
-//    public String signUpAccountAuth(@RequestBody SignUpRequestDto signUpRequestDto){}
-
     @PostMapping("/login")
     public LoginResponseDto login(@RequestBody LoginRequestDto loginRequestDto) {
         return this.authService.login(loginRequestDto);
@@ -55,5 +52,10 @@ public class MemberController {
     @PostMapping("/changePassword")
     public String changePassword(@RequestBody ChangePasswordReqDto reqDto) {
         return this.memberService.changePassword(reqDto);
+    }
+
+    @GetMapping("/inquiry")
+    public InquiryMemberRespDto inquiryMember(@RequestParam(required = false) String id) {
+        return this.memberService.inquiryMember(id);
     }
 }

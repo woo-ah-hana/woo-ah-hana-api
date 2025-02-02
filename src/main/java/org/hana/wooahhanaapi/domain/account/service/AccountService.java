@@ -1,12 +1,12 @@
 package org.hana.wooahhanaapi.domain.account.service;
 
 import lombok.RequiredArgsConstructor;
-import org.hana.wooahhanaapi.domain.account.adapter.AccountCreatePort;
-import org.hana.wooahhanaapi.domain.account.adapter.AccountTransferPort;
-import org.hana.wooahhanaapi.domain.account.adapter.AccountTransferRecordPort;
-import org.hana.wooahhanaapi.domain.account.adapter.BankCreatePort;
-import org.hana.wooahhanaapi.domain.account.adapter.GetAccountInfoPort;
-import org.hana.wooahhanaapi.domain.account.adapter.dto.*;
+import org.hana.wooahhanaapi.domain.account.port.AccountCreatePort;
+import org.hana.wooahhanaapi.domain.account.port.AccountTransferPort;
+import org.hana.wooahhanaapi.domain.account.port.AccountTransferRecordPort;
+import org.hana.wooahhanaapi.domain.account.port.BankCreatePort;
+import org.hana.wooahhanaapi.domain.account.port.GetAccountInfoPort;
+import org.hana.wooahhanaapi.domain.account.dto.*;
 import org.springframework.stereotype.Service;
 
 @Service

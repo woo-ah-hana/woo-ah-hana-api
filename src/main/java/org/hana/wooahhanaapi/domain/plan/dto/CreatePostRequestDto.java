@@ -15,7 +15,7 @@ import java.util.UUID;
 @Builder
 public class CreatePostRequestDto {
     private UUID planId;
-    private UUID memberId;
+    //private UUID memberId;
     private String description;
-    private LocalDateTime createAt;
+    //private LocalDateTime createAt;
 }

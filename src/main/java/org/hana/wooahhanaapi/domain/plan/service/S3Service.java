@@ -17,10 +17,10 @@ import java.nio.charset.StandardCharsets;
 @RequiredArgsConstructor
 @Service
 public class S3Service {
-//    @Value("${cloud.aws.s3.bucket}")
-//    private String bucket;
+    @Value("${S3_BUCKET_NAME}")
+    private String bucket;
 
-//    private final AmazonS3 amazonS3;
+    private final AmazonS3 amazonS3;
 
     public String upload(MultipartFile multipartFile, String s3FileName) throws IOException {
 
@@ -30,20 +30,20 @@ public class S3Service {
         // 파일의 MIME 타입 설정
         objMeta.setContentType(multipartFile.getContentType());
         try{
-//            amazonS3.putObject(bucket, encodedFileName, multipartFile.getInputStream(), objMeta);
+            amazonS3.putObject(bucket, encodedFileName, multipartFile.getInputStream(), objMeta);
         }catch (AmazonServiceException e) {
             log.error("S3 파일 업로드 중 오류 발생: {}", e.getMessage(), e);
         }
 
-//        return amazonS3.getUrl(bucket, encodedFileName).toString();
-          return "url";
+        return amazonS3.getUrl(bucket, encodedFileName).toString();
+          //return "url";
     }
 
     public void delete(String fileUrl) {
         try {
             // ".com/" 이후의 파일명을 추출
             String keyName = fileUrl.substring(fileUrl.indexOf(".com/") + 5);
-//            amazonS3.deleteObject(bucket, keyName);
+            amazonS3.deleteObject(bucket, keyName);
         } catch (AmazonServiceException e) {
             log.error("S3 파일 삭제 중 오류 발생: {}", e.toString());
         }

@@ -38,11 +38,11 @@ public class PlanEntity {
     @Column(nullable=false, name = "category")
     protected String category;
 
-    @Column(name = "locations")
+    @Column(name = "locations", length=2000)
     @Convert(converter = ListConverter.class)
     protected List<String> locations;
 
-    @Column(name = "member_ids")
+    @Column(name = "member_ids", length=2000)
     @Convert(converter = ListConverter.class)
     private List<UUID> memberIds;
 

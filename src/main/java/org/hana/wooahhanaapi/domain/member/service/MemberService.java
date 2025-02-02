@@ -1,19 +1,13 @@
 package org.hana.wooahhanaapi.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
-import org.hana.wooahhanaapi.domain.account.adapter.GetAccountInfoPort;
-import org.hana.wooahhanaapi.domain.account.adapter.dto.GetAccountInfoReqDto;
+import org.hana.wooahhanaapi.domain.account.port.GetAccountInfoPort;
+import org.hana.wooahhanaapi.domain.account.dto.GetAccountInfoReqDto;
 import org.hana.wooahhanaapi.domain.account.exception.MemberNotPresentException;
 import org.hana.wooahhanaapi.domain.member.dto.*;
 import org.hana.wooahhanaapi.domain.member.entity.MemberEntity;
 import org.hana.wooahhanaapi.domain.member.exception.*;
 import org.hana.wooahhanaapi.domain.member.repository.MemberRepository;
-import org.hana.wooahhanaapi.utils.security.JwtProvider;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -47,7 +41,6 @@ public class MemberService implements UserDetailsService {
             throw new DuplicateUsernameException("중복된 아이디입니다.");
         }
 
-        // 비밀번호 조건 먼저 검증
         Matcher matcher = pattern.matcher(request.getPassword());
         if (!matcher.matches()) {
             throw new PasswordNotSatisfyCondException("비밀번호 조건을 만족하지 않습니다.");
@@ -59,7 +52,8 @@ public class MemberService implements UserDetailsService {
                 passwordEncoder.encode(request.getPassword()),
                 request.getPhoneNumber(),
                 request.getAccountNumber(),
-                request.getBankTranId()
+                request.getBankTranId(),
+                request.getFcmToken()
         );
         memberRepository.save(memberEntity);
         return memberEntity.getUsername();
@@ -126,4 +120,18 @@ public class MemberService implements UserDetailsService {
 
     }
 
+    public InquiryMemberRespDto inquiryMember(String id) {
+        try{
+            MemberEntity memberEntity = memberRepository.findByUsername(id).orElseThrow();
+            return InquiryMemberRespDto.builder()
+                    .id(memberEntity.getId().toString())
+                    .name(memberEntity.getName())
+                    .build();
+        }catch (Exception e){
+            return InquiryMemberRespDto.builder()
+                    .id("존재하지 않습니다.")
+                    .name("존재하지 않습니다.")
+                    .build();
+        }
+    }
 }

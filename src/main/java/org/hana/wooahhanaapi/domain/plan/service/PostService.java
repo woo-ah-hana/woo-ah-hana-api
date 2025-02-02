@@ -14,10 +14,12 @@ import org.hana.wooahhanaapi.domain.plan.mapper.PlanMapper;
 import org.hana.wooahhanaapi.domain.plan.mapper.PostMapper;
 import org.hana.wooahhanaapi.domain.plan.repository.PlanRepository;
 import org.hana.wooahhanaapi.domain.plan.repository.PostRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -32,6 +34,8 @@ public class PostService {
     private final PostRepository postRepository;
 
     public UUID createPost(CreatePostRequestDto requestDto, MultipartFile image) throws IOException {
+        // 현재 로그인한 사용자 정보 가져오기
+        MemberEntity userDetails = (MemberEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (!Objects.requireNonNull(image.getContentType()).startsWith("image/")) {
             throw new InvalidFileTypeException("지원되지 않는 파일 형식입니다.");
@@ -41,22 +45,21 @@ public class PostService {
         }
 
         String s3FileName = UUID.randomUUID() + "-" + image.getOriginalFilename();
+        String imageUrl = s3Service.upload(image, s3FileName);
         // TODO: S3 서비스에 저장
-        String imageUrl = s3FileName;
+        //String imageUrl = s3FileName;
 
         PlanEntity plan = planRepository.findById(requestDto.getPlanId())
                 .orElseThrow(() -> new EntityNotFoundException("해당 Plan이 존재하지 않습니다."));
 
-        MemberEntity member = memberRepository.findById(requestDto.getMemberId())
-                .orElseThrow(() -> new EntityNotFoundException("해당 Member가 존재하지 않습니다."));
-
+        System.out.println(imageUrl);
         Post post = Post.create(
                 UUID.randomUUID(),
                 plan,
-                member,
+                userDetails,
                 imageUrl,
                 requestDto.getDescription(),
-                requestDto.getCreateAt()
+                LocalDateTime.now()
         );
 
         return  postRepository.save(PostMapper.mapDomainToEntity(post)).getId();
@@ -74,9 +77,9 @@ public class PostService {
     public List<GetPostResponseDto> getPostsByPlanId(UUID planId) {
         List<PostEntity> posts = postRepository.findCompletedByPlanId(planId);
 
-        if (posts.isEmpty()) {
-            throw new EntityNotFoundException("해당 Posts을 찾을 수 없습니다.");
-        }
+//        if (posts.isEmpty()) {
+//            throw new EntityNotFoundException("해당 Posts을 찾을 수 없습니다.");
+//        }
 
         return posts.stream()
                 .map(PlanMapper::mapPostsEntityToDto)

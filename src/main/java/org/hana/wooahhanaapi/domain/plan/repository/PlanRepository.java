@@ -15,4 +15,9 @@ public interface PlanRepository extends JpaRepository<PlanEntity, UUID> {
 
     @Query("SELECT p FROM PlanEntity p WHERE p.communityId = :communityId AND p.endDate > CURRENT_TIMESTAMP")
     List<PlanEntity> findAllByCommunityId(@Param("communityId") UUID communityId);
+
+    @Query("SELECT p FROM PlanEntity p " + "WHERE p.communityId = :communityId " + "AND (p.startDate <= :toDate AND p.endDate >= :fromDate)")
+    List<PlanEntity> findPlansInPeriod(
+            @Param("communityId") UUID communityId, @Param("fromDate") LocalDateTime fromDate, @Param("toDate") LocalDateTime toDate
+    );
 }

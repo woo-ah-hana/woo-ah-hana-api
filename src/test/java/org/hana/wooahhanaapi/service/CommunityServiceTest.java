@@ -1,13 +1,8 @@
 package org.hana.wooahhanaapi.service;
 
 import org.assertj.core.api.Assertions;
-import org.hana.wooahhanaapi.domain.account.adapter.AccountTransferPort;
-import org.hana.wooahhanaapi.domain.account.adapter.AccountTransferRecordPort;
-import org.hana.wooahhanaapi.domain.account.adapter.dto.AccountTransferRecordReqDto;
-import org.hana.wooahhanaapi.domain.account.adapter.dto.AccountTransferRecordRespListDto;
-import org.hana.wooahhanaapi.domain.account.adapter.dto.SimplifiedTransferReqDto;
-import org.hana.wooahhanaapi.domain.account.exception.IncorrectValidationCodeException;
-import org.hana.wooahhanaapi.domain.community.domain.Community;
+import org.hana.wooahhanaapi.domain.account.port.AccountTransferPort;
+import org.hana.wooahhanaapi.domain.account.port.AccountTransferRecordPort;
 import org.hana.wooahhanaapi.domain.community.dto.*;
 import org.hana.wooahhanaapi.domain.community.entity.CommunityEntity;
 import org.hana.wooahhanaapi.domain.community.entity.MembershipEntity;
@@ -22,8 +17,6 @@ import org.hana.wooahhanaapi.domain.member.repository.MemberRepository;
 import org.hana.wooahhanaapi.domain.member.service.MemberService;
 import org.hana.wooahhanaapi.utils.redis.SaveValidCodePort;
 import org.hana.wooahhanaapi.utils.redis.ValidateAccountPort;
-import org.hana.wooahhanaapi.utils.redis.dto.AccountValidationConfirmDto;
-import org.hana.wooahhanaapi.utils.redis.dto.SendValidationCodeReqDto;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,18 +26,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -91,6 +78,13 @@ public class CommunityServiceTest {
         );
         // 계주 : 함형주, 이름 : "모임1", 계좌번호 : 1468299555144인 모임 하나 개설
         communityRepository.save(community);
+
+        CommunityEntity community2 = CommunityEntity.create(
+                memberRepository.findByUsername("01026530957").get().getId(), "맛집탐방",
+                "1468152645150", 10L, 20000L, 5L
+        );
+        // 계주 : 함형주, 이름 : "맛집탐방", 계좌번호 : 1468152645150인 모임 하나 개설
+        communityRepository.save(community2);
 
         MembershipEntity ms1 = MembershipEntity.create(m1, community);
         MembershipEntity ms2 = MembershipEntity.create(m2, community);
@@ -332,5 +326,28 @@ public class CommunityServiceTest {
         Assertions.assertThat(membershipRepository.existsByMemberAndCommunity(sj, foundCommunity)).isFalse();
     }
 
+    @Test
+    @DisplayName("결산 정보")
+    void getExpenseInfoTest() {
+        CommunityEntity community = communityRepository.findByAccountNumber("1468152645150").orElseThrow();
+        System.out.println(community.getId());
+        GetExpenseInfoReqDto reqDto = GetExpenseInfoReqDto.builder()
+                .communityId(community.getId())
+                .fromDate("2024-10-01")
+                .toDate("2024-12-31")
+                .build();
 
+        GetExpenseInfoRespDto result = communityService.getExpenseInfo(reqDto);
+
+        Assertions.assertThat(result.getPlanTitleList()).isEqualTo(new ArrayList<>());
+        Assertions.assertThat(result.getNumberOfPlans()).isEqualTo(0);
+        Assertions.assertThat(result.getHowMuchSpentThanLastQuarter()).isEqualTo(224900L);
+        Assertions.assertThat(result.getThisQuarterExpense()).isEqualTo(224900L);
+        Assertions.assertThat(result.getThisQuarterIncome()).isEqualTo(0L);
+        Assertions.assertThat(result.getHighestMonth()).isEqualTo(12);
+        Assertions.assertThat(result.getMonthlyExpenses()).isEqualTo(Arrays.asList(0L,4900L,220000L));
+        Assertions.assertThat(result.getHighestPlanName()).isEqualTo("이번 분기, 여행한 기록이 없습니다.");
+        Assertions.assertThat(result.getHighestPlanExpense()).isEqualTo(0L);
+
+    }
 }
