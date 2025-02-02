@@ -50,15 +50,15 @@ public class DatabaseSeeder implements CommandLineRunner {
         memberRepository.save(member6);
         MemberEntity member7 = MemberEntity.create("01092469330","안유진",passwordEncoder.encode("yj1234!"),"01092469330","3561084512201","002", "mock-fcm-token"); //농협:bank_tran_id="002"
         memberRepository.save(member7);
-        MemberEntity member8 = MemberEntity.create("01026483859","김가을",passwordEncoder.encode("ge1234!"),"01092469330","3561084512201","001", "mock-fcm-token"); //하나:bank_tran_id="001"
+        MemberEntity member8 = MemberEntity.create("01026483859","김가을",passwordEncoder.encode("ge1234!"),"01026483859","1464397169654","001", "mock-fcm-token"); //하나:bank_tran_id="001"
         memberRepository.save(member8);
-        MemberEntity member9 = MemberEntity.create("01024029471","장원영",passwordEncoder.encode("wy1234!"),"01092469330","3561084512201","001", "mock-fcm-token"); //하나:bank_tran_id="001"
+        MemberEntity member9 = MemberEntity.create("01024029471","장원영",passwordEncoder.encode("wy1234!"),"01024029471","1467018418840","001", "mock-fcm-token"); //하나:bank_tran_id="001"
         memberRepository.save(member9);
-        MemberEntity member10 = MemberEntity.create("01099123592","김레이",passwordEncoder.encode("re1234!"),"01092469330","3561084512201","008", "mock-fcm-token"); //국민:bank_tran_id="008"
+        MemberEntity member10 = MemberEntity.create("01099123592","김레이",passwordEncoder.encode("re1234!"),"01099123592","5215712291290","008", "mock-fcm-token"); //국민:bank_tran_id="008"
         memberRepository.save(member10);
-        MemberEntity member11 = MemberEntity.create("01084595281","김지원",passwordEncoder.encode("jw1234!"),"01092469330","3561084512201","009", "mock-fcm-token"); //부산:bank_tran_id="009"
+        MemberEntity member11 = MemberEntity.create("01084595281","김지원",passwordEncoder.encode("jw1234!"),"01084595281","1728638574889","009", "mock-fcm-token"); //부산:bank_tran_id="009"
         memberRepository.save(member11);
-        MemberEntity member12 = MemberEntity.create("01052548974","이현서",passwordEncoder.encode("hs1234!"),"01092469330","3561084512201","010", "mock-fcm-token"); //대구:bank_tran_id="010"
+        MemberEntity member12 = MemberEntity.create("01052548974","이현서",passwordEncoder.encode("hs1234!"),"01052548974","2662280371228","010", "mock-fcm-token"); //대구:bank_tran_id="010"
         memberRepository.save(member12);
 
         //community, membership seed
@@ -73,7 +73,7 @@ public class DatabaseSeeder implements CommandLineRunner {
         MembershipEntity m6 = MembershipEntity.create(member6, community); membershipRepository.save(m6);
 
         MemberEntity yj = memberRepository.findByUsername("01092469330").orElse(null); // 계주 : 안유진
-        CommunityEntity community2 = CommunityEntity.create(yj.getId(),"어쩌다6인조","1463056220188",3L,50000L,20L);
+        CommunityEntity community2 = CommunityEntity.create(yj.getId(),"어쩌다6인조","1463056220188",3L,70000L,20L);
         communityRepository.save(community2);
         MembershipEntity m7 = MembershipEntity.create(member7, community2); membershipRepository.save(m7); // 아이브
         MembershipEntity m8 = MembershipEntity.create(member8, community2); membershipRepository.save(m8);
@@ -93,7 +93,7 @@ public class DatabaseSeeder implements CommandLineRunner {
         MembershipEntity m23 = MembershipEntity.create(member12, community3); membershipRepository.save(m23); // 현서
 
         MemberEntity mk = memberRepository.findByUsername("01029011957").orElse(null); // 계주 : 김미강
-        CommunityEntity community4 = CommunityEntity.create(mk.getId(),"가평가자","1465510634457",3L,200000L,60L);
+        CommunityEntity community4 = CommunityEntity.create(mk.getId(),"하나로","1465510634457",3L,50000L,15L);
         communityRepository.save(community4);
         MembershipEntity m17 = MembershipEntity.create(member3, community4); membershipRepository.save(m17); // 영헌
         MembershipEntity m18 = MembershipEntity.create(member2, community4); membershipRepository.save(m18); // 선정
@@ -143,9 +143,9 @@ public class DatabaseSeeder implements CommandLineRunner {
                 p2from, p2to,"meeting", seongsu, p2members);
         planRepository.save(p2);
 
-        // 모임 : 가평가자, 계획 : 여름 빠지, 일정 : 2025/7/23 - 2025/7/25
+        // 모임 : 하나로, 계획 : 가평 소풍, 일정 : 2025/7/23 - 2025/7/25
         ArrayList<String> gapyeong = new ArrayList<>();
-        gapyeong.add("가평 빠지");
+        gapyeong.add("아침고요수목원");
         gapyeong.add("남이섬");
         gapyeong.add("가평 닭갈비");
 
@@ -200,6 +200,45 @@ public class DatabaseSeeder implements CommandLineRunner {
                 p5from, p5to,"exercise", gwanak, p5members);
         planRepository.save(p5);
 
+        // 모임 : 하나로, 계획 : 가을 북한산 등반, 일정 : 2024/11/15
+        ArrayList<String> bukhanmt = new ArrayList<>();
+        bukhanmt.add("북한산공원");
+        bukhanmt.add("북한산 카페");
+        bukhanmt.add("북한산 냉면");
+
+        ArrayList<UUID> p6members = new ArrayList<>();
+        p6members.add(member1.getId()); // 형주
+        p6members.add(member2.getId()); // 선정
+        p6members.add(member3.getId()); // 영헌
+        p6members.add(member6.getId()); // 미강
+
+        LocalDateTime p6from = LocalDateTime.of(2024, 11, 15, 7, 0, 0);
+        LocalDateTime p6to = LocalDateTime.of(2024, 11, 15, 20, 0, 0);
+
+        PlanEntity p6 = PlanEntity.create(community4.getId(), "가을 북한산 등반",
+                p6from, p6to,"exercise", bukhanmt, p6members);
+        planRepository.save(p6);
+
+        // 모임 : 맛집탐방, 계획 : 강화도 여행, 일정 : 2024/09/23 - 2024/09/24
+        ArrayList<String> gangwha = new ArrayList<>();
+        gangwha.add("마니산");
+        gangwha.add("강화도 칼국수");
+        gangwha.add("강화도 루지");
+
+        ArrayList<UUID> p7members = new ArrayList<>();
+        p7members.add(member1.getId()); // 형주
+        p7members.add(member2.getId()); // 선정
+        p7members.add(member3.getId()); // 영헌
+        p7members.add(member4.getId()); // 상현
+        p7members.add(member5.getId()); // 채운
+        p7members.add(member6.getId()); // 미강
+
+        LocalDateTime p7from = LocalDateTime.of(2024, 9, 23, 7, 0, 0);
+        LocalDateTime p7to = LocalDateTime.of(2024, 9, 24, 20, 0, 0);
+
+        PlanEntity p7 = PlanEntity.create(community.getId(), "강화도 여행",
+                p7from, p7to,"location", gangwha, p7members);
+        planRepository.save(p7);
     }
 }
 
