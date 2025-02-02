@@ -16,10 +16,11 @@ import java.io.IOException;
 
 @RequiredArgsConstructor
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
 public class NaverCloudController {
 
-    @PostMapping("fileUpload")
+    private final NaverCloud naverCloud;
+
+    @PostMapping("/fileUpload")
     public String fileUpload(@RequestParam("uploadFile") MultipartFile uploadFile, HttpServletRequest req) {
         System.out.println("NaverCloudController STT: 파일 업로드 시작");
 
@@ -50,14 +51,13 @@ public class NaverCloudController {
         // NaverCloud STT 호출
         String response;
         try {
-            response = NaverCloud.stt(filePath);
+            response = naverCloud.stt(filePath);
             System.out.println("NaverCloud STT 응답: " + response);
         } catch (Exception e) {
             System.err.println("NaverCloud STT 호출 중 오류 발생: " + e.getMessage());
             e.printStackTrace();
             return "fail: STT 호출 실패";
         }
-
         return response != null && !response.isEmpty() ? response : "fail: STT 응답이 비어있음";
     }
 }

@@ -1,13 +1,22 @@
 package org.hana.wooahhanaapi.domain.stt.service;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+@Service
 public class NaverCloud {
-    public static String stt(String filePath) {
-        String clientId = "ninr2zu0qx";  // Application Client ID
-        String clientSecret = "kmIOFaR83NOPtrO4JmdH3VzXKqPrg6P7pHsI7UXz";  // Application Client Secret
+
+    @Value("${STT_CLIENT_ID}")
+    private String clientId;
+
+    @Value("${STT_CLIENT_SECRET}")
+    private String clientSecret;
+
+    public String stt(String filePath) {
         StringBuffer response = new StringBuffer();
 
         try {
@@ -16,7 +25,7 @@ public class NaverCloud {
                 throw new FileNotFoundException("음성 파일을 찾을 수 없습니다: " + filePath);
             }
 
-            String language = "Kor";  // 언어 코드 (Kor, Jpn, Eng, Chn)
+            String language = "Kor";
             String apiURL = "https://naveropenapi.apigw.ntruss.com/recog/v1/stt?lang=" + language;
             URL url = new URL(apiURL);
 
@@ -56,7 +65,6 @@ public class NaverCloud {
                 System.err.println("NaverCloud STT 오류: " + response.toString());
                 return "fail: STT 호출 실패 - " + responseCode;
             }
-
         } catch (IOException e) {
             System.err.println("NaverCloud STT IOException: " + e.getMessage());
             e.printStackTrace();
@@ -66,7 +74,6 @@ public class NaverCloud {
             e.printStackTrace();
             return "fail: Exception 발생";
         }
-
         return response.toString();
     }
 }
