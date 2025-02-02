@@ -53,4 +53,9 @@ public class MemberController {
     public String changePassword(@RequestBody ChangePasswordReqDto reqDto) {
         return this.memberService.changePassword(reqDto);
     }
+
+    @GetMapping("/inquiry")
+    public InquiryMemberRespDto inquiryMember(@RequestParam(required = false) String id) {
+        return this.memberService.inquiryMember(id);
+    }
 }
