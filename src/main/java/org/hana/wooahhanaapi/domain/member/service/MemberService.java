@@ -120,4 +120,18 @@ public class MemberService implements UserDetailsService {
 
     }
 
+    public InquiryMemberRespDto inquiryMember(String id) {
+        try{
+            MemberEntity memberEntity = memberRepository.findByUsername(id).orElseThrow();
+            return InquiryMemberRespDto.builder()
+                    .id(memberEntity.getId().toString())
+                    .name(memberEntity.getName())
+                    .build();
+        }catch (Exception e){
+            return InquiryMemberRespDto.builder()
+                    .id("존재하지 않습니다.")
+                    .name("존재하지 않습니다.")
+                    .build();
+        }
+    }
 }
