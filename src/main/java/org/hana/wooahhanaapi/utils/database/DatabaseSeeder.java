@@ -127,14 +127,14 @@ public class DatabaseSeeder implements CommandLineRunner {
 
         // 모임 : 맛집탐방, 계획 : 성수 나들이, 일정 : 2025/1/15
         ArrayList<String> seongsu = new ArrayList<>();
-        gangneung.add("성수 소금빵");
-        gangneung.add("성수 맛집");
-        gangneung.add("성수 무신사스토어");
+        seongsu.add("성수 소금빵");
+        seongsu.add("성수 맛집");
+        seongsu.add("성수 무신사스토어");
 
         ArrayList<UUID> p2members = new ArrayList<>();
-        p1members.add(member2.getId()); // 선정
-        p1members.add(member3.getId()); // 영헌
-        p1members.add(member4.getId()); // 상현
+        p2members.add(member2.getId()); // 선정
+        p2members.add(member3.getId()); // 영헌
+        p2members.add(member4.getId()); // 상현
 
         LocalDateTime p2from = LocalDateTime.of(2025, 1, 31, 7, 0, 0);
         LocalDateTime p2to = LocalDateTime.of(2025, 1, 31, 20, 0, 0);
