@@ -14,4 +14,5 @@ public class MyAccountResponseDto {
     private String accountNumber;
     private String name;
     private Long amount;
+    private boolean setAutoDeposit;
 }
