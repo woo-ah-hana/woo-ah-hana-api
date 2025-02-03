@@ -9,4 +9,6 @@ import java.util.UUID;
 
 public interface AutoDepositRepository extends JpaRepository<AutoDepositEntity, UUID> {
     List<AutoDepositEntity> findALlByDepositDay(int depositDay);
+
+    AutoDepositEntity findByCommunityAccNumAndAndMemberAccNumAndMemberBankTranId(String accountNumber, String accountNumber1, String bankTranId);
 }

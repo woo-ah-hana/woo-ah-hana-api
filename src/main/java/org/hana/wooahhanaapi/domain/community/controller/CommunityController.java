@@ -80,6 +80,13 @@ public class CommunityController {
         return "success";
     }
 
+    //자동이체 해제
+    @DeleteMapping("/account/autoDeposit")
+    public String deleteAutoDeposit(@RequestParam UUID communityId) {
+        this.communityService.deleteAutoDeposit(communityId);
+        return "success";
+    }
+
     // 개인 계좌 변경
     @PostMapping("/account/changeAccount")
     public String changeMemberAccount(@RequestBody CommunityChgMemAccReqDto dto) {

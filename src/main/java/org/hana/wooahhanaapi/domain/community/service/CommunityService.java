@@ -9,6 +9,7 @@ import org.hana.wooahhanaapi.account.exception.MemberNotPresentException;
 import org.hana.wooahhanaapi.domain.community.domain.AutoDeposit;
 import org.hana.wooahhanaapi.domain.community.entity.AutoDepositEntity;
 import org.hana.wooahhanaapi.domain.community.entity.MembershipEntity;
+import org.hana.wooahhanaapi.domain.community.exception.AutoDepositNotFoundException;
 import org.hana.wooahhanaapi.domain.community.exception.NoAuthorityException;
 import org.hana.wooahhanaapi.domain.community.mapper.AutoDepositMapper;
 import org.hana.wooahhanaapi.domain.community.repository.AutoDepositRepository;
@@ -596,5 +597,20 @@ public class CommunityService {
                 .highestPlanName(highestPlanName)
                 .highestPlanExpense(highestPlanExpense)
                 .build();
+    }
+
+    public void deleteAutoDeposit(UUID communityId) {
+
+        MemberEntity userDetails = (MemberEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        CommunityEntity foundCommunity = communityRepository.findById(communityId)
+                .orElseThrow(() -> new CommunityNotFoundException("모임을 찾을 수 없습니다."));
+
+        try{
+            AutoDepositEntity autoDepositEntity = autoDepositRepository.findByCommunityAccNumAndAndMemberAccNumAndMemberBankTranId(foundCommunity.getAccountNumber(),userDetails.getAccountNumber(),userDetails.getBankTranId());
+            autoDepositRepository.delete(autoDepositEntity);
+        } catch (Exception e) {
+            throw new AutoDepositNotFoundException("설정된 자동이체 내역이 없습니다.");
+        }
     }
 }
