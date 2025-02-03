@@ -11,6 +11,7 @@ public class AutoDepositMapper {
                 .communityAccNum(autoDeposit.getCommunityAccNum())
                 .fee(autoDeposit.getFee())
                 .depositDay(autoDeposit.getDepositDay())
+                .memberBankTranId(autoDeposit.getMemberBankTranId())
                 .build();
     }
 
