@@ -7,6 +7,7 @@ import net.nurigo.sdk.message.model.Message;
 import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import net.nurigo.sdk.message.service.DefaultMessageService;
+import org.hana.wooahhanaapi.sms.port.SMSSendPort;
 import org.hana.wooahhanaapi.sms.port.SMSValidationPort;
 import org.hana.wooahhanaapi.redis.SaveValidCodeForMemberPort;
 import org.hana.wooahhanaapi.redis.ValidateMemberPort;
@@ -18,7 +19,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @RequiredArgsConstructor
-public class SMSValidationAdaptor implements SMSValidationPort {
+public class SMSValidationAdaptor implements SMSValidationPort, SMSSendPort {
 
     private DefaultMessageService messageService;
     private final ValidateMemberPort validateMemberPort;
