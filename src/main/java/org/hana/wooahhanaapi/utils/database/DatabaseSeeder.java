@@ -240,7 +240,7 @@ public class DatabaseSeeder implements CommandLineRunner {
                 p7from, p7to,"location", gangwha, p7members);
         planRepository.save(p7);
 
-        // 모임 : 맛집탐방, 계획 : 성수 1박2일 여행, 일정 : 2025/03/11 - 2024/03/12
+        // 모임 : 맛집탐방, 계획 : 성수 1박2일 여행, 일정 : 2025/03/11 - 2025/03/12
         ArrayList<String> seungsoo = new ArrayList<>();
         seungsoo.add("성수 카페");
         seungsoo.add("성수 베이커리");
