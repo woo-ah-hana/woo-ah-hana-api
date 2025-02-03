@@ -31,7 +31,8 @@ public class CommunityNotificationService {
             if(e instanceof UserNotFoundException){
                 throw new UserNotFoundException("멤버를 찾을 수 없읍니다.");
             }else {
-                throw new UserNotFoundException("Firebase Exception");
+                System.out.println(e.getMessage());
+                throw new FirebaseException("Firebase Exception");
             }
         }
     }
