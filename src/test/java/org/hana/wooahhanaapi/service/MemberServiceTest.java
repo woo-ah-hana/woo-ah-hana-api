@@ -1,6 +1,6 @@
 package org.hana.wooahhanaapi.service;
 
-import org.hana.wooahhanaapi.domain.account.exception.MemberNotPresentException;
+import org.hana.wooahhanaapi.account.exception.MemberNotPresentException;
 import org.hana.wooahhanaapi.domain.member.dto.ChangePasswordReqDto;
 import org.hana.wooahhanaapi.domain.member.dto.LoginRequestDto;
 import org.hana.wooahhanaapi.domain.member.dto.MemberResponseDto;

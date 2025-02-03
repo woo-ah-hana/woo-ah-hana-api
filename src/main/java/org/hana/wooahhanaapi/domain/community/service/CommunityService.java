@@ -1,11 +1,11 @@
 package org.hana.wooahhanaapi.domain.community.service;
 
 import lombok.RequiredArgsConstructor;
-import org.hana.wooahhanaapi.domain.account.port.AccountTransferPort;
-import org.hana.wooahhanaapi.domain.account.port.AccountTransferRecordPort;
-import org.hana.wooahhanaapi.domain.account.port.GetAccountInfoPort;
-import org.hana.wooahhanaapi.domain.account.dto.*;
-import org.hana.wooahhanaapi.domain.account.exception.MemberNotPresentException;
+import org.hana.wooahhanaapi.account.dto.*;
+import org.hana.wooahhanaapi.account.port.AccountTransferPort;
+import org.hana.wooahhanaapi.account.port.AccountTransferRecordPort;
+import org.hana.wooahhanaapi.account.port.GetAccountInfoPort;
+import org.hana.wooahhanaapi.account.exception.MemberNotPresentException;
 import org.hana.wooahhanaapi.domain.community.domain.AutoDeposit;
 import org.hana.wooahhanaapi.domain.community.entity.AutoDepositEntity;
 import org.hana.wooahhanaapi.domain.community.entity.MembershipEntity;
@@ -19,7 +19,7 @@ import org.hana.wooahhanaapi.utils.redis.ValidateAccountPort;
 import org.hana.wooahhanaapi.utils.redis.dto.AccountValidationConfirmDto;
 import org.hana.wooahhanaapi.utils.redis.SaveValidCodePort;
 import org.hana.wooahhanaapi.utils.redis.dto.SendValidationCodeReqDto;
-import org.hana.wooahhanaapi.domain.account.exception.IncorrectValidationCodeException;
+import org.hana.wooahhanaapi.account.exception.IncorrectValidationCodeException;
 import org.hana.wooahhanaapi.domain.community.dto.*;
 import org.hana.wooahhanaapi.domain.community.entity.CommunityEntity;
 import org.hana.wooahhanaapi.domain.community.exception.CommunityNotFoundException;

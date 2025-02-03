@@ -2,9 +2,9 @@ package org.hana.wooahhanaapi.domain.plan.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.hana.wooahhanaapi.domain.account.port.AccountTransferRecordPort;
-import org.hana.wooahhanaapi.domain.account.dto.AccountTransferRecordReqDto;
-import org.hana.wooahhanaapi.domain.account.dto.AccountTransferRecordRespListDto;
+import org.hana.wooahhanaapi.account.port.AccountTransferRecordPort;
+import org.hana.wooahhanaapi.account.dto.AccountTransferRecordReqDto;
+import org.hana.wooahhanaapi.account.dto.AccountTransferRecordRespListDto;
 import org.hana.wooahhanaapi.domain.community.dto.CommunityTrsfRecordRespDto;
 import org.hana.wooahhanaapi.domain.community.entity.CommunityEntity;
 import org.hana.wooahhanaapi.domain.community.exception.CommunityNotFoundException;

@@ -1,10 +1,10 @@
 package org.hana.wooahhanaapi.adapter;
 
-import org.hana.wooahhanaapi.domain.account.adapter.AccountAdapter;
-import org.hana.wooahhanaapi.domain.account.dto.*;
-import org.hana.wooahhanaapi.domain.account.exception.AccountNotFoundException;
-import org.hana.wooahhanaapi.domain.account.exception.DuplicateAccountException;
-import org.hana.wooahhanaapi.domain.account.exception.TransferNotValidException;
+import org.hana.wooahhanaapi.account.adapter.AccountAdapter;
+import org.hana.wooahhanaapi.account.dto.*;
+import org.hana.wooahhanaapi.account.exception.AccountNotFoundException;
+import org.hana.wooahhanaapi.account.exception.DuplicateAccountException;
+import org.hana.wooahhanaapi.account.exception.TransferNotValidException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
