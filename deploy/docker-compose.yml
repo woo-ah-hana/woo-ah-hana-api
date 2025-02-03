@@ -18,6 +18,8 @@ services:
       - AWS_REGION=${AWS_REGION}
       - S3_BUCKET_NAME=${S3_BUCKET_NAME}
       - FIREBASE_CREDENTIALS=${FIREBASE_CREDENTIALS}
+      - STT_CLIENT_ID=${STT_CLIENT_ID}
+      - STT_CLIENT_SECRET=${STT_CLIENT_SECRET}
     networks:
       - api-net
   db:
