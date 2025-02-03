@@ -3,6 +3,7 @@ package org.hana.wooahhanaapi.domain.account.controller;
 import lombok.RequiredArgsConstructor;
 import org.hana.wooahhanaapi.domain.account.dto.*;
 import org.hana.wooahhanaapi.domain.account.service.AccountService;
+import org.hana.wooahhanaapi.utils.redis.dto.AccountValidationConfirmDto;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,5 +34,10 @@ public class AccountController {
     @PostMapping("/transfer")
     public AccountTransferRespDto transferAccount(@RequestBody SimplifiedTransferReqDto simplifiedTransferReqDto) {
         return this.accountService.createTransfer(simplifiedTransferReqDto);
+    }
+
+    @PostMapping("/validate")
+    public boolean transferAccount(@RequestBody AccountValidationConfirmDto accountValidationConfirmDto) {
+        return this.accountService.transferAccount(accountValidationConfirmDto);
     }
 }

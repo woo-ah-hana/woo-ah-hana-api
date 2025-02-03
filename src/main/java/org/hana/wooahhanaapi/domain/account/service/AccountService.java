@@ -7,6 +7,8 @@ import org.hana.wooahhanaapi.domain.account.port.AccountTransferRecordPort;
 import org.hana.wooahhanaapi.domain.account.port.BankCreatePort;
 import org.hana.wooahhanaapi.domain.account.port.GetAccountInfoPort;
 import org.hana.wooahhanaapi.domain.account.dto.*;
+import org.hana.wooahhanaapi.utils.redis.ValidateAccountPort;
+import org.hana.wooahhanaapi.utils.redis.dto.AccountValidationConfirmDto;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,6 +20,7 @@ public class AccountService {
     private final AccountTransferRecordPort accountTransferRecordPort;
     private final GetAccountInfoPort getAccountInfoPort;
     private final AccountTransferPort accountTransferPort;
+    private final ValidateAccountPort validateAccountPort;
 
     public AccountCreateRespDto createAccount(AccountCreateReqDto accountCreateReqDto) {
         return accountCreatePort.createNewAccount(accountCreateReqDto);
@@ -37,5 +40,9 @@ public class AccountService {
 
     public AccountTransferRespDto createTransfer(SimplifiedTransferReqDto simplifiedTransferReqDto) {
         return accountTransferPort.createAccountTransfer(simplifiedTransferReqDto);
+    }
+
+    public boolean transferAccount(AccountValidationConfirmDto accountValidationConfirmDto) {
+        return validateAccountPort.validateAccount(accountValidationConfirmDto);
     }
 }
