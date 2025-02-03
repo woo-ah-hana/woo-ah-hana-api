@@ -1,9 +1,9 @@
 package org.hana.wooahhanaapi.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
-import org.hana.wooahhanaapi.domain.account.port.GetAccountInfoPort;
-import org.hana.wooahhanaapi.domain.account.dto.GetAccountInfoReqDto;
-import org.hana.wooahhanaapi.domain.account.exception.MemberNotPresentException;
+import org.hana.wooahhanaapi.account.port.GetAccountInfoPort;
+import org.hana.wooahhanaapi.account.dto.GetAccountInfoReqDto;
+import org.hana.wooahhanaapi.account.exception.MemberNotPresentException;
 import org.hana.wooahhanaapi.domain.member.dto.*;
 import org.hana.wooahhanaapi.domain.member.entity.MemberEntity;
 import org.hana.wooahhanaapi.domain.member.exception.*;

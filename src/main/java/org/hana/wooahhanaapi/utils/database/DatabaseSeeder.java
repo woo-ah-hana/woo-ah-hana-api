@@ -2,7 +2,6 @@ package org.hana.wooahhanaapi.utils.database;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.hana.wooahhanaapi.domain.account.service.AccountService;
 import org.hana.wooahhanaapi.domain.community.entity.CommunityEntity;
 import org.hana.wooahhanaapi.domain.community.entity.MembershipEntity;
 import org.hana.wooahhanaapi.domain.community.repository.CommunityRepository;

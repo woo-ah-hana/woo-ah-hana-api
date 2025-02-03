@@ -1,8 +1,8 @@
 package org.hana.wooahhanaapi.service;
 
 import org.assertj.core.api.Assertions;
-import org.hana.wooahhanaapi.domain.account.port.AccountTransferPort;
-import org.hana.wooahhanaapi.domain.account.port.AccountTransferRecordPort;
+import org.hana.wooahhanaapi.account.port.AccountTransferPort;
+import org.hana.wooahhanaapi.account.port.AccountTransferRecordPort;
 import org.hana.wooahhanaapi.domain.community.dto.*;
 import org.hana.wooahhanaapi.domain.community.entity.CommunityEntity;
 import org.hana.wooahhanaapi.domain.community.entity.MembershipEntity;
