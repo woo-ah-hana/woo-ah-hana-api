@@ -35,7 +35,7 @@ public class MemberController {
     }
 
     @GetMapping("/info")
-    public MemberResponseDto getMemberInfo(){
+    public MemberInfoResponseDto getMemberInfo(){
         return this.memberService.getMemberInfo();
     }
 

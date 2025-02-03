@@ -1,10 +1,7 @@
 package org.hana.wooahhanaapi.service;
 
 import org.hana.wooahhanaapi.account.exception.MemberNotPresentException;
-import org.hana.wooahhanaapi.domain.member.dto.ChangePasswordReqDto;
-import org.hana.wooahhanaapi.domain.member.dto.LoginRequestDto;
-import org.hana.wooahhanaapi.domain.member.dto.MemberResponseDto;
-import org.hana.wooahhanaapi.domain.member.dto.SignUpRequestDto;
+import org.hana.wooahhanaapi.domain.member.dto.*;
 import org.hana.wooahhanaapi.domain.member.entity.MemberEntity;
 import org.hana.wooahhanaapi.domain.member.exception.*;
 import org.hana.wooahhanaapi.domain.member.repository.MemberRepository;
@@ -46,7 +43,7 @@ public class MemberServiceTest {
     @BeforeAll
     public void setUp() {
         MemberEntity m1 = MemberEntity.create(
-                "01026530956","함형주", passwordEncoder.encode("hj12345!"), "01026530956", "3561057204496", "002");
+                "01026530956","함형주", passwordEncoder.encode("hj12345!"), "01026530956", "3561057204496", "002","mock_fcm_token");
         memberRepository.save(m1);
     }
 
@@ -105,7 +102,7 @@ public class MemberServiceTest {
         LoginRequestDto requestDto = new LoginRequestDto("01026530956","hj12345!");
         login(requestDto);
 
-        MemberResponseDto result = memberService.getMemberInfo();
+        MemberInfoResponseDto result = memberService.getMemberInfo();
 
         Assertions.assertEquals("01026530956", result.getUsername());
     }
