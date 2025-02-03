@@ -7,8 +7,8 @@ import org.hana.wooahhanaapi.account.port.AccountTransferPort;
 import org.hana.wooahhanaapi.account.port.AccountTransferRecordPort;
 import org.hana.wooahhanaapi.account.port.BankCreatePort;
 import org.hana.wooahhanaapi.account.port.GetAccountInfoPort;
-import org.hana.wooahhanaapi.utils.redis.ValidateAccountPort;
-import org.hana.wooahhanaapi.utils.redis.dto.AccountValidationConfirmDto;
+import org.hana.wooahhanaapi.redis.ValidateAccountPort;
+import org.hana.wooahhanaapi.redis.dto.AccountValidationConfirmDto;
 import org.springframework.stereotype.Service;
 
 @Service

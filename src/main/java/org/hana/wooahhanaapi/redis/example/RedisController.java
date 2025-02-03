@@ -1,4 +1,4 @@
-package org.hana.wooahhanaapi.utils.redis.example;
+package org.hana.wooahhanaapi.redis.example;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -59,6 +59,9 @@ dependencies {
 	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
 	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
+	// sms
+	implementation 'net.nurigo:sdk:4.2.7'
+
 	// .env 파일 로드 라이브러리
 	implementation group: 'com.google.firebase', name: 'firebase-admin', version: '9.2.0'
 

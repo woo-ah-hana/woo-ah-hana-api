@@ -3,7 +3,7 @@ package org.hana.wooahhanaapi.account.controller;
 import lombok.RequiredArgsConstructor;
 import org.hana.wooahhanaapi.account.dto.*;
 import org.hana.wooahhanaapi.account.service.AccountService;
-import org.hana.wooahhanaapi.utils.redis.dto.AccountValidationConfirmDto;
+import org.hana.wooahhanaapi.redis.dto.AccountValidationConfirmDto;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
