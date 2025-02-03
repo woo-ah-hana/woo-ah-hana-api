@@ -1,9 +1,8 @@
-package org.hana.wooahhanaapi.domain.stt.controller;
+package org.hana.wooahhanaapi.stt.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.hana.wooahhanaapi.domain.stt.service.NaverCloud;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.hana.wooahhanaapi.stt.service.NaverCloud;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
