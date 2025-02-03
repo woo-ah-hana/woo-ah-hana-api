@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.hana.wooahhanaapi.account.port.GetAccountInfoPort;
 import org.hana.wooahhanaapi.account.dto.GetAccountInfoReqDto;
 import org.hana.wooahhanaapi.account.exception.MemberNotPresentException;
+import org.hana.wooahhanaapi.domain.community.repository.AutoDepositRepository;
 import org.hana.wooahhanaapi.domain.member.dto.*;
 import org.hana.wooahhanaapi.domain.member.entity.MemberEntity;
 import org.hana.wooahhanaapi.domain.member.exception.*;
@@ -29,6 +30,7 @@ public class MemberService implements UserDetailsService {
 
     private static final String passwordPattern = "^(?=.*[a-z])(?=.*\\d)(?=.*[!@#$%^&*])[a-zA-Z\\d!@#$%^&*]{8,}$";
     private static final Pattern pattern = Pattern.compile(passwordPattern);
+    private final AutoDepositRepository autoDepositRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -90,15 +92,19 @@ public class MemberService implements UserDetailsService {
         }
     }
 
-    public MyAccountResponseDto getMyAccountInfo() {
+    public MyAccountResponseDto getMyAccountInfo(String communityAccNum) {
         try{
             MemberEntity memberEntity = (MemberEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+            boolean hasSetAutoDeposit = autoDepositRepository.existsByCommunityAccNumAndMemberAccNum(communityAccNum, memberEntity.getAccountNumber());
             GetAccountInfoReqDto reqDto = new GetAccountInfoReqDto(memberEntity.getBankTranId(),"00","2025-01-17",memberEntity.getAccountNumber());
+
             return MyAccountResponseDto.builder()
                     .accountNumber(String.valueOf(memberEntity.getAccountNumber()))
                     .bankTranId(String.valueOf(memberEntity.getBankTranId()))
                     .name(memberEntity.getName())
                     .amount(getAccountInfoPort.getAccountInfo(reqDto).getData().getBalanceAmt())
+                    .setAutoDeposit(hasSetAutoDeposit)
                     .build();
         }catch (Exception e){
             throw new UserNotLoginException("로그인이 안되어 있습니다. 로그인 해주세요.");

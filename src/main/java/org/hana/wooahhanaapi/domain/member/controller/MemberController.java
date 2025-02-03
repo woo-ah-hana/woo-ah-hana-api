@@ -40,8 +40,8 @@ public class MemberController {
     }
 
     @GetMapping("/my-account/info")
-    public MyAccountResponseDto getMyAccountInfo(){
-        return this.memberService.getMyAccountInfo();
+    public MyAccountResponseDto getMyAccountInfo(@RequestParam(required = false) String communityAccNum){
+        return this.memberService.getMyAccountInfo(communityAccNum);
     }
 
     @GetMapping("/name")
