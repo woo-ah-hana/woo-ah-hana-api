@@ -61,10 +61,11 @@ public class MemberService implements UserDetailsService {
         return memberEntity.getUsername();
     }
 
-    public MemberResponseDto getMemberInfo() {
+    public MemberInfoResponseDto getMemberInfo() {
         try{
             MemberEntity memberEntity1 = (MemberEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            return MemberResponseDto.builder()
+            return MemberInfoResponseDto.builder()
+                    .id(memberEntity1.getId())
                     .username(memberEntity1.getUsername())
                     .name(memberEntity1.getName())
                     .phoneNumber(memberEntity1.getPhoneNumber())
