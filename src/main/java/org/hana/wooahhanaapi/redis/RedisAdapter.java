@@ -1,9 +1,9 @@
-package org.hana.wooahhanaapi.utils.redis;
+package org.hana.wooahhanaapi.redis;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hana.wooahhanaapi.utils.redis.dto.AccountValidationConfirmDto;
-import org.hana.wooahhanaapi.utils.redis.dto.MemberValidationConfirmDto;
+import org.hana.wooahhanaapi.redis.dto.AccountValidationConfirmDto;
+import org.hana.wooahhanaapi.redis.dto.MemberValidationConfirmDto;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class RedisAdapter implements ValidateAccountPort, SaveValidCodePort, ValidateMemberPort{
+public class RedisAdapter implements ValidateAccountPort, SaveValidCodePort, ValidateMemberPort, SaveValidCodeForMemberPort{
     private final RedisTemplate<String, String> redisTemplate;
 
     // 계좌 입금자명 인증

@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.hana.wooahhanaapi.domain.community.dto.*;
 import org.hana.wooahhanaapi.domain.community.dto.RegisterInCommunityRequestDto;
 import org.hana.wooahhanaapi.domain.plan.dto.GetMembersResponseDto;
-import org.hana.wooahhanaapi.utils.redis.dto.SendValidationCodeReqDto;
+import org.hana.wooahhanaapi.redis.dto.SendValidationCodeReqDto;
 import org.hana.wooahhanaapi.domain.community.service.CommunityService;
 import org.springframework.web.bind.annotation.*;
 

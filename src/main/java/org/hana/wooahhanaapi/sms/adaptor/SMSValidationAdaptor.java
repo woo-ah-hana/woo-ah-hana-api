@@ -8,9 +8,9 @@ import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import net.nurigo.sdk.message.service.DefaultMessageService;
 import org.hana.wooahhanaapi.sms.port.SMSValidationPort;
-import org.hana.wooahhanaapi.utils.redis.SaveValidCodePort;
-import org.hana.wooahhanaapi.utils.redis.ValidateMemberPort;
-import org.hana.wooahhanaapi.utils.redis.dto.MemberValidationConfirmDto;
+import org.hana.wooahhanaapi.redis.SaveValidCodeForMemberPort;
+import org.hana.wooahhanaapi.redis.ValidateMemberPort;
+import org.hana.wooahhanaapi.redis.dto.MemberValidationConfirmDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +22,7 @@ public class SMSValidationAdaptor implements SMSValidationPort {
 
     private DefaultMessageService messageService;
     private final ValidateMemberPort validateMemberPort;
-    private final SaveValidCodePort saveValidCodePort;
+    private final SaveValidCodeForMemberPort saveValidCodeForMemberPort;
 
     @Value("${COOLSMS_API_KEY}")
     private String apiKey;
@@ -46,7 +46,7 @@ public class SMSValidationAdaptor implements SMSValidationPort {
         message.setText("[우아하나] 인증번호 : " + randomNumber);
 
         SingleMessageSentResponse response = this.messageService.sendOne(new SingleMessageSendingRequest(message));
-        saveValidCodePort.saveValidCodeForMember(phoneNumber, randomNumber);
+        saveValidCodeForMemberPort.saveValidCodeForMember(phoneNumber, randomNumber);
         if(response.getStatusCode().equals("2000")) { // 전송 성공
             return true;
         }

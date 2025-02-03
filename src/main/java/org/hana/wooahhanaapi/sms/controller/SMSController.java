@@ -1,9 +1,8 @@
 package org.hana.wooahhanaapi.sms.controller;
 
 import lombok.RequiredArgsConstructor;
-import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import org.hana.wooahhanaapi.sms.port.SMSValidationPort;
-import org.hana.wooahhanaapi.utils.redis.dto.MemberValidationConfirmDto;
+import org.hana.wooahhanaapi.redis.dto.MemberValidationConfirmDto;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor

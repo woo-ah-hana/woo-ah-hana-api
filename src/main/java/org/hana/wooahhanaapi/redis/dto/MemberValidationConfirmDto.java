@@ -1,4 +1,4 @@
-package org.hana.wooahhanaapi.utils.redis.dto;
+package org.hana.wooahhanaapi.redis.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
