@@ -23,4 +23,5 @@ public class GetExpenseInfoRespDto {
     private List<Long> monthlyExpenses = Arrays.asList(0L, 0L, 0L);
     private String highestPlanName;
     private Long highestPlanExpense;
+    private String imageUrl;
 }
