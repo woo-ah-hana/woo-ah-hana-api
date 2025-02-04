@@ -574,7 +574,13 @@ public class CommunityService {
         Map<PlanEntity, Long> planExpenses = new HashMap<>();
         for (PlanEntity plan : planList) {
             long planExpense = thisQuarterResult.getData().getResList().stream()
-                    .filter(transfer -> "출금".equals(transfer.getInoutType()) && transfer.getTranDate().compareTo(plan.getStartDate().toString()) >= 0 && transfer.getTranDate().compareTo(plan.getEndDate().toString()) <= 0)
+                    .filter(transfer -> {
+                        LocalDate tranDate = LocalDate.parse(transfer.getTranDate());
+                        LocalDate startDate = plan.getStartDate().toLocalDate();
+                        LocalDate endDate = plan.getEndDate().toLocalDate();
+
+                        return "출금".equals(transfer.getInoutType()) && !tranDate.isBefore(startDate) && !tranDate.isAfter(endDate);
+                    })
                     .mapToLong(transfer -> Long.parseLong(transfer.getTranAmt()))
                     .sum();
 
