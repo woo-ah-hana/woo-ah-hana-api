@@ -9,8 +9,7 @@ import org.hana.wooahhanaapi.account.exception.MemberNotPresentException;
 import org.hana.wooahhanaapi.domain.community.domain.AutoDeposit;
 import org.hana.wooahhanaapi.domain.community.entity.AutoDepositEntity;
 import org.hana.wooahhanaapi.domain.community.entity.MembershipEntity;
-import org.hana.wooahhanaapi.domain.community.exception.AutoDepositNotFoundException;
-import org.hana.wooahhanaapi.domain.community.exception.NoAuthorityException;
+import org.hana.wooahhanaapi.domain.community.exception.*;
 import org.hana.wooahhanaapi.domain.community.mapper.AutoDepositMapper;
 import org.hana.wooahhanaapi.domain.community.repository.AutoDepositRepository;
 import org.hana.wooahhanaapi.domain.plan.dto.GetMembersResponseDto;
@@ -25,8 +24,6 @@ import org.hana.wooahhanaapi.redis.dto.SendValidationCodeReqDto;
 import org.hana.wooahhanaapi.account.exception.IncorrectValidationCodeException;
 import org.hana.wooahhanaapi.domain.community.dto.*;
 import org.hana.wooahhanaapi.domain.community.entity.CommunityEntity;
-import org.hana.wooahhanaapi.domain.community.exception.CommunityNotFoundException;
-import org.hana.wooahhanaapi.domain.community.exception.NotAMemberException;
 import org.hana.wooahhanaapi.domain.community.repository.CommunityRepository;
 import org.hana.wooahhanaapi.domain.community.repository.MembershipRepository;
 import org.hana.wooahhanaapi.domain.member.entity.MemberEntity;
@@ -361,6 +358,11 @@ public class CommunityService {
         // 모임 찾고
         CommunityEntity foundCommunity = communityRepository.findById(dto.getCommunityId())
                 .orElseThrow(() -> new CommunityNotFoundException("모임을 찾을 수 없습니다."));
+
+        if(autoDepositRepository.existsByCommunityAccNumAndMemberAccNum(
+                foundCommunity.getAccountNumber(), userDetails.getAccountNumber())) {
+            throw new DuplicateAutoDepositException("이미 자동이체가 등록되어 있습니다.");
+        }
 
         AutoDeposit newAutoDeposit = AutoDeposit.create(
                 null,
