@@ -15,7 +15,9 @@ import org.hana.wooahhanaapi.domain.community.mapper.AutoDepositMapper;
 import org.hana.wooahhanaapi.domain.community.repository.AutoDepositRepository;
 import org.hana.wooahhanaapi.domain.plan.dto.GetMembersResponseDto;
 import org.hana.wooahhanaapi.domain.plan.entity.PlanEntity;
+import org.hana.wooahhanaapi.domain.plan.entity.PostEntity;
 import org.hana.wooahhanaapi.domain.plan.repository.PlanRepository;
+import org.hana.wooahhanaapi.domain.plan.repository.PostRepository;
 import org.hana.wooahhanaapi.redis.ValidateAccountPort;
 import org.hana.wooahhanaapi.redis.dto.AccountValidationConfirmDto;
 import org.hana.wooahhanaapi.redis.SaveValidCodePort;
@@ -57,6 +59,7 @@ public class CommunityService {
     private final AutoDepositRepository autoDepositRepository;
     private final GetAccountInfoPort getAccountInfoPort;
     private final PlanRepository planRepository;
+    private final PostRepository postRepository;
 
     // 모임 생성
     public void createCommunity(CommunityCreateReqDto dto) {
@@ -568,23 +571,34 @@ public class CommunityService {
                 .orElse(0);
 
         highestMonth = localFromDate.getMonthValue() + highestMonth;
-
-        Map<String, Long> planExpenses = new HashMap<>();
+        Map<PlanEntity, Long> planExpenses = new HashMap<>();
         for (PlanEntity plan : planList) {
             long planExpense = thisQuarterResult.getData().getResList().stream()
-                    .filter(transfer -> "출금".equals(transfer.getInoutType()) && transfer.getTranDate().compareTo(plan.getStartDate().toString()) >= 0 && transfer.getTranDate().compareTo(plan.getEndDate().toString()) <= 0)
+                    .filter(transfer -> {
+                        LocalDate tranDate = LocalDate.parse(transfer.getTranDate());
+                        LocalDate startDate = plan.getStartDate().toLocalDate();
+                        LocalDate endDate = plan.getEndDate().toLocalDate();
+
+                        return "출금".equals(transfer.getInoutType()) && !tranDate.isBefore(startDate) && !tranDate.isAfter(endDate);
+                    })
                     .mapToLong(transfer -> Long.parseLong(transfer.getTranAmt()))
                     .sum();
 
-            planExpenses.put(plan.getTitle(), planExpense);
+            planExpenses.put(plan, planExpense);
         }
 
-        String highestPlanName = planExpenses.entrySet().stream()
+        PlanEntity highestPlan = planExpenses.entrySet().stream()
                 .max(Comparator.comparingLong(Map.Entry::getValue))
-                .map(Map.Entry::getKey)
-                .orElse("이번 분기, 여행한 기록이 없습니다.");
+                .map(Map.Entry::getKey).orElse(null);
+        String highestPlanName = null;
+        if(highestPlan != null) {
+            highestPlanName = highestPlan.getTitle();
+        }
 
-        Long highestPlanExpense = planExpenses.getOrDefault(highestPlanName, 0L);
+        Long highestPlanExpense = planExpenses.getOrDefault(highestPlan, 0L);
+
+        PostEntity post = postRepository.findFirstByPlan(highestPlan);
+        String imageUrl = (post != null) ? post.getImageUrl() : null;
 
         return GetExpenseInfoRespDto.builder()
                 .planTitleList(planTitleList)
@@ -596,6 +610,7 @@ public class CommunityService {
                 .monthlyExpenses(monthlyExpenses)
                 .highestPlanName(highestPlanName)
                 .highestPlanExpense(highestPlanExpense)
+                .imageUrl(imageUrl)
                 .build();
     }
 
