@@ -322,9 +322,16 @@ public class CommunityService {
         if(!validateAccountPort.validateAccount(accValidDto)) {
             throw new IncorrectValidationCodeException("입금자명이 일치하지 않습니다.");
         }
+        // 이전 개인 계좌
+        String prevAccountNum = userDetails.getAccountNumber();
 
         // 계좌 수정
         userDetails.updateAccount(dto.getAccountNumber(), dto.getBankTranId());
+
+        // 기존 계좌 자동이체 해제
+        List<AutoDepositEntity> prevAutoDeposits = autoDepositRepository.findAllByMemberAccNum(prevAccountNum);
+        autoDepositRepository.deleteAll(prevAutoDeposits);
+
         // 저장
         memberRepository.save(userDetails);
     }
@@ -377,6 +384,23 @@ public class CommunityService {
         autoDepositRepository.save(AutoDepositMapper.mapDomainToEntity(newAutoDeposit));
     }
 
+    // 자동이체 설정 해제
+    public void deleteAutoDeposit(UUID communityId) {
+
+        MemberEntity userDetails = (MemberEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        CommunityEntity foundCommunity = communityRepository.findById(communityId)
+                .orElseThrow(() -> new CommunityNotFoundException("모임을 찾을 수 없습니다."));
+
+        try{
+            AutoDepositEntity autoDepositEntity = autoDepositRepository.findByCommunityAccNumAndAndMemberAccNumAndMemberBankTranId(
+                    foundCommunity.getAccountNumber(),userDetails.getAccountNumber(),userDetails.getBankTranId());
+            autoDepositRepository.delete(autoDepositEntity);
+        } catch (Exception e) {
+            throw new AutoDepositNotFoundException("설정된 자동이체 내역이 없습니다.");
+        }
+    }
+
     // 매일 자정에 당일이 자동이체 날짜인 계좌들을 체크 -> 이체 진행
     @Scheduled(cron = "0 0 0 * * ?")
     public void sendDailyTransfers() {
@@ -422,6 +446,7 @@ public class CommunityService {
             }
         }
     }
+    
     public List<CommunitiesResponseDto> getCommunities() {
         MemberEntity userDetails = (MemberEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<CommunityEntity> result = membershipRepository.findCommunitiesByMemberId(userDetails.getId());
@@ -614,20 +639,5 @@ public class CommunityService {
                 .highestPlanExpense(highestPlanExpense)
                 .imageUrl(imageUrl)
                 .build();
-    }
-
-    public void deleteAutoDeposit(UUID communityId) {
-
-        MemberEntity userDetails = (MemberEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        CommunityEntity foundCommunity = communityRepository.findById(communityId)
-                .orElseThrow(() -> new CommunityNotFoundException("모임을 찾을 수 없습니다."));
-
-        try{
-            AutoDepositEntity autoDepositEntity = autoDepositRepository.findByCommunityAccNumAndAndMemberAccNumAndMemberBankTranId(foundCommunity.getAccountNumber(),userDetails.getAccountNumber(),userDetails.getBankTranId());
-            autoDepositRepository.delete(autoDepositEntity);
-        } catch (Exception e) {
-            throw new AutoDepositNotFoundException("설정된 자동이체 내역이 없습니다.");
-        }
     }
 }
