@@ -120,7 +120,7 @@ public class DatabaseSeeder implements CommandLineRunner {
         LocalDateTime p1from = LocalDateTime.of(2025, 1, 10, 7, 0, 0);
         LocalDateTime p1to = LocalDateTime.of(2025, 1, 11, 13, 0, 0);
 
-        PlanEntity p1 = PlanEntity.create(community.getId(), "수리고등학교 동창 강릉 여행",
+        PlanEntity p1 = PlanEntity.create(community.getId(), "수리고 동창 강릉 여행",
                 p1from, p1to,"location", gangneung, p1members);
         planRepository.save(p1);
 
