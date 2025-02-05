@@ -259,6 +259,27 @@ public class DatabaseSeeder implements CommandLineRunner {
         PlanEntity p8 = PlanEntity.create(community.getId(), "성수 디저트 탐방",
                 p8from, p8to,"hobby", seungsoo, p8members);
         planRepository.save(p8);
+
+        // 모임 : 여수여행, 계획 : 여수 해안 여행, 일정 : 2024/07/30 - 2024/08/01
+        ArrayList<String> yeosoo = new ArrayList<>();
+        yeosoo.add("여수 공원");
+        yeosoo.add("여수 칼국수");
+        yeosoo.add("여수 카페");
+
+        ArrayList<UUID> p9members = new ArrayList<>();
+        p9members.add(member1.getId()); // 형주
+        p9members.add(member2.getId()); // 선정
+        p9members.add(member3.getId()); // 영헌
+        p9members.add(member4.getId()); // 상현
+        p9members.add(member5.getId()); // 채운
+        p9members.add(member6.getId()); // 미강
+
+        LocalDateTime p9from = LocalDateTime.of(2024, 7, 30, 7, 0, 0);
+        LocalDateTime p9to = LocalDateTime.of(2024, 8, 1, 20, 0, 0);
+
+        PlanEntity p9 = PlanEntity.create(community.getId(), "여수 해안 여행",
+                p9from, p9to,"location", yeosoo, p9members);
+        planRepository.save(p9);
     }
 }
 
