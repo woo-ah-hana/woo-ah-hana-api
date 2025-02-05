@@ -215,7 +215,7 @@ public class DatabaseSeeder implements CommandLineRunner {
         LocalDateTime p6to = LocalDateTime.of(2024, 11, 15, 20, 0, 0);
 
         PlanEntity p6 = PlanEntity.create(community4.getId(), "가을 북한산 등반",
-                p6from, p6to,"exercise", bukhanmt, p6members);
+                p6from, p6to,"hobby", bukhanmt, p6members);
         planRepository.save(p6);
 
         // 모임 : 맛집탐방, 계획 : 강화도 여행, 일정 : 2024/09/23 - 2024/09/24
