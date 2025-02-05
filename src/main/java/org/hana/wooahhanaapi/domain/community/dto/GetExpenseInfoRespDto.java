@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class GetExpenseInfoRespDto {
-    private List<String> planTitleList;
+    private List<GetExpensePlanInfoDto> planInfoList;
     private int numberOfPlans;
     private Long howMuchSpentThanLastQuarter;
     private Long thisQuarterExpense;
