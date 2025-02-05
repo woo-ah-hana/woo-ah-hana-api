@@ -7,13 +7,14 @@ import lombok.NoArgsConstructor;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class GetExpenseInfoRespDto {
-    private List<String> planTitleList;
+    private List<GetExpensePlanInfoDto> planInfoList;
     private int numberOfPlans;
     private Long howMuchSpentThanLastQuarter;
     private Long thisQuarterExpense;

@@ -579,7 +579,12 @@ public class CommunityService {
         LocalDateTime toDateTime = localToDate.atTime(23, 59, 59);
 
         List<PlanEntity> planList = planRepository.findPlansInPeriod(getExpenseInfoReqDto.getCommunityId(),fromDateTime,toDateTime);
-        List<String> planTitleList = planList.stream().map(PlanEntity::getTitle).toList();
+        List<GetExpensePlanInfoDto> planInfoList = planList.stream()
+                .map(plan -> GetExpensePlanInfoDto.builder()
+                        .title(plan.getTitle())
+                        .category(plan.getCategory())
+                        .build())
+                .toList();
 
         List<Long> monthlyExpenses = new ArrayList<>(Collections.nCopies(3, 0L));
         for (AccountTransferRecordRespListDto transfer : thisQuarterResult.getData().getResList()) {
@@ -628,7 +633,7 @@ public class CommunityService {
         String imageUrl = (post != null) ? post.getImageUrl() : null;
 
         return GetExpenseInfoRespDto.builder()
-                .planTitleList(planTitleList)
+                .planInfoList(planInfoList)
                 .numberOfPlans(planList.size())
                 .howMuchSpentThanLastQuarter(thisQuarterExpense - lastQuarterExpense)
                 .thisQuarterExpense(thisQuarterExpense)
