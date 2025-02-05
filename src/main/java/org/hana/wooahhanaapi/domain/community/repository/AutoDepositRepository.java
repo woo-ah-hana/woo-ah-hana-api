@@ -13,4 +13,6 @@ public interface AutoDepositRepository extends JpaRepository<AutoDepositEntity, 
     AutoDepositEntity findByCommunityAccNumAndAndMemberAccNumAndMemberBankTranId(String accountNumber, String accountNumber1, String bankTranId);
   
     boolean existsByCommunityAccNumAndMemberAccNum(String communityAccNum, String memberAccNum);
+
+    List<AutoDepositEntity> findAllByMemberAccNum(String memberAccNum);
 }
